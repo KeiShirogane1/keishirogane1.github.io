@@ -1,0 +1,11 @@
+{
+  "id": "QR-001",
+  "enabled": false,
+  "deleted": true,
+  "store": "",
+  "location": "",
+  "qrValue": "https://keishirogane1.github.io/permanent-qr-manager/go/QR-001/",
+  "nfcValue": "https://keishirogane1.github.io/permanent-qr-manager/go/QR-001/",
+  "recoveryValue": "https://keishirogane1.github.io/permanent-qr-manager/recover/QR-001/",
+  "updatedAt": "2026-09-23T13:10:49.747Z"
+}
