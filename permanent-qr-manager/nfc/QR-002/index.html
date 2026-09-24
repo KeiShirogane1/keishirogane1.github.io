@@ -52,13 +52,20 @@
     if (apiSrc) {
       try {
         return await decodeApiRoute(await fetch(fresh(apiSrc), { cache: "no-store", mode: "cors" }));
-      } catch {}
+      } catch {
+        // Public GitHub API can rate-limit anonymous clients; fall through to CDN/Page sources.
+      }
     }
 
-    const results = await Promise.allSettled([fetchJson(rawSrc), fetchJson("./route.json")]);
-    const route = newest(results
+    const localSrc = "./route.json";
+    const results = await Promise.allSettled([
+      fetchJson(rawSrc),
+      fetchJson(localSrc)
+    ]);
+    const routes = results
       .filter((result) => result.status === "fulfilled")
-      .map((result) => result.value));
+      .map((result) => result.value);
+    const route = newest(routes);
     if (!route) throw new Error("Route fetch failed");
     return route;
   };
@@ -77,6 +84,7 @@
         show("Destination not configured", "This permanent NFC does not have a destination yet.");
         return;
       }
+
       try {
         const target = new URL(route.destination);
         if (!["http:", "https:"].includes(target.protocol)) throw new Error("Unsupported URL");
@@ -87,7 +95,9 @@
         show("Invalid destination", "The saved destination is not a valid web address.");
       }
     })
-    .catch(() => show("Route unavailable", "Could not load the latest destination. Check your connection and try again."));
+    .catch(() => {
+      show("Route unavailable", "Could not load the latest destination. Check your connection and try again.");
+    });
 })();
 </script>
 </body>
