@@ -3,9 +3,9 @@
   "enabled": true,
   "deleted": false,
   "store": "",
-  "location": "",
+  "location": "Pinned location (14.59807, 120.98354)",
   "qrValue": "https://keishirogane1.github.io/permanent-qr-manager/go/QR-003/",
   "nfcValue": "https://keishirogane1.github.io/permanent-qr-manager/go/QR-003/",
   "recoveryValue": "https://keishirogane1.github.io/permanent-qr-manager/recover/QR-003/",
-  "updatedAt": "2026-09-24T16:58:47.399Z"
+  "updatedAt": "2026-09-24T16:59:48.895Z"
 }
