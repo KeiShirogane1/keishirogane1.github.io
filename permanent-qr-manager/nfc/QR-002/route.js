@@ -1,0 +1,1 @@
+window.__QWERNFC_ROUTE__ = {"id":"QR-002","kind":"NFC","enabled":true,"deleted":false,"destination":"https://nexora-production-eb7b.up.railway.app/","updatedAt":"2026-09-24T05:39:26.981Z"};

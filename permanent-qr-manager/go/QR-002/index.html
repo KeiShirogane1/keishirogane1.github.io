@@ -5,9 +5,16 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <meta name="robots" content="noindex,nofollow" />
 <meta name="referrer" content="no-referrer" />
-<meta http-equiv="refresh" content="0;url=https://nexora-production-eb7b.up.railway.app/" />
+<meta http-equiv="cache-control" content="no-store,no-cache,must-revalidate,max-age=0" />
+<meta http-equiv="pragma" content="no-cache" />
+<meta http-equiv="expires" content="0" />
 <title>Opening destination</title>
-<style>body{margin:0;background:#06110a;color:#e9fff0;font-family:system-ui,-apple-system,sans-serif;min-height:100vh;display:grid;place-items:center}main{width:min(92vw,560px);padding:28px;border:1px solid #1d5b32;border-radius:20px;background:#0a1b10}p{line-height:1.55;color:#b9d8c2}a{color:#7de39c}code{color:#d8ffe3}</style>
+<style>body{margin:0;background:#06110a;color:#e9fff0;font-family:system-ui,-apple-system,sans-serif;min-height:100vh;display:grid;place-items:center}main{width:min(92vw,560px);padding:28px;border:1px solid #1d5b32;border-radius:20px;background:#0a1b10}p{line-height:1.55;color:#b9d8c2}a{color:#7de39c}</style>
 </head>
-<body><main><small>QwerNFC PERMANENT ROUTER</small><h1>Opening destination</h1><p><code>QR-002</code></p><p>If you are not redirected automatically, <a href="https://nexora-production-eb7b.up.railway.app/" rel="noreferrer noopener">continue to the destination</a>.</p></main></body>
+<body>
+<main><small>QwerNFC PERMANENT ROUTER</small><h1 id="route-title">Opening destination</h1><p><code>QR-002</code></p><p id="route-status">Resolving the latest QR destination…</p><p><a id="route-link" hidden rel="noreferrer noopener">Continue to destination</a></p></main>
+<script>
+(()=>{const title=document.getElementById("route-title"),status=document.getElementById("route-status"),link=document.getElementById("route-link");window.__QWERNFC_ROUTE__=null;const show=(h,m)=>{title.textContent=h;status.textContent=m;};const loader=document.createElement("script");loader.async=true;const src="https://raw.githubusercontent.com/KeiShirogane1/keishirogane1.github.io/bbmain/permanent-qr-manager/go/QR-002/route.js";loader.src=src+"?v="+Date.now();loader.onload=()=>{const route=window.__QWERNFC_ROUTE__;if(!route||route.id!=="QR-002"){show("Route unavailable","The latest destination could not be verified.");return;}if(route.deleted||route.enabled!==true){show("Permanent QR inactive","This permanent QR has been disabled.");return;}if(!route.destination){show("Destination not configured","This permanent QR does not have a destination yet.");return;}try{const target=new URL(route.destination);if(!["http:","https:"].includes(target.protocol))throw new Error();link.href=target.href;link.hidden=false;window.location.replace(target.href);}catch{show("Invalid destination","The saved destination is not a valid web address.");}};loader.onerror=()=>show("Route unavailable","Could not load the latest destination. Check your connection and try again.");document.head.appendChild(loader);})();
+</script>
+</body>
 </html>
