@@ -1,5 +1,5 @@
 QwerNFC Restore debug APK
-Commit: 259ffb4742dc2f99c2f64e4d69f8e54ccb0f14a2
+Commit: 27a08a542913bf69ff977671b654699b6dc7d463
 Branch: android-app
 Package: com.keishirogane.qwernfcrestore
 Build: debug
