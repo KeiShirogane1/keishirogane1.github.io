@@ -6,70 +6,654 @@
 <meta name="robots" content="noindex,nofollow" />
 <meta name="referrer" content="no-referrer" />
 <meta http-equiv="cache-control" content="no-store,no-cache,must-revalidate,max-age=0" />
+<meta http-equiv="pragma" content="no-cache" />
+<meta http-equiv="expires" content="0" />
 <title>QwerNFC · Update Info</title>
 <style>
-:root{color-scheme:dark;font-family:Inter,system-ui,-apple-system,sans-serif;background:#020906;color:#effaf2}
-*{box-sizing:border-box}body{margin:0;min-height:100dvh;background:radial-gradient(circle at 50% -8%,#0b51265e,transparent 34%),#020906}
-button,input,textarea{font:inherit}main{width:min(100%,620px);margin:auto;padding:16px 14px 40px}
-.brand{display:flex;align-items:center;gap:10px;padding:6px 1px 15px}.mark{width:42px;height:42px;border:1px solid #1d6a38;border-radius:13px;background:#082916;display:grid;place-items:center;color:#71e596;font-weight:950}.brand strong,.brand small{display:block}.brand small{margin-top:2px;color:#789280;font-size:.75rem}
-.card{margin-top:12px;padding:15px;border:1px solid #174b2a;border-radius:18px;background:linear-gradient(180deg,#07170d,#051009)}
-.tag{display:inline-flex;padding:5px 8px;border:1px solid #1c6837;border-radius:999px;background:#092616;color:#66df8a;font-size:.64rem;font-weight:900;letter-spacing:.06em}.hero h1{margin:10px 0 5px;font-size:1.35rem}.muted{margin:0;color:#7f9788;font-size:.76rem;line-height:1.5}
-.grid{display:grid;gap:9px}.current{padding:11px;border:1px solid #1c5933;border-radius:12px;background:#06180e}.current span,.current strong{display:block}.current span{color:#6f8a78;font-size:.64rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em}.current strong{margin-top:4px;color:#eef9f1;font-size:.82rem;overflow-wrap:anywhere}
-.edit-list{display:grid;gap:10px}.edit-row{padding:11px;border:1px solid #1a4e2d;border-radius:13px;background:#06150c}.edit-head{display:flex;align-items:center;gap:8px}.edit-head input{accent-color:#16a34a}.edit-head strong{font-size:.78rem}.edit-row label{display:block;margin-top:9px}.edit-row label>span{display:block;margin-bottom:5px;color:#76907f;font-size:.65rem;font-weight:800}.edit-row input,.edit-row textarea{width:100%;border:1px solid #264b34;border-radius:10px;outline:none;background:#031008;color:#effaf2;padding:10px 11px}.edit-row textarea{min-height:92px;resize:vertical}.edit-row input:disabled,.edit-row textarea:disabled{opacity:.45}.edit-row input:focus,.edit-row textarea:focus{border-color:#34a75d}
-.reason{margin-top:12px}.reason span{display:block;margin-bottom:5px;color:#8da494;font-size:.68rem;font-weight:850}.reason textarea{width:100%;min-height:100px;padding:11px;border:1px solid #28573a;border-radius:11px;outline:none;background:#041109;color:#eef9f1;resize:vertical}.reason textarea:focus{border-color:#34a75d}
-.primary,.secondary{width:100%;min-height:48px;border-radius:12px;font-weight:900}.primary{margin-top:12px;border:1px solid #26924d;background:#0b6a31;color:#fff}.secondary{margin-top:8px;border:1px solid #28563a;background:#07190e;color:#9ab09f}.status{margin-top:10px;padding:10px 11px;border:1px solid #4c4020;border-radius:11px;background:#1d1808;color:#d6bd78;font-size:.72rem;line-height:1.45}.status.ok{border-color:#1e6b39;background:#071f10;color:#79dc98}.status.error{border-color:#71362f;background:#26110f;color:#f0a59d}
-.review-list{display:grid;gap:8px}.review-item{padding:10px;border:1px solid #1c5933;border-radius:11px;background:#06170d}.review-item strong{display:block;font-size:.78rem}.pair{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:7px}.pair div{padding:8px;border-radius:9px;background:#031008}.pair span{display:block;color:#6f8b78;font-size:.6rem;font-weight:850}.pair p{margin:4px 0 0;font-size:.7rem;overflow-wrap:anywhere}.pair .new{border:1px solid #2f8d4f}
-#qr-box{display:grid;place-items:center;margin:14px 0;padding:14px;border-radius:14px;background:#fff}#qr-box img,#qr-box canvas{max-width:100%;height:auto}
-.notice{margin-top:12px;color:#789080;font-size:.68rem;line-height:1.5}.hidden{display:none!important}
+:root{
+  color-scheme:dark;
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  background:#020806;
+  color:#f2fbf5;
+  --bg:#020806;
+  --surface:#06120c;
+  --surface-2:#081a10;
+  --surface-3:#0a2014;
+  --line:#174a2b;
+  --line-strong:#218a48;
+  --green:#1fd765;
+  --green-2:#0bb94f;
+  --green-soft:#113d23;
+  --text:#f2fbf5;
+  --muted:#8ba394;
+  --muted-2:#61766a;
+  --danger:#ff7e73;
+  --warning:#e8c168;
+}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{
+  margin:0;
+  min-height:100dvh;
+  background:
+    radial-gradient(circle at 50% -12%,rgba(20,119,62,.20),transparent 38%),
+    linear-gradient(180deg,#03100a 0,#020806 42%,#020806 100%);
+  color:var(--text);
+  -webkit-font-smoothing:antialiased;
+}
+button,input,textarea{font:inherit}
+button{cursor:pointer}
+button:disabled{cursor:not-allowed;opacity:.55}
+a{color:inherit}
+.app{
+  width:min(100%,500px);
+  min-height:100dvh;
+  margin:0 auto;
+  padding:calc(14px + env(safe-area-inset-top)) 14px calc(110px + env(safe-area-inset-bottom));
+}
+.topbar{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:4px 2px 16px;
+}
+.back{
+  width:46px;
+  height:46px;
+  flex:0 0 46px;
+  border:1px solid #15582f;
+  border-radius:15px;
+  background:#082317;
+  color:#dff9e7;
+  display:grid;
+  place-items:center;
+}
+.back svg{width:22px;height:22px}
+.topbar-copy strong{
+  display:block;
+  font-size:1.18rem;
+  line-height:1.2;
+  letter-spacing:-.01em;
+}
+.topbar-copy span{
+  display:block;
+  margin-top:3px;
+  color:var(--muted);
+  font-size:.78rem;
+}
+.card{
+  border:1px solid var(--line);
+  border-radius:20px;
+  background:linear-gradient(180deg,rgba(8,27,16,.97),rgba(4,15,9,.98));
+  box-shadow:0 16px 40px rgba(0,0,0,.16);
+}
+.identity-card{
+  padding:16px;
+}
+.identity-main{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+.identity-mark{
+  width:58px;
+  height:58px;
+  flex:0 0 58px;
+  border:1px solid #1d7d43;
+  border-radius:16px;
+  background:linear-gradient(145deg,#0b3a20,#071b10);
+  display:grid;
+  place-items:center;
+  color:#72eba0;
+}
+.identity-mark svg{width:28px;height:28px}
+.identity-copy{min-width:0;flex:1}
+.identity-copy h1{
+  margin:0;
+  font-size:1.15rem;
+  line-height:1.2;
+}
+.identity-copy p{
+  margin:4px 0 0;
+  color:var(--muted);
+  font-size:.76rem;
+}
+.status-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  margin-top:8px;
+  padding:5px 8px;
+  border:1px solid #1c6e3b;
+  border-radius:999px;
+  background:#0a2b18;
+  color:#7be59b;
+  font-size:.66rem;
+  font-weight:850;
+}
+.managed-link{
+  margin-top:14px;
+  padding:12px 12px 11px;
+  border:1px solid #175a33;
+  border-radius:14px;
+  background:#04130b;
+}
+.managed-link-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+}
+.managed-link-head span{
+  color:#72d793;
+  font-size:.68rem;
+  font-weight:800;
+  letter-spacing:.02em;
+}
+.copy-link{
+  width:32px;
+  height:32px;
+  border:1px solid #205f39;
+  border-radius:9px;
+  background:#0a2114;
+  color:#bde8ca;
+  display:grid;
+  place-items:center;
+}
+.copy-link svg{width:15px;height:15px}
+.managed-link strong{
+  display:block;
+  margin-top:6px;
+  color:#edf9f1;
+  font-size:.82rem;
+  font-weight:700;
+  line-height:1.42;
+  overflow-wrap:anywhere;
+}
+.section-head{
+  margin:22px 2px 10px;
+}
+.section-head h2{
+  margin:0;
+  font-size:1.12rem;
+  letter-spacing:-.01em;
+}
+.section-head p{
+  margin:5px 0 0;
+  color:var(--muted);
+  font-size:.78rem;
+  line-height:1.5;
+}
+.current-card{
+  padding:14px;
+}
+.current-grid{
+  display:grid;
+  gap:9px;
+}
+.current-row{
+  padding:11px 12px;
+  border:1px solid #163f27;
+  border-radius:13px;
+  background:#06140c;
+}
+.current-row span{
+  display:block;
+  color:#6f8a79;
+  font-size:.64rem;
+  font-weight:850;
+  letter-spacing:.05em;
+  text-transform:uppercase;
+}
+.current-row strong{
+  display:block;
+  margin-top:4px;
+  color:#edf8f1;
+  font-size:.82rem;
+  line-height:1.4;
+  overflow-wrap:anywhere;
+}
+.edit-stack{
+  display:grid;
+  gap:10px;
+}
+.edit-card{
+  border:1px solid #18492a;
+  border-radius:17px;
+  background:linear-gradient(180deg,#07180f,#051109);
+  overflow:hidden;
+  transition:border-color .18s ease,background .18s ease,transform .18s ease;
+}
+.edit-card.active{
+  border-color:#279354;
+  background:linear-gradient(180deg,#092315,#06170d);
+  box-shadow:0 0 0 1px rgba(31,215,101,.08) inset;
+}
+.edit-toggle{
+  width:100%;
+  padding:13px 14px;
+  border:0;
+  background:transparent;
+  color:inherit;
+  display:flex;
+  align-items:center;
+  gap:11px;
+  text-align:left;
+}
+.field-icon{
+  width:40px;
+  height:40px;
+  flex:0 0 40px;
+  border:1px solid #1b6337;
+  border-radius:12px;
+  background:#0a2d19;
+  display:grid;
+  place-items:center;
+  color:#66df8c;
+}
+.field-icon svg{width:20px;height:20px}
+.field-copy{
+  min-width:0;
+  flex:1;
+}
+.field-copy strong{
+  display:block;
+  font-size:.87rem;
+  line-height:1.2;
+}
+.field-copy span{
+  display:block;
+  margin-top:3px;
+  color:var(--muted);
+  font-size:.68rem;
+  line-height:1.35;
+}
+.check{
+  width:28px;
+  height:28px;
+  flex:0 0 28px;
+  border:1px solid #456054;
+  border-radius:8px;
+  background:#0b1610;
+  color:transparent;
+  display:grid;
+  place-items:center;
+}
+.check svg{width:17px;height:17px}
+.edit-card.active .check{
+  border-color:#2be070;
+  background:linear-gradient(145deg,#20d966,#11b94e);
+  color:#001f0c;
+}
+.field-panel{
+  display:none;
+  padding:0 14px 14px;
+}
+.edit-card.active .field-panel{display:block}
+.field-panel label{
+  display:block;
+  color:#7d9686;
+  font-size:.68rem;
+  font-weight:800;
+}
+.field-panel input{
+  width:100%;
+  min-height:50px;
+  margin-top:6px;
+  padding:0 13px;
+  border:1px solid #28583a;
+  border-radius:12px;
+  outline:0;
+  background:#04110a;
+  color:#f1fbf4;
+  font-size:.91rem;
+}
+.field-panel input:focus{
+  border-color:#31b661;
+  box-shadow:0 0 0 3px rgba(38,190,94,.08);
+}
+.reason-card{
+  margin-top:12px;
+  padding:14px;
+}
+.reason-title{
+  display:flex;
+  align-items:flex-start;
+  gap:10px;
+}
+.reason-title .field-icon{
+  width:38px;
+  height:38px;
+  flex-basis:38px;
+}
+.reason-title strong{
+  display:block;
+  font-size:.88rem;
+}
+.reason-title span{
+  display:block;
+  margin-top:3px;
+  color:var(--muted);
+  font-size:.68rem;
+}
+.reason-card textarea{
+  width:100%;
+  min-height:116px;
+  margin-top:12px;
+  padding:12px 13px;
+  border:1px solid #28583a;
+  border-radius:12px;
+  outline:0;
+  resize:vertical;
+  background:#04110a;
+  color:#f2fbf5;
+  font-size:.9rem;
+  line-height:1.5;
+}
+.reason-card textarea:focus{
+  border-color:#31b661;
+  box-shadow:0 0 0 3px rgba(38,190,94,.08);
+}
+.reason-card textarea::placeholder,
+.field-panel input::placeholder{color:#5c7065}
+.status{
+  margin-top:10px;
+  padding:10px 11px;
+  border:1px solid #705d2e;
+  border-radius:11px;
+  background:#221b08;
+  color:#e2c374;
+  font-size:.74rem;
+  line-height:1.45;
+}
+.status.ok{
+  border-color:#236a3c;
+  background:#071d10;
+  color:#79dda0;
+}
+.status.error{
+  border-color:#71362f;
+  background:#25110f;
+  color:#f3a59c;
+}
+.privacy-note{
+  display:flex;
+  gap:9px;
+  margin:12px 2px 0;
+  color:#668071;
+  font-size:.67rem;
+  line-height:1.48;
+}
+.privacy-note svg{
+  width:16px;
+  height:16px;
+  flex:0 0 16px;
+  margin-top:1px;
+  color:#54cf7b;
+}
+.sticky-action{
+  position:fixed;
+  left:50%;
+  bottom:0;
+  z-index:20;
+  width:min(100%,500px);
+  transform:translateX(-50%);
+  padding:10px 14px calc(12px + env(safe-area-inset-bottom));
+  background:linear-gradient(180deg,rgba(2,8,6,0),rgba(2,8,6,.92) 20%,rgba(2,8,6,.99) 44%);
+  pointer-events:none;
+}
+.primary{
+  width:100%;
+  min-height:54px;
+  border:1px solid #39e87b;
+  border-radius:15px;
+  background:linear-gradient(180deg,#18d660,#0eac48);
+  color:#001d0b;
+  font-size:.92rem;
+  font-weight:950;
+  letter-spacing:.01em;
+  box-shadow:0 12px 30px rgba(13,176,73,.22);
+  pointer-events:auto;
+}
+.primary:active{transform:translateY(1px)}
+.secondary{
+  width:100%;
+  min-height:48px;
+  margin-top:8px;
+  border:1px solid #28583a;
+  border-radius:12px;
+  background:#07180e;
+  color:#a9c0b0;
+  font-weight:850;
+}
+.review-card,.request-card{
+  margin-top:12px;
+  padding:15px;
+}
+.review-list{
+  display:grid;
+  gap:10px;
+  margin-top:12px;
+}
+.review-item{
+  padding:12px;
+  border:1px solid #184a2b;
+  border-radius:13px;
+  background:#06150d;
+}
+.review-item>strong{
+  display:block;
+  font-size:.82rem;
+}
+.review-pair{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:8px;
+  margin-top:8px;
+}
+.review-pair div{
+  padding:9px 10px;
+  border:1px solid #153c24;
+  border-radius:10px;
+  background:#04100a;
+}
+.review-pair .requested{
+  border-color:#2a8a4e;
+  background:#082316;
+}
+.review-pair span{
+  display:block;
+  color:#718979;
+  font-size:.61rem;
+  font-weight:850;
+}
+.review-pair p{
+  margin:4px 0 0;
+  color:#edf8f1;
+  font-size:.75rem;
+  line-height:1.42;
+  overflow-wrap:anywhere;
+}
+.reason-review{
+  margin-top:10px;
+  padding:11px;
+  border:1px solid #235f38;
+  border-radius:12px;
+  background:#071a10;
+}
+.reason-review span{
+  color:#6dcc8c;
+  font-size:.63rem;
+  font-weight:850;
+}
+.reason-review p{
+  margin:5px 0 0;
+  color:#e4f4e9;
+  font-size:.76rem;
+  line-height:1.45;
+}
+.request-card{text-align:center}
+.request-card h2{
+  margin:10px 0 5px;
+  font-size:1rem;
+}
+.request-card p{
+  margin:0;
+  color:var(--muted);
+  font-size:.75rem;
+  line-height:1.5;
+}
+#qr-box{
+  display:grid;
+  place-items:center;
+  width:min(100%,310px);
+  margin:14px auto;
+  padding:12px;
+  border-radius:16px;
+  background:#fff;
+}
+#qr-box img,#qr-box canvas{display:block;max-width:100%;height:auto}
+.hidden{display:none!important}
+@media (min-width:540px){
+  .app{padding-left:20px;padding-right:20px}
+}
 </style>
 </head>
 <body>
-<main>
-<header class="brand"><span class="mark">Q</span><div><strong>QwerNFC Update Info</strong><small>Customer edit request</small></div></header>
+<main class="app">
+  <header class="topbar">
+    <button class="back" type="button" id="back-button" aria-label="Go back">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
+    </button>
+    <div class="topbar-copy">
+      <strong>Update Info</strong>
+      <span>Customer request</span>
+    </div>
+  </header>
 
-<section class="card hero">
-  <span class="tag">CUSTOMER UPDATE</span>
-  <h1 id="title">Loading your information…</h1>
-  <p class="muted">Choose only the information you want to change. Nothing goes live until the QwerNFC admin approves it.</p>
-</section>
+  <section class="card identity-card">
+    <div class="identity-main">
+      <div class="identity-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10h18"/><path d="M5 10V7l2-3h10l2 3v3"/><path d="M5 10v10h14V10"/><path d="M9 20v-6h6v6"/></svg>
+      </div>
+      <div class="identity-copy">
+        <h1 id="business-name">Loading…</h1>
+        <p id="qr-id">QR ID</p>
+        <span class="status-pill">Managed QwerNFC profile</span>
+      </div>
+    </div>
+    <div class="managed-link">
+      <div class="managed-link-head">
+        <span>Current managed link</span>
+        <button class="copy-link" id="copy-current-link" type="button" aria-label="Copy current managed link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg>
+        </button>
+      </div>
+      <strong id="current-link">Loading…</strong>
+    </div>
+  </section>
 
-<section class="card">
-  <span class="tag">CURRENT INFO</span>
-  <div class="grid" id="current-grid" style="margin-top:10px"></div>
-</section>
+  <section class="section-head">
+    <h2>Your current information</h2>
+    <p>Review the information currently connected to this QR before requesting a change.</p>
+  </section>
 
-<form id="edit-form" class="card hidden">
-  <span class="tag">WHAT DO YOU WANT TO EDIT?</span>
-  <div class="edit-list" style="margin-top:10px">
-    <div class="edit-row"><div class="edit-head"><input type="checkbox" data-toggle="store"><strong>Store name</strong></div><label><span>New store name</span><input name="store" maxlength="80" disabled></label></div>
-    <div class="edit-row"><div class="edit-head"><input type="checkbox" data-toggle="location"><strong>Location</strong></div><label><span>New location</span><input name="location" maxlength="180" disabled></label></div>
-    <div class="edit-row"><div class="edit-head"><input type="checkbox" data-toggle="managedLink"><strong>Managed link</strong></div><label><span>New Google Review / website / TikTok link</span><input name="managedLink" type="url" maxlength="2048" disabled></label></div>
-    <div class="edit-row"><div class="edit-head"><input type="checkbox" data-toggle="phone"><strong>Phone</strong></div><label><span>New phone number</span><input name="phone" type="tel" maxlength="32" placeholder="Private — enter only if changing" disabled></label></div>
-    <div class="edit-row"><div class="edit-head"><input type="checkbox" data-toggle="email"><strong>Email</strong></div><label><span>New email</span><input name="email" type="email" maxlength="120" placeholder="Private — enter only if changing" disabled></label></div>
-  </div>
-  <label class="reason"><span>Reason for editing info</span><textarea name="reason" maxlength="500" required placeholder="Example: We changed our business address and review link."></textarea></label>
-  <button class="primary" type="submit">Review changes</button>
-  <div id="form-status" class="status hidden"></div>
-</form>
+  <section class="card current-card">
+    <div class="current-grid" id="current-grid"></div>
+  </section>
 
-<section id="review-card" class="card hidden">
-  <span class="tag">REVIEW OLD → NEW</span>
-  <div id="review-list" class="review-list" style="margin-top:10px"></div>
-  <div class="current" style="margin-top:10px"><span>Reason</span><strong id="review-reason"></strong></div>
-  <button id="create-request" class="primary" type="button">Save request</button>
-  <button id="back-edit" class="secondary" type="button">Back to edit</button>
-</section>
+  <section class="section-head">
+    <h2>What do you want to edit?</h2>
+    <p>Select only the information you want to change. The admin will review your request before anything goes live.</p>
+  </section>
 
-<section id="request-card" class="card hidden">
-  <span class="tag">REQUEST READY</span>
-  <h2 style="margin:10px 0 5px">Show this QR to the QwerNFC admin</h2>
-  <p class="muted">The admin scans this request, reviews OLD → NEW and your reason, then approves or rejects it. Your permanent QR is not changed by this request.</p>
-  <div id="qr-box"></div>
-  <button id="copy-request" class="secondary" type="button">Copy secure request code</button>
-  <div id="request-status" class="status ok">Request created locally. No private GitHub credentials are exposed.</div>
-</section>
+  <form id="edit-form">
+    <div class="edit-stack">
+      <article class="edit-card" data-edit-card="store">
+        <button class="edit-toggle" type="button" data-edit-toggle="store">
+          <span class="field-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10h18"/><path d="M5 10V7l2-3h10l2 3v3"/><path d="M5 10v10h14V10"/><path d="M9 20v-6h6v6"/></svg></span>
+          <span class="field-copy"><strong>Store name</strong><span>Update your business or store name</span></span>
+          <span class="check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4L19 6"/></svg></span>
+        </button>
+        <div class="field-panel"><label>New store name<input name="store" maxlength="80" disabled /></label></div>
+      </article>
 
-<p class="notice">Phone and email are intentionally not loaded into this public page. If you want to change them, enter the new values. Current private phone/email stay protected in QwerNFC Manager.</p>
+      <article class="edit-card" data-edit-card="location">
+        <button class="edit-toggle" type="button" data-edit-toggle="location">
+          <span class="field-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg></span>
+          <span class="field-copy"><strong>Location</strong><span>Update your business location</span></span>
+          <span class="check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4L19 6"/></svg></span>
+        </button>
+        <div class="field-panel"><label>New location<input name="location" maxlength="180" disabled /></label></div>
+      </article>
+
+      <article class="edit-card" data-edit-card="managedLink">
+        <button class="edit-toggle" type="button" data-edit-toggle="managedLink">
+          <span class="field-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></span>
+          <span class="field-copy"><strong>Managed link</strong><span>Google Review, website, TikTok, or another managed destination</span></span>
+          <span class="check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4L19 6"/></svg></span>
+        </button>
+        <div class="field-panel"><label>New managed link<input name="managedLink" type="url" inputmode="url" maxlength="2048" disabled /></label></div>
+      </article>
+
+      <article class="edit-card" data-edit-card="phone">
+        <button class="edit-toggle" type="button" data-edit-toggle="phone">
+          <span class="field-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.4 19.4 0 0 1-6-6A19.8 19.8 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.9.33 1.78.62 2.62a2 2 0 0 1-.45 2.11L8 9.73a16 16 0 0 0 6 6l1.28-1.28a2 2 0 0 1 2.11-.45c.84.29 1.72.5 2.62.62A2 2 0 0 1 22 16.92Z"/></svg></span>
+          <span class="field-copy"><strong>Phone</strong><span>Enter a new number only if changing it</span></span>
+          <span class="check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4L19 6"/></svg></span>
+        </button>
+        <div class="field-panel"><label>New phone number<input name="phone" type="tel" maxlength="32" placeholder="Enter new phone number" disabled /></label></div>
+      </article>
+
+      <article class="edit-card" data-edit-card="email">
+        <button class="edit-toggle" type="button" data-edit-toggle="email">
+          <span class="field-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-10 6L2 7"/></svg></span>
+          <span class="field-copy"><strong>Email</strong><span>Enter a new email only if changing it</span></span>
+          <span class="check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4L19 6"/></svg></span>
+        </button>
+        <div class="field-panel"><label>New email<input name="email" type="email" maxlength="120" placeholder="Enter new email address" disabled /></label></div>
+      </article>
+    </div>
+
+    <section class="card reason-card">
+      <div class="reason-title">
+        <span class="field-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/><path d="M8 13h8"/><path d="M8 17h6"/></svg></span>
+        <div><strong>Reason for editing info</strong><span>Tell the admin why you are requesting these changes</span></div>
+      </div>
+      <textarea name="reason" maxlength="500" required placeholder="Example: We changed our business address and review link."></textarea>
+      <div id="form-status" class="status hidden"></div>
+    </section>
+
+    <div class="privacy-note">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      <span>Current phone and email stay private in QwerNFC Manager. This page never exposes the private backup or permanent QR database.</span>
+    </div>
+
+    <div class="sticky-action" id="edit-action">
+      <button class="primary" type="submit">Review changes →</button>
+    </div>
+  </form>
+
+  <section id="review-card" class="card review-card hidden">
+    <span class="status-pill">Review request</span>
+    <div class="section-head" style="margin:14px 0 0">
+      <h2>Confirm your changes</h2>
+      <p>Check OLD → NEW before creating the request for the QwerNFC admin.</p>
+    </div>
+    <div id="review-list" class="review-list"></div>
+    <div class="reason-review"><span>REASON FOR EDIT</span><p id="review-reason"></p></div>
+    <button id="create-request" class="primary" type="button" style="margin-top:12px">Save request</button>
+    <button id="back-edit" class="secondary" type="button">Back to edit</button>
+  </section>
+
+  <section id="request-card" class="card request-card hidden">
+    <span class="status-pill">Request ready</span>
+    <h2>Show this QR to the QwerNFC admin</h2>
+    <p>The admin reviews OLD → NEW and your reason, then approves or rejects it. Your permanent QR stays unchanged.</p>
+    <div id="qr-box"></div>
+    <button id="copy-request" class="secondary" type="button">Copy secure request code</button>
+    <div id="request-status" class="status ok">Request created locally. No private GitHub credentials are exposed.</div>
+  </section>
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js" referrerpolicy="no-referrer"></script>
@@ -78,133 +662,162 @@ button,input,textarea{font:inherit}main{width:min(100%,620px);margin:auto;paddin
   const PREFIX = "QWERNFC-UPDATE:1:";
   const params = new URLSearchParams(location.search);
   const id = String(params.get("id") || "").toUpperCase();
-  const state = { record: null, route: null, changes: null, reason: "", request: "" };
+  const state = { record:null, route:null, changes:null, reason:"", request:"" };
 
-  const title = document.getElementById("title");
+  const businessName = document.getElementById("business-name");
+  const qrId = document.getElementById("qr-id");
+  const currentLink = document.getElementById("current-link");
   const currentGrid = document.getElementById("current-grid");
   const form = document.getElementById("edit-form");
   const formStatus = document.getElementById("form-status");
+  const editAction = document.getElementById("edit-action");
   const reviewCard = document.getElementById("review-card");
   const reviewList = document.getElementById("review-list");
   const reviewReason = document.getElementById("review-reason");
   const requestCard = document.getElementById("request-card");
   const qrBox = document.getElementById("qr-box");
 
-  const esc = (value) => String(value ?? "").replace(/[&<>"']/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
+  const esc = (value) => String(value ?? "").replace(/[&<>"']/g,(char)=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[char]));
   const fresh = (src) => src + (src.includes("?") ? "&" : "?") + "v=" + Date.now();
   const fetchJson = async (src) => {
-    const response = await fetch(fresh(src), { cache:"no-store", mode:"cors" });
-    if (!response.ok) throw new Error("Could not load current information.");
+    const response = await fetch(fresh(src),{cache:"no-store",mode:"cors"});
+    if(!response.ok) throw new Error("Could not load current information.");
     return response.json();
   };
   const encode = (value) => {
     const bytes = new TextEncoder().encode(value);
     let binary = "";
-    for (const byte of bytes) binary += String.fromCharCode(byte);
+    for(const byte of bytes) binary += String.fromCharCode(byte);
     return btoa(binary).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/g,"");
   };
-  const showStatus = (message, kind="error") => {
+  const showStatus = (message,kind="error") => {
     formStatus.textContent = message;
     formStatus.className = "status " + kind;
   };
-
-  if (!/^QR-\d+$/.test(id)) {
-    title.textContent = "Invalid QwerNFC update link";
-    return;
-  }
-
   const currentValue = (field) => field === "managedLink"
     ? String(state.route?.destination || "")
     : String(state.record?.[field] || "");
 
+  document.getElementById("back-button").addEventListener("click",()=>history.back());
+
+  if(!/^QR-\d+$/.test(id)){
+    businessName.textContent = "Invalid QwerNFC update link";
+    qrId.textContent = "";
+    currentLink.textContent = "This update link is not valid.";
+    form.classList.add("hidden");
+    editAction.classList.add("hidden");
+    return;
+  }
+
   const renderCurrent = () => {
-    title.textContent = (state.record.store || id) + " · " + id;
+    businessName.textContent = state.record.store || id;
+    qrId.textContent = "QR ID · " + id;
+    currentLink.textContent = state.route.destination || "Not configured";
+
     const items = [
-      ["Store name", state.record.store || "Not provided"],
-      ["Location", state.record.location || "Not provided"],
-      ["Managed link", state.route.destination || "Not configured"],
-      ["Phone", "Private in QwerNFC Manager"],
-      ["Email", "Private in QwerNFC Manager"]
+      ["Store name",state.record.store || "Not provided"],
+      ["Location",state.record.location || "Not provided"],
+      ["Managed link",state.route.destination || "Not configured"],
+      ["Phone","Private in QwerNFC Manager"],
+      ["Email","Private in QwerNFC Manager"]
     ];
-    currentGrid.innerHTML = items.map(([label,value]) => '<div class="current"><span>'+esc(label)+'</span><strong>'+esc(value)+'</strong></div>').join("");
+    currentGrid.innerHTML = items.map(([label,value]) =>
+      '<div class="current-row"><span>'+esc(label)+'</span><strong>'+esc(value)+'</strong></div>'
+    ).join("");
 
     form.elements.store.value = state.record.store || "";
     form.elements.location.value = state.record.location || "";
     form.elements.managedLink.value = state.route.destination || "";
-    form.classList.remove("hidden");
   };
 
   Promise.all([
     fetchJson("../recover/" + encodeURIComponent(id) + "/recovery.json"),
     fetchJson("../go/" + encodeURIComponent(id) + "/route.json")
-  ]).then(([record, route]) => {
-    if (!record || record.id !== id || record.deleted || record.enabled !== true) throw new Error("This QwerNFC record is unavailable.");
-    if (!route || route.id !== id || route.deleted || route.enabled !== true) throw new Error("The managed route is unavailable.");
+  ]).then(([record,route])=>{
+    if(!record || record.id!==id || record.deleted || record.enabled!==true) throw new Error("This QwerNFC record is unavailable.");
+    if(!route || route.id!==id || route.deleted || route.enabled!==true) throw new Error("The managed route is unavailable.");
     state.record = record;
     state.route = route;
     renderCurrent();
-  }).catch((error) => {
-    title.textContent = error?.message || "Could not load this QwerNFC profile.";
+  }).catch((error)=>{
+    businessName.textContent = "Could not load profile";
+    qrId.textContent = id;
+    currentLink.textContent = error?.message || "Update information unavailable.";
+    form.classList.add("hidden");
+    editAction.classList.add("hidden");
   });
 
-  document.querySelectorAll("[data-toggle]").forEach((box) => {
-    box.addEventListener("change", () => {
-      const field = box.dataset.toggle;
+  document.getElementById("copy-current-link").addEventListener("click",async()=>{
+    const value = String(state.route?.destination || "");
+    if(!value) return;
+    try{ await navigator.clipboard.writeText(value); }catch{}
+  });
+
+  document.querySelectorAll("[data-edit-toggle]").forEach((button)=>{
+    button.addEventListener("click",()=>{
+      const field = button.dataset.editToggle;
+      const card = document.querySelector('[data-edit-card="'+field+'"]');
       const input = form.elements[field];
-      input.disabled = !box.checked;
-      if (box.checked) input.focus();
+      const active = !card.classList.contains("active");
+      card.classList.toggle("active",active);
+      input.disabled = !active;
+      if(active) setTimeout(()=>input.focus(),0);
     });
   });
 
-  form.addEventListener("submit", (event) => {
+  form.addEventListener("submit",(event)=>{
     event.preventDefault();
     const changes = {};
-    let count = 0;
 
-    for (const box of document.querySelectorAll("[data-toggle]")) {
-      if (!box.checked) continue;
-      const field = box.dataset.toggle;
+    for(const card of document.querySelectorAll("[data-edit-card].active")){
+      const field = card.dataset.editCard;
       const value = String(form.elements[field].value || "").trim();
-      if (!value) return showStatus("Enter the new " + field + " value.");
-      if (field === "managedLink") {
-        try {
+      if(!value) return showStatus("Enter the new " + field + " value.");
+
+      if(field==="managedLink"){
+        try{
           const url = new URL(value);
-          if (!["http:","https:"].includes(url.protocol)) throw new Error();
+          if(!["http:","https:"].includes(url.protocol)) throw new Error();
           changes[field] = url.href;
-        } catch {
+        }catch{
           return showStatus("Managed link must be a complete http:// or https:// URL.");
         }
-      } else {
+      }else{
         changes[field] = value;
       }
-      count += 1;
     }
 
     const reason = String(form.elements.reason.value || "").trim();
-    if (!count) return showStatus("Choose at least one item to edit.");
-    if (reason.length < 3) return showStatus("Tell the admin why you are requesting these changes.");
-    if (reason.length > 500) return showStatus("Reason is too long.");
+    if(!Object.keys(changes).length) return showStatus("Select at least one item to edit.");
+    if(reason.length < 3) return showStatus("Tell the admin why you are requesting these changes.");
+    if(reason.length > 500) return showStatus("Reason is too long.");
 
     state.changes = changes;
     state.reason = reason;
-    reviewList.innerHTML = Object.entries(changes).map(([field,value]) => {
-      const label = ({store:"Store name",location:"Location",managedLink:"Managed link",phone:"Phone",email:"Email"})[field] || field;
-      const oldValue = (field === "phone" || field === "email") ? "Private in QwerNFC Manager" : (currentValue(field) || "Not provided");
-      return '<div class="review-item"><strong>'+esc(label)+'</strong><div class="pair"><div><span>OLD</span><p>'+esc(oldValue)+'</p></div><div class="new"><span>NEW</span><p>'+esc(value)+'</p></div></div></div>';
+
+    const labels = {store:"Store name",location:"Location",managedLink:"Managed link",phone:"Phone",email:"Email"};
+    reviewList.innerHTML = Object.entries(changes).map(([field,value])=>{
+      const oldValue = (field==="phone" || field==="email")
+        ? "Private in QwerNFC Manager"
+        : (currentValue(field) || "Not provided");
+      return '<article class="review-item"><strong>'+esc(labels[field] || field)+'</strong><div class="review-pair"><div><span>OLD</span><p>'+esc(oldValue)+'</p></div><div class="requested"><span>NEW</span><p>'+esc(value)+'</p></div></div></article>';
     }).join("");
     reviewReason.textContent = reason;
+
     form.classList.add("hidden");
+    editAction.classList.add("hidden");
     reviewCard.classList.remove("hidden");
     window.scrollTo({top:0,behavior:"smooth"});
   });
 
-  document.getElementById("back-edit").addEventListener("click", () => {
+  document.getElementById("back-edit").addEventListener("click",()=>{
     reviewCard.classList.add("hidden");
     form.classList.remove("hidden");
+    editAction.classList.remove("hidden");
   });
 
-  document.getElementById("create-request").addEventListener("click", () => {
-    if (!state.changes) return;
+  document.getElementById("create-request").addEventListener("click",()=>{
+    if(!state.changes) return;
     const payload = {
       type:"customer-info-update",
       version:1,
@@ -215,23 +828,26 @@ button,input,textarea{font:inherit}main{width:min(100%,620px);margin:auto;paddin
     };
     state.request = PREFIX + encode(JSON.stringify(payload));
     qrBox.innerHTML = "";
-    if (typeof QRCode === "function") {
-      new QRCode(qrBox, { text:state.request, width:280, height:280, correctLevel:QRCode.CorrectLevel.M });
-    } else {
-      qrBox.innerHTML = '<div style="color:#111;text-align:center">QR generator unavailable. Use Copy secure request code.</div>';
+
+    if(typeof QRCode === "function"){
+      new QRCode(qrBox,{text:state.request,width:280,height:280,correctLevel:QRCode.CorrectLevel.M});
+    }else{
+      qrBox.innerHTML = '<div style="color:#111;text-align:center;padding:28px">QR generator unavailable. Use Copy secure request code.</div>';
     }
+
     reviewCard.classList.add("hidden");
     requestCard.classList.remove("hidden");
     window.scrollTo({top:0,behavior:"smooth"});
   });
 
-  document.getElementById("copy-request").addEventListener("click", async () => {
-    if (!state.request) return;
-    try {
+  document.getElementById("copy-request").addEventListener("click",async()=>{
+    if(!state.request) return;
+    const status = document.getElementById("request-status");
+    try{
       await navigator.clipboard.writeText(state.request);
-      document.getElementById("request-status").textContent = "Secure request code copied.";
-    } catch {
-      document.getElementById("request-status").textContent = "Could not copy automatically. Keep this page open and show the QR to the admin.";
+      status.textContent = "Secure request code copied.";
+    }catch{
+      status.textContent = "Could not copy automatically. Keep this page open and show the QR to the admin.";
     }
   });
 })();
