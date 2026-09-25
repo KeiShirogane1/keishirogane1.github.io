@@ -22,6 +22,8 @@ a{font:inherit}main{width:min(100%,560px);min-height:100dvh;margin:auto;padding:
 .steps{margin-top:12px;padding:14px}.steps ol{margin:0;padding-left:20px;color:#89a091;line-height:1.55;font-size:.8rem}.steps li+li{margin-top:7px}
 .inside{margin-top:12px;padding:14px}.inside-grid{display:grid;gap:8px}.inside-item{padding:11px;border:1px solid #1b5832;border-radius:12px;background:#071a0f}.inside-item strong,.inside-item span{display:block}.inside-item strong{font-size:.84rem}.inside-item span{margin-top:4px;color:#789080;font-size:.72rem;line-height:1.4}
 .notice{margin-top:12px;padding:12px;border:1px solid #5d4b20;border-radius:13px;background:#211a08;color:#d5bd78;font-size:.75rem;line-height:1.45}
+.change-alert{margin-top:12px;padding:13px;border:1px solid #347b4d;border-radius:14px;background:#092416}.change-alert[hidden]{display:none}.change-alert strong,.change-alert span{display:block}.change-alert strong{color:#effaf2;font-size:.9rem}.change-alert span{margin-top:5px;color:#83a18d;font-size:.73rem;line-height:1.45}
+.support{margin-top:12px;padding:13px;border:1px solid #235a37;border-radius:14px;background:#071a10}.support strong,.support a{display:block}.support strong{font-size:.82rem}.support a{margin-top:5px;color:#79e19a;text-decoration:none;font-size:.76rem;font-weight:800}
 footer{padding:18px 4px 0;text-align:center;color:#587263;font-size:.66rem}
 </style>
 </head>
@@ -36,10 +38,15 @@ footer{padding:18px 4px 0;text-align:center;color:#587263;font-size:.66rem}
     <div class="identity"><b id="identity">QR-002</b><span>This store has its own separate RESTORE QR.</span></div>
   </section>
 
+  <div id="link-change" class="change-alert" hidden>
+    <strong>Your managed link has changed.</strong>
+    <span>Download/open the latest QwerNFC Restore app to review the change and confirm whether it was requested by you.</span>
+  </div>
+
   <section class="card actions">
     <h2>Download your Restore app</h2>
     <a class="download" href="../../downloads/restore/QR-002/QwerNFC-Restore-QR-002.apk" download>Download QR-002 QwerNFC Restore APK</a>
-    <p>This APK belongs to <strong>QR-002</strong>. After installation, open it and the app automatically loads this store's recovery profile — no second Restore QR scan is required.</p>
+    <p>This APK belongs to <strong>QR-002</strong>. After installation, open it and the app automatically loads this store's latest recovery profile — no second Restore QR scan is required.</p>
   </section>
 
   <section class="card inside">
@@ -62,6 +69,7 @@ footer{padding:18px 4px 0;text-align:center;color:#587263;font-size:.66rem}
   </section>
 
   <aside class="notice">The private GitHub database and credentials are never placed in the customer APK or this public page.</aside>
+  <section class="support"><strong>Need help or did not request a link change?</strong><a href="https://www.tiktok.com/@the.qwernfc" rel="noreferrer noopener">TikTok · @the.qwernfc</a></section>
   <footer>QwerNFC Restore · QR-002</footer>
 </main>
 <script>
@@ -98,6 +106,16 @@ footer{padding:18px 4px 0;text-align:center;color:#587263;font-size:.66rem}
     document.getElementById("business").textContent = value.store || value.id;
     document.getElementById("location").textContent = value.location || "Business location not provided";
     document.getElementById("identity").textContent = value.id;
+
+    fetchJson("../../go/" + encodeURIComponent(value.id) + "/route.json")
+      .then((route) => {
+        const linkVersion = Number(route?.linkVersion || 0);
+        const responseVersion = Number(route?.customerResponseVersion || 0);
+        if (linkVersion > 1 && responseVersion !== linkVersion) {
+          document.getElementById("link-change").hidden = false;
+        }
+      })
+      .catch(() => {});
   }).catch((error) => {
     document.getElementById("location").textContent = error?.message || "Recovery unavailable.";
   });
