@@ -1,0 +1,58 @@
+name: Publish Live-Link QwerNFC Restore APKs
+
+on:
+  push:
+    branches: [bbmain]
+    paths:
+      - ".github/workflows/publish-live-link-restore-apks.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: bbmain
+
+      - name: Download exact per-QR Restore artifact
+        env:
+          ARTIFACT_URL: 'https://sdmntprsouthcentralus.oaiusercontent.com/files/00000000-a450-81f7-9442-8284af267e2e/raw?se=2026-09-25T08%3A45%3A46Z&sp=r&sv=2026-02-06&sr=b&scid=11122cd9-2789-5dc5-8ad5-0f7fd323caf4&skoid=6fa9748a-b7b2-4b56-a932-8c1417549c47&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-09-25T06%3A16%3A27Z&ske=2026-09-26T06%3A16%3A27Z&sks=b&skv=2026-02-06&sig=TkvAH7/P4r6QpJplcfY9zo3u2/Spgvt8LfOCraw/vvs%3D'
+        run: |
+          set -euo pipefail
+          curl -L --fail --retry 3 "$ARTIFACT_URL" -o /tmp/restore-bound.zip
+          rm -rf /tmp/restore-bound
+          mkdir -p /tmp/restore-bound
+          unzip -q /tmp/restore-bound.zip -d /tmp/restore-bound
+
+          grep -F "Commit: 3015ae6e3c9312d8d92196a6e0dc7892b216b449" /tmp/restore-bound/QR-002/BUILD.txt
+          grep -F "Package: com.keishirogane.qwernfcrestore.qr002" /tmp/restore-bound/QR-002/BUILD.txt
+          grep -F "Restore-ID: QR-002" /tmp/restore-bound/QR-002/BUILD.txt
+          echo "6aeb87e3668460b7fb72f0144ed65a363f2f906ab6fdec84d7a79b5862931edb  /tmp/restore-bound/QR-002/QwerNFC-Restore-QR-002.apk" | sha256sum -c -
+
+          grep -F "Commit: 3015ae6e3c9312d8d92196a6e0dc7892b216b449" /tmp/restore-bound/QR-003/BUILD.txt
+          grep -F "Package: com.keishirogane.qwernfcrestore.qr003" /tmp/restore-bound/QR-003/BUILD.txt
+          grep -F "Restore-ID: QR-003" /tmp/restore-bound/QR-003/BUILD.txt
+          echo "0adf613e18aa3bd51e46cdcb251ff04a712a9bcd7519f0cf125d6d008d75c1fe  /tmp/restore-bound/QR-003/QwerNFC-Restore-QR-003.apk" | sha256sum -c -
+
+          for id in QR-002 QR-003; do
+            mkdir -p "permanent-qr-manager/downloads/restore/$id"
+            cp "/tmp/restore-bound/$id/QwerNFC-Restore-$id.apk" "permanent-qr-manager/downloads/restore/$id/QwerNFC-Restore-$id.apk"
+            cp "/tmp/restore-bound/$id/BUILD.txt" "permanent-qr-manager/downloads/restore/$id/BUILD.txt"
+            cp "/tmp/restore-bound/$id/QwerNFC-Restore-$id.apk.sha256" "permanent-qr-manager/downloads/restore/$id/QwerNFC-Restore-$id.apk.sha256"
+          done
+
+      - name: Publish exact Restore APKs
+        run: |
+          set -euo pipefail
+          git config user.name "QwerNFC Restore Publisher"
+          git config user.email "actions@users.noreply.github.com"
+          git add permanent-qr-manager/downloads/restore
+          if git diff --cached --quiet; then
+            echo "Restore APKs already current."
+            exit 0
+          fi
+          git commit -m "fix: publish live-link Restore APKs 3015ae6e [skip ci]"
+          git push origin HEAD:bbmain
