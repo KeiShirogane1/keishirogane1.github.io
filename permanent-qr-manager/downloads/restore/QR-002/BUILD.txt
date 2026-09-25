@@ -1,0 +1,7 @@
+QwerNFC Restore debug APK
+Commit: b6be66f961dc8265e8e4dcd201406d23232483ee
+Branch: android-app
+Package: com.keishirogane.qwernfcrestore.qr002
+Restore-ID: QR-002
+Build: debug
+Mode: customer-restore-bound
