@@ -1,0 +1,1806 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<meta name="robots" content="noindex,nofollow" />
+<meta name="referrer" content="no-referrer" />
+<meta http-equiv="cache-control" content="no-store,no-cache,must-revalidate,max-age=0" />
+<meta http-equiv="pragma" content="no-cache" />
+<meta http-equiv="expires" content="0" />
+<title>QwerNFC Update Info</title>
+<style>
+:root{
+  color-scheme:dark;
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --bg:#020705;
+  --bg2:#03110a;
+  --card:#07150e;
+  --card2:#091c12;
+  --card3:#0b2216;
+  --line:#173e27;
+  --line2:#225f39;
+  --line3:#2ca95c;
+  --green:#37e879;
+  --green2:#16c95a;
+  --green3:#0c9e45;
+  --text:#f4fbf6;
+  --muted:#92a79a;
+  --muted2:#6c8073;
+  --muted3:#53655a;
+  --danger:#ff8b80;
+  --warning:#e5bf6b;
+  --shadow:0 20px 54px rgba(0,0,0,.32);
+}
+*{box-sizing:border-box}
+html{background:var(--bg);scroll-behavior:smooth}
+body{
+  margin:0;
+  min-height:100dvh;
+  background:
+    radial-gradient(circle at 50% -6%,rgba(20,146,69,.20),transparent 31%),
+    linear-gradient(180deg,var(--bg2),var(--bg) 38%);
+  color:var(--text);
+  -webkit-font-smoothing:antialiased;
+}
+button,input,textarea{font:inherit}
+button{cursor:pointer}
+button:disabled{cursor:not-allowed;opacity:.55}
+svg{display:block}
+.hidden{display:none!important}
+
+.app{
+  width:min(100%,440px);
+  min-height:100dvh;
+  margin:0 auto;
+  padding:calc(10px + env(safe-area-inset-top)) 14px calc(96px + env(safe-area-inset-bottom));
+}
+
+.topbar{
+  display:grid;
+  grid-template-columns:42px 1fr 42px;
+  align-items:center;
+  min-height:56px;
+  margin-bottom:10px;
+}
+.icon-btn{
+  width:40px;
+  height:40px;
+  border:1px solid #1a5632;
+  border-radius:14px;
+  background:#082117;
+  color:#e7f8ec;
+  display:grid;
+  place-items:center;
+}
+.icon-btn svg{width:20px;height:20px}
+.brand{
+  text-align:center;
+  font-weight:950;
+  font-size:1.03rem;
+  letter-spacing:-.02em;
+}
+.brand span{color:var(--green)}
+.help-btn{
+  justify-self:end;
+  width:34px;
+  height:34px;
+  border:1px solid #1a5632;
+  border-radius:50%;
+  background:#071a11;
+  color:#9fb6a7;
+  display:grid;
+  place-items:center;
+  font-weight:900;
+}
+
+.stepper{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  align-items:start;
+  margin:4px 0 16px;
+}
+.step{
+  position:relative;
+  text-align:center;
+  color:#62766a;
+  font-size:.66rem;
+  font-weight:800;
+}
+.step:not(:last-child)::after{
+  content:"";
+  position:absolute;
+  top:14px;
+  left:calc(50% + 17px);
+  right:calc(-50% + 17px);
+  height:2px;
+  background:#173b26;
+}
+.step.complete:not(:last-child)::after,
+.step.active:not(:last-child)::after{
+  background:linear-gradient(90deg,var(--green2),#1d7a44);
+}
+.step-dot{
+  position:relative;
+  z-index:2;
+  width:30px;
+  height:30px;
+  margin:0 auto 6px;
+  border:1px solid #345143;
+  border-radius:50%;
+  background:#102019;
+  display:grid;
+  place-items:center;
+  color:#8ca093;
+  font-size:.73rem;
+  font-weight:900;
+}
+.step.active{color:#f0faf3}
+.step.active .step-dot{
+  border-color:#47ec83;
+  background:linear-gradient(145deg,#3df07f,#17c95a);
+  color:#00200c;
+  box-shadow:0 0 0 5px rgba(40,213,101,.08);
+}
+.step.complete{color:#b7c8bd}
+.step.complete .step-dot{
+  border-color:#2ebf63;
+  background:#0b351d;
+  color:#62e68f;
+}
+.step.complete .step-dot::before{
+  content:"✓";
+  font-size:.83rem;
+}
+.step.complete .step-number{display:none}
+
+.card{
+  border:1px solid var(--line);
+  border-radius:18px;
+  background:linear-gradient(180deg,rgba(8,25,16,.98),rgba(4,14,9,.99));
+  box-shadow:var(--shadow);
+}
+
+.profile-card{padding:14px}
+.profile-main{
+  display:grid;
+  grid-template-columns:58px minmax(0,1fr) auto;
+  gap:12px;
+  align-items:center;
+}
+.profile-logo{
+  width:58px;
+  height:58px;
+  border:1px solid #1f7d44;
+  border-radius:16px;
+  background:
+    radial-gradient(circle at 30% 20%,rgba(55,232,121,.24),transparent 45%),
+    linear-gradient(145deg,#0b3b20,#071b10);
+  display:grid;
+  place-items:center;
+  color:#8cf4ae;
+}
+.profile-logo svg{width:29px;height:29px}
+.profile-copy{min-width:0}
+.profile-copy h1{
+  margin:0;
+  font-size:1.08rem;
+  line-height:1.15;
+  letter-spacing:-.015em;
+}
+.profile-copy p{
+  margin:4px 0 0;
+  color:var(--muted);
+  font-size:.72rem;
+}
+.id-chip{
+  align-self:start;
+  padding:5px 8px;
+  border:1px solid #245f3a;
+  border-radius:999px;
+  background:#0a2115;
+  color:#b7d5c0;
+  font-size:.61rem;
+  font-weight:900;
+}
+.active-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  margin-top:8px;
+  padding:5px 8px;
+  border-radius:999px;
+  background:#0b3b20;
+  color:#69ea92;
+  font-size:.61rem;
+  font-weight:900;
+}
+.active-pill::before{
+  content:"";
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:#3af27c;
+}
+.link-panel{
+  margin-top:12px;
+  padding:11px;
+  border:1px solid #195532;
+  border-radius:13px;
+  background:#04120b;
+}
+.link-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+}
+.link-head span{
+  color:#80d99e;
+  font-size:.62rem;
+  font-weight:850;
+  text-transform:uppercase;
+  letter-spacing:.055em;
+}
+.copy-btn{
+  width:30px;
+  height:30px;
+  border:1px solid #285e3d;
+  border-radius:9px;
+  background:#0a1f14;
+  color:#baddc5;
+  display:grid;
+  place-items:center;
+}
+.copy-btn svg{width:14px;height:14px}
+.link-value{
+  display:block;
+  margin-top:6px;
+  color:#eef8f1;
+  font-size:.78rem;
+  line-height:1.38;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.section-head{
+  margin:20px 2px 9px;
+}
+.section-head h2{
+  margin:0;
+  font-size:1.02rem;
+  letter-spacing:-.015em;
+}
+.section-head p{
+  margin:5px 0 0;
+  color:var(--muted);
+  font-size:.72rem;
+  line-height:1.45;
+}
+.eyebrow{
+  display:block;
+  margin-bottom:5px;
+  color:#63d98b;
+  font-size:.58rem;
+  font-weight:950;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+}
+
+.info-card{padding:10px}
+.info-list{display:grid;gap:7px}
+.info-row{
+  min-height:55px;
+  display:grid;
+  grid-template-columns:34px minmax(0,1fr) auto;
+  gap:9px;
+  align-items:center;
+  padding:9px 10px;
+  border:1px solid #153922;
+  border-radius:12px;
+  background:#06130c;
+}
+.small-icon{
+  width:34px;
+  height:34px;
+  border:1px solid #1c5c36;
+  border-radius:10px;
+  background:#092417;
+  color:#65d889;
+  display:grid;
+  place-items:center;
+}
+.small-icon svg{width:17px;height:17px}
+.info-copy{min-width:0}
+.info-copy span{
+  display:block;
+  color:#687f70;
+  font-size:.58rem;
+  font-weight:850;
+  text-transform:uppercase;
+  letter-spacing:.05em;
+}
+.info-copy strong{
+  display:block;
+  margin-top:3px;
+  color:#edf7ef;
+  font-size:.75rem;
+  line-height:1.35;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.private-lock{
+  color:#587064;
+}
+.private-lock svg{width:15px;height:15px}
+
+.edit-list{
+  display:grid;
+  gap:8px;
+}
+.edit-card{
+  border:1px solid #173d26;
+  border-radius:16px;
+  background:linear-gradient(180deg,#07180f,#051109);
+  overflow:hidden;
+  transition:.16s ease;
+}
+.edit-card.active{
+  border-color:#2a9d58;
+  background:linear-gradient(180deg,#092619,#06170f);
+  box-shadow:0 0 0 1px rgba(42,206,97,.08) inset;
+}
+.edit-trigger{
+  width:100%;
+  min-height:64px;
+  padding:11px;
+  border:0;
+  background:transparent;
+  color:inherit;
+  display:grid;
+  grid-template-columns:40px minmax(0,1fr) 27px;
+  gap:10px;
+  align-items:center;
+  text-align:left;
+}
+.edit-icon{
+  width:40px;
+  height:40px;
+  border:1px solid #1d663a;
+  border-radius:12px;
+  background:#0a2c19;
+  color:#69e290;
+  display:grid;
+  place-items:center;
+}
+.edit-icon svg{width:19px;height:19px}
+.edit-copy{min-width:0}
+.edit-copy strong{
+  display:block;
+  font-size:.81rem;
+}
+.edit-copy span{
+  display:block;
+  margin-top:3px;
+  color:var(--muted);
+  font-size:.64rem;
+  line-height:1.35;
+}
+.check-box{
+  width:27px;
+  height:27px;
+  border:1px solid #455e50;
+  border-radius:8px;
+  background:#0a1510;
+  color:transparent;
+  display:grid;
+  place-items:center;
+}
+.check-box svg{width:16px;height:16px}
+.edit-card.active .check-box{
+  border-color:#43ee80;
+  background:linear-gradient(145deg,#39ec78,#18c958);
+  color:#001e0b;
+}
+.edit-body{
+  display:none;
+  padding:0 11px 12px 61px;
+}
+.edit-card.active .edit-body{display:block}
+.edit-body label{
+  display:block;
+  color:#7b9383;
+  font-size:.62rem;
+  font-weight:850;
+}
+.edit-body input{
+  width:100%;
+  min-height:46px;
+  margin-top:6px;
+  padding:0 11px;
+  border:1px solid #28583a;
+  border-radius:10px;
+  outline:none;
+  background:#04110a;
+  color:#f3fbf5;
+  font-size:.82rem;
+}
+.edit-body input:focus,
+.reason-card textarea:focus{
+  border-color:#35b963;
+  box-shadow:0 0 0 3px rgba(50,190,97,.09);
+}
+.edit-body input::placeholder,
+.reason-card textarea::placeholder{color:#53675b}
+
+.location-edit-body{
+  padding:0 11px 12px;
+}
+.location-coordinate-summary{
+  min-height:42px;
+  padding:0 10px;
+  border:1px solid #173c25;
+  border-radius:11px;
+  background:#07150c;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  color:#cfe4d5;
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  font-size:.66rem;
+}
+.location-coordinate-summary svg{
+  width:17px;
+  height:17px;
+  flex:0 0 17px;
+  color:#58c879;
+}
+.location-open-button{
+  width:100%;
+  min-height:44px;
+  margin-top:8px;
+  border:1px solid #1b4b2d;
+  border-radius:12px;
+  background:#0a1e11;
+  color:#dff1e4;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  font-size:.67rem;
+  font-weight:800;
+}
+.location-open-button svg{width:17px;height:17px;color:#65bf7f}
+.location-edit-body small{
+  display:block;
+  margin-top:8px;
+  color:#738b7a;
+  font-size:.61rem;
+  line-height:1.45;
+}
+.location-picker-layer{
+  position:fixed;
+  inset:0;
+  z-index:260;
+}
+.location-picker-scrim{
+  position:absolute;
+  inset:0;
+  width:100%;
+  border:0;
+  background:rgba(0,0,0,.72);
+}
+.location-picker-card{
+  position:absolute;
+  left:12px;
+  right:12px;
+  bottom:max(12px,env(safe-area-inset-bottom));
+  width:min(calc(100% - 24px),520px);
+  max-height:calc(100dvh - 24px);
+  overflow:auto;
+  margin-inline:auto;
+  padding:14px;
+  border:1px solid #1e4a2c;
+  border-radius:22px;
+  background:#051009;
+  box-shadow:0 24px 60px rgba(0,0,0,.52);
+}
+.location-picker-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:11px;
+}
+.location-picker-head h2{
+  margin:3px 0 0;
+  font-size:1.05rem;
+}
+.detail-kicker{
+  display:block;
+  margin-bottom:4px;
+  color:#7aa68a;
+  font-size:.64rem;
+  font-weight:850;
+  letter-spacing:.12em;
+}
+.location-picker-card .icon-button{
+  width:44px;
+  height:44px;
+  border:1px solid #173c25;
+  border-radius:14px;
+  background:#07150c;
+  color:#dff1e4;
+  display:grid;
+  place-items:center;
+}
+.location-picker-card .icon-button svg{width:19px;height:19px}
+.location-map{
+  position:relative;
+  height:280px;
+  overflow:hidden;
+  border:1px solid #1f4b2e;
+  border-radius:17px;
+  background:#0a1710;
+  touch-action:none;
+  cursor:grab;
+}
+.location-map:active{cursor:grabbing}
+.location-tile-layer{
+  position:absolute;
+  inset:0;
+  will-change:transform;
+}
+.location-tile-layer img{
+  position:absolute;
+  width:256px;
+  height:256px;
+  max-width:none;
+  user-select:none;
+  pointer-events:none;
+  filter:brightness(.68) saturate(.58) hue-rotate(76deg);
+}
+.location-map-shade{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:
+    linear-gradient(180deg,rgba(1,7,3,.13),rgba(1,7,3,.10)),
+    radial-gradient(circle at 50% 50%,transparent 0 32%,rgba(0,0,0,.16) 78%);
+}
+.location-center-pin{
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:42px;
+  height:42px;
+  margin:-38px 0 0 -21px;
+  border:1px solid #43b66a;
+  border-radius:50% 50% 50% 8px;
+  background:#084515;
+  color:white;
+  display:grid;
+  place-items:center;
+  transform:rotate(-45deg);
+  box-shadow:0 9px 20px rgba(0,0,0,.42);
+  pointer-events:none;
+  z-index:3;
+}
+.location-center-pin svg{
+  width:19px;
+  height:19px;
+  transform:rotate(45deg);
+}
+.location-map-zoom{
+  position:absolute;
+  right:10px;
+  top:10px;
+  z-index:4;
+  display:grid;
+  gap:6px;
+}
+.location-map-zoom button{
+  width:40px;
+  height:40px;
+  padding:0;
+  border:1px solid #28573a;
+  border-radius:11px;
+  background:rgba(2,9,6,.92);
+  color:#f0f8f2;
+  display:grid;
+  place-items:center;
+  font-size:1.25rem;
+  font-weight:800;
+  line-height:1;
+  box-shadow:0 5px 15px rgba(0,0,0,.28);
+}
+.location-map-zoom button:active{background:#0b2b18}
+.location-map-hint{
+  position:absolute;
+  left:50%;
+  bottom:9px;
+  z-index:4;
+  transform:translateX(-50%);
+  max-width:calc(100% - 28px);
+  padding:6px 10px;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:999px;
+  background:rgba(2,9,6,.82);
+  color:#d8e7dc;
+  font-size:.61rem;
+  white-space:nowrap;
+  pointer-events:none;
+}
+.location-picker-coordinates{
+  margin-top:10px;
+  min-height:38px;
+  padding:0 10px;
+  border:1px solid #173c25;
+  border-radius:11px;
+  background:#07150c;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  color:#cfe4d5;
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  font-size:.66rem;
+}
+.location-picker-coordinates svg{width:17px;height:17px;color:#58c879}
+.location-picker-actions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin-top:9px;
+}
+.location-picker-actions button{
+  min-height:44px;
+  border:1px solid #1b4b2d;
+  border-radius:12px;
+  background:#0a1e11;
+  color:#dff1e4;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  font-size:.67rem;
+  font-weight:800;
+}
+.location-picker-actions button svg{width:17px;height:17px;color:#65bf7f}
+.location-picker-status{
+  min-height:35px;
+  margin:9px 2px 2px;
+  color:#809487;
+  font-size:.63rem;
+  line-height:1.45;
+  text-align:center;
+}
+.location-picker-save-row{
+  display:grid;
+  grid-template-columns:.85fr 1.15fr;
+  gap:9px;
+  margin-top:8px;
+}
+.detail-cancel,.detail-save{
+  min-height:50px;
+  border-radius:14px;
+  font-weight:850;
+}
+.detail-cancel{
+  border:1px solid #173c25;
+  background:#07150c;
+  color:#b9c7d9;
+}
+.detail-save{
+  border:0;
+  background:linear-gradient(180deg,#0d6a2b,#084515);
+  color:#f2fbf5;
+  box-shadow:0 10px 24px rgba(8,69,21,.22);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+}
+.detail-save svg{width:18px;height:18px}
+.map-attribution{
+  display:block;
+  margin-top:7px;
+  color:#51645a;
+  font-size:.52rem;
+  text-align:center;
+}
+
+.reason-card{
+  margin-top:9px;
+  padding:12px;
+}
+.reason-head{
+  display:grid;
+  grid-template-columns:38px minmax(0,1fr);
+  gap:10px;
+  align-items:start;
+}
+.reason-head .edit-icon{
+  width:38px;
+  height:38px;
+}
+.reason-head strong{
+  display:block;
+  font-size:.8rem;
+}
+.reason-head span{
+  display:block;
+  margin-top:3px;
+  color:var(--muted);
+  font-size:.63rem;
+}
+.reason-card textarea{
+  width:100%;
+  min-height:102px;
+  margin-top:10px;
+  padding:10px 11px;
+  border:1px solid #28583a;
+  border-radius:10px;
+  outline:none;
+  resize:vertical;
+  background:#04110a;
+  color:#f3fbf5;
+  font-size:.81rem;
+  line-height:1.45;
+}
+.char-count{
+  margin-top:4px;
+  color:#61776a;
+  text-align:right;
+  font-size:.6rem;
+}
+.status{
+  margin-top:8px;
+  padding:9px 10px;
+  border:1px solid #6d592a;
+  border-radius:10px;
+  background:#211a08;
+  color:#e1c275;
+  font-size:.68rem;
+  line-height:1.4;
+}
+.status.error{
+  border-color:#71372f;
+  background:#25110f;
+  color:#f1a299;
+}
+.status.ok{
+  border-color:#24683c;
+  background:#071d10;
+  color:#79e09d;
+}
+.security-note{
+  display:grid;
+  grid-template-columns:17px minmax(0,1fr);
+  gap:8px;
+  margin:10px 2px 0;
+  color:#637b6c;
+  font-size:.62rem;
+  line-height:1.45;
+}
+.security-note svg{
+  width:15px;
+  height:15px;
+  color:#52cd78;
+}
+
+.action-bar{
+  position:fixed;
+  left:50%;
+  bottom:0;
+  z-index:50;
+  width:min(100%,440px);
+  transform:translateX(-50%);
+  padding:10px 14px calc(12px + env(safe-area-inset-bottom));
+  background:linear-gradient(180deg,rgba(2,7,5,0),rgba(2,7,5,.94) 26%,rgba(2,7,5,.995) 54%);
+  pointer-events:none;
+}
+.action-inner{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:10px;
+  align-items:center;
+  padding:8px 9px 8px 11px;
+  border:1px solid #17482b;
+  border-radius:15px;
+  background:#07150d;
+  box-shadow:0 18px 44px rgba(0,0,0,.4);
+  pointer-events:auto;
+}
+.action-copy strong{
+  display:block;
+  font-size:.7rem;
+}
+.action-copy span{
+  display:block;
+  margin-top:2px;
+  color:var(--muted2);
+  font-size:.59rem;
+}
+.primary{
+  min-height:44px;
+  padding:0 14px;
+  border:1px solid #43ed7f;
+  border-radius:12px;
+  background:linear-gradient(180deg,#38eb78,#16c858);
+  color:#001d0a;
+  font-size:.72rem;
+  font-weight:950;
+}
+.full-primary{
+  width:100%;
+  min-height:48px;
+  border:1px solid #43ed7f;
+  border-radius:13px;
+  background:linear-gradient(180deg,#38eb78,#16c858);
+  color:#001d0a;
+  font-weight:950;
+}
+.secondary{
+  width:100%;
+  min-height:46px;
+  margin-top:8px;
+  border:1px solid #29583a;
+  border-radius:12px;
+  background:#07180e;
+  color:#a9bdae;
+  font-weight:850;
+}
+
+.review-card{padding:12px}
+.review-list{display:grid;gap:9px}
+.review-item{
+  padding:11px;
+  border:1px solid #173e27;
+  border-radius:13px;
+  background:#06140c;
+}
+.review-item>strong{
+  display:block;
+  font-size:.76rem;
+}
+.diff-grid{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 22px minmax(0,1fr);
+  gap:6px;
+  align-items:stretch;
+  margin-top:8px;
+}
+.diff-box{
+  min-width:0;
+  padding:9px;
+  border:1px solid #163822;
+  border-radius:9px;
+  background:#041009;
+}
+.diff-box.new{
+  border-color:#2b8450;
+  background:#082116;
+}
+.diff-box span{
+  display:block;
+  color:#6f8476;
+  font-size:.56rem;
+  font-weight:900;
+  text-transform:uppercase;
+}
+.diff-box p{
+  margin:4px 0 0;
+  color:#eaf5ed;
+  font-size:.68rem;
+  line-height:1.35;
+  overflow-wrap:anywhere;
+}
+.diff-arrow{
+  display:grid;
+  place-items:center;
+  color:#6ed990;
+  font-weight:900;
+}
+.reason-review{
+  margin-top:10px;
+  padding:10px;
+  border:1px solid #225e38;
+  border-radius:10px;
+  background:#071a10;
+}
+.reason-review span{
+  color:#69d68c;
+  font-size:.58rem;
+  font-weight:900;
+  letter-spacing:.06em;
+}
+.reason-review p{
+  margin:5px 0 0;
+  color:#e6f3e9;
+  font-size:.7rem;
+  line-height:1.45;
+}
+
+.submit-card{
+  padding:18px 14px 14px;
+  text-align:center;
+}
+.success-mark{
+  width:66px;
+  height:66px;
+  margin:0 auto 12px;
+  border:1px solid #30b95f;
+  border-radius:50%;
+  background:
+    radial-gradient(circle at 34% 28%,rgba(83,255,143,.36),transparent 40%),
+    linear-gradient(145deg,#16b953,#0a6d32);
+  color:#eaffef;
+  display:grid;
+  place-items:center;
+  box-shadow:0 0 0 8px rgba(33,207,94,.06);
+}
+.success-mark svg{width:32px;height:32px}
+.submit-card h2{
+  margin:0;
+  font-size:1.04rem;
+}
+.submit-card>p{
+  margin:6px auto 0;
+  max-width:330px;
+  color:var(--muted);
+  font-size:.71rem;
+  line-height:1.5;
+}
+#qr-box{
+  display:grid;
+  place-items:center;
+  width:min(100%,292px);
+  margin:14px auto;
+  padding:11px;
+  border-radius:15px;
+  background:#fff;
+}
+#qr-box img,#qr-box canvas{
+  display:block;
+  max-width:100%;
+  height:auto;
+}
+.request-code{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 34px;
+  gap:7px;
+  align-items:center;
+  margin:10px 0 0;
+}
+.request-code code{
+  display:block;
+  min-width:0;
+  padding:10px;
+  border:1px solid #1a442b;
+  border-radius:10px;
+  background:#04110a;
+  color:#a9c0b0;
+  font-size:.59rem;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.timeline{
+  display:grid;
+  gap:0;
+  margin-top:14px;
+  text-align:left;
+}
+.timeline-row{
+  position:relative;
+  display:grid;
+  grid-template-columns:28px minmax(0,1fr);
+  gap:9px;
+  padding-bottom:14px;
+}
+.timeline-row:not(:last-child)::after{
+  content:"";
+  position:absolute;
+  left:13px;
+  top:26px;
+  bottom:0;
+  width:2px;
+  background:#183c27;
+}
+.timeline-dot{
+  width:27px;
+  height:27px;
+  border:1px solid #3b5a49;
+  border-radius:50%;
+  background:#0a1710;
+  color:#71877a;
+  display:grid;
+  place-items:center;
+  font-size:.68rem;
+  font-weight:900;
+}
+.timeline-row.done .timeline-dot{
+  border-color:#36d670;
+  background:#0b3b20;
+  color:#65e98f;
+}
+.timeline-copy strong{
+  display:block;
+  font-size:.72rem;
+}
+.timeline-copy span{
+  display:block;
+  margin-top:3px;
+  color:var(--muted2);
+  font-size:.62rem;
+  line-height:1.4;
+}
+.bottom-buttons{
+  display:grid;
+  grid-template-columns:1fr 1.3fr;
+  gap:8px;
+  margin-top:12px;
+}
+.bottom-buttons .secondary{margin-top:0}
+
+@media (min-width:520px){
+  .app{padding-left:18px;padding-right:18px}
+}
+</style>
+</head>
+<body>
+<main class="app" aria-label="QwerNFC Update Info">
+  <header class="topbar">
+    <button class="icon-btn" id="back-button" type="button" aria-label="Go back">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
+    </button>
+    <div class="brand">Qwer<span>NFC</span></div>
+    <button class="help-btn" type="button" id="help-button" aria-label="About this update request">?</button>
+  </header>
+
+  <div class="stepper" aria-label="Update request progress">
+    <div class="step active" data-step="edit"><div class="step-dot"><span class="step-number">1</span></div><span>Edit Info</span></div>
+    <div class="step" data-step="review"><div class="step-dot"><span class="step-number">2</span></div><span>Review</span></div>
+    <div class="step" data-step="submit"><div class="step-dot"><span class="step-number">3</span></div><span>Submit</span></div>
+  </div>
+
+  <section class="card profile-card">
+    <div class="profile-main">
+      <div class="profile-logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12c4-7 11-8 16-8-1 7-5 14-12 16"/><path d="M5 20c2-5 6-9 12-12"/></svg>
+      </div>
+      <div class="profile-copy">
+        <h1 id="business-name">Loading…</h1>
+        <p id="profile-location">Loading business profile</p>
+        <span class="active-pill">Active</span>
+      </div>
+      <span class="id-chip" id="profile-id">QR</span>
+    </div>
+
+    <div class="link-panel">
+      <div class="link-head">
+        <span>Current managed link</span>
+        <button class="copy-btn" id="copy-current-link" type="button" aria-label="Copy current managed link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg>
+        </button>
+      </div>
+      <strong class="link-value" id="current-link">Loading…</strong>
+    </div>
+  </section>
+
+  <section id="edit-stage">
+    <div class="section-head">
+      <span class="eyebrow">CURRENT INFO</span>
+      <h2>Current Information</h2>
+      <p>This is the information currently displayed for this QR.</p>
+    </div>
+
+    <section class="card info-card">
+      <div class="info-list" id="current-list"></div>
+    </section>
+
+    <div class="section-head">
+      <span class="eyebrow">WHAT DO YOU WANT TO EDIT?</span>
+      <h2>Select what you want to change</h2>
+      <p>Only selected fields will be included in your request.</p>
+    </div>
+
+    <form id="edit-form">
+      <div class="edit-list">
+        <article class="edit-card" data-edit-card="store">
+          <button class="edit-trigger" type="button" data-edit-toggle="store">
+            <span class="edit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10h18"/><path d="M5 10V7l2-3h10l2 3v3"/><path d="M5 10v10h14V10"/><path d="M9 20v-6h6v6"/></svg></span>
+            <span class="edit-copy"><strong>Store name</strong><span>Change the business or store name</span></span>
+            <span class="check-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m5 12 4 4L19 6"/></svg></span>
+          </button>
+          <div class="edit-body"><label>New store name<input name="store" maxlength="80" disabled /></label></div>
+        </article>
+
+        <article class="edit-card" data-edit-card="location">
+          <button class="edit-trigger" type="button" data-edit-toggle="location">
+            <span class="edit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg></span>
+            <span class="edit-copy"><strong>Location</strong><span>Change the store location</span></span>
+            <span class="check-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m5 12 4 4L19 6"/></svg></span>
+          </button>
+          <div class="edit-body location-edit-body">
+            <input name="location" type="hidden" disabled />
+            <input name="latitude" type="hidden" disabled />
+            <input name="longitude" type="hidden" disabled />
+            <input name="googleMapsUrl" type="hidden" disabled />
+            <div class="location-coordinate-summary" data-location-summary>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>
+              <span data-location-value>Pinned location</span>
+            </div>
+            <button class="location-open-button" type="button" data-open-location-picker>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>
+              <span>Edit map pin</span>
+            </button>
+            <small>Use the same map picker as QwerNFC Manager. Drag the map, zoom, or use your precise live location.</small>
+          </div>
+        </article>
+
+        <article class="edit-card" data-edit-card="managedLink">
+          <button class="edit-trigger" type="button" data-edit-toggle="managedLink">
+            <span class="edit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></span>
+            <span class="edit-copy"><strong>Managed link</strong><span>Google Review, website, TikTok, or another link</span></span>
+            <span class="check-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m5 12 4 4L19 6"/></svg></span>
+          </button>
+          <div class="edit-body"><label>New link<input name="managedLink" type="url" inputmode="url" maxlength="2048" disabled /></label></div>
+        </article>
+
+        <article class="edit-card" data-edit-card="phone">
+          <button class="edit-trigger" type="button" data-edit-toggle="phone">
+            <span class="edit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.4 19.4 0 0 1-6-6A19.8 19.8 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.9.33 1.78.62 2.62a2 2 0 0 1-.45 2.11L8 9.73a16 16 0 0 0 6 6l1.28-1.28a2 2 0 0 1 2.11-.45c.84.29 1.72.5 2.62.62A2 2 0 0 1 22 16.92Z"/></svg></span>
+            <span class="edit-copy"><strong>Phone number</strong><span>Change contact phone number</span></span>
+            <span class="check-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m5 12 4 4L19 6"/></svg></span>
+          </button>
+          <div class="edit-body"><label>New phone number<input name="phone" type="tel" maxlength="32" placeholder="Enter new phone number" disabled /></label></div>
+        </article>
+
+        <article class="edit-card" data-edit-card="email">
+          <button class="edit-trigger" type="button" data-edit-toggle="email">
+            <span class="edit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-10 6L2 7"/></svg></span>
+            <span class="edit-copy"><strong>Email address</strong><span>Change contact email address</span></span>
+            <span class="check-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m5 12 4 4L19 6"/></svg></span>
+          </button>
+          <div class="edit-body"><label>New email address<input name="email" type="email" maxlength="120" placeholder="Enter new email address" disabled /></label></div>
+        </article>
+      </div>
+
+      <section class="card reason-card">
+        <div class="reason-head">
+          <span class="edit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/><path d="M8 13h8"/><path d="M8 17h6"/></svg></span>
+          <div><strong>Reason for editing info</strong><span>Required — tell the admin why you are making these changes</span></div>
+        </div>
+        <textarea name="reason" maxlength="500" required placeholder="Example: We transferred to a new location and updated our Google Maps link."></textarea>
+        <div class="char-count"><span id="reason-count">0</span>/500</div>
+        <div id="form-status" class="status hidden"></div>
+      </section>
+
+      <div class="security-note">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        <span>Phone and email are private. Current values are never exposed on this public page. The private backup and permanent QR database also remain protected.</span>
+      </div>
+
+      <div class="action-bar" id="edit-action">
+        <div class="action-inner">
+          <div class="action-copy"><strong id="selected-summary">No fields selected</strong><span>Admin approval is required</span></div>
+          <button class="primary" type="submit">Review changes →</button>
+        </div>
+      </div>
+    </form>
+  </section>
+
+  <section id="review-stage" class="hidden">
+    <div class="section-head">
+      <span class="eyebrow">REVIEW</span>
+      <h2>Review your changes</h2>
+      <p>Please check the old and new information before submitting your request.</p>
+    </div>
+
+    <section class="card review-card">
+      <div id="review-list" class="review-list"></div>
+      <div class="reason-review"><span>REASON FOR EDITING</span><p id="review-reason"></p></div>
+      <div class="bottom-buttons">
+        <button id="back-edit" class="secondary" type="button">← Back</button>
+        <button id="create-request" class="full-primary" type="button">Submit request →</button>
+      </div>
+    </section>
+  </section>
+
+  <section id="submit-stage" class="hidden">
+    <div class="section-head">
+      <span class="eyebrow">SUBMIT</span>
+      <h2>Update Request Created</h2>
+      <p>Your request is ready for the QwerNFC admin to review.</p>
+    </div>
+
+    <section class="card submit-card">
+      <div class="success-mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4L19 6"/></svg>
+      </div>
+      <h2>Request ready</h2>
+      <p>Show this QR to the QwerNFC admin. The admin scans it, reviews OLD → NEW and your reason, then approves or rejects the request.</p>
+
+      <div id="qr-box"></div>
+
+      <div class="request-code">
+        <code id="request-code">Preparing secure request…</code>
+        <button id="copy-request" class="copy-btn" type="button" aria-label="Copy secure request code">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg>
+        </button>
+      </div>
+
+      <div class="timeline">
+        <div class="timeline-row done">
+          <div class="timeline-dot">✓</div>
+          <div class="timeline-copy"><strong>Request created</strong><span>Your requested changes and reason are encoded in this request QR.</span></div>
+        </div>
+        <div class="timeline-row">
+          <div class="timeline-dot">2</div>
+          <div class="timeline-copy"><strong>Waiting for admin review</strong><span>Show the request QR to the QwerNFC admin for approval or rejection.</span></div>
+        </div>
+        <div class="timeline-row">
+          <div class="timeline-dot">3</div>
+          <div class="timeline-copy"><strong>Information updates after approval</strong><span>No business information changes until the admin explicitly approves it.</span></div>
+        </div>
+      </div>
+
+      <div id="request-status" class="status ok">Secure request created. No private GitHub credentials were exposed.</div>
+      <button id="done-button" class="full-primary" type="button" style="margin-top:12px">✓ Done</button>
+    </section>
+  </section>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js" referrerpolicy="no-referrer"></script>
+<script>
+(() => {
+  const PREFIX = "QWERNFC-UPDATE:1:";
+  const params = new URLSearchParams(location.search);
+  const id = String(params.get("id") || "").toUpperCase();
+  const state = { record:null, route:null, changes:null, reason:"", request:"", locationPin:null };
+
+  const businessName = document.getElementById("business-name");
+  const profileLocation = document.getElementById("profile-location");
+  const profileId = document.getElementById("profile-id");
+  const currentLink = document.getElementById("current-link");
+  const currentList = document.getElementById("current-list");
+  const form = document.getElementById("edit-form");
+  const formStatus = document.getElementById("form-status");
+  const selectedSummary = document.getElementById("selected-summary");
+  const reasonCount = document.getElementById("reason-count");
+  const editStage = document.getElementById("edit-stage");
+  const reviewStage = document.getElementById("review-stage");
+  const submitStage = document.getElementById("submit-stage");
+  const reviewList = document.getElementById("review-list");
+  const reviewReason = document.getElementById("review-reason");
+  const qrBox = document.getElementById("qr-box");
+  const requestCode = document.getElementById("request-code");
+  const editAction = document.getElementById("edit-action");
+
+  const esc = (value) => String(value == null ? "" : value).replace(/[&<>"']/g,(char)=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[char]));
+  const fresh = (src) => src + (src.includes("?") ? "&" : "?") + "v=" + Date.now();
+  const fetchJson = async (src) => {
+    const response = await fetch(fresh(src),{cache:"no-store",mode:"cors"});
+    if(!response.ok) throw new Error("Could not load current information.");
+    return response.json();
+  };
+  const encode = (value) => {
+    const bytes = new TextEncoder().encode(value);
+    let binary = "";
+    for(const byte of bytes) binary += String.fromCharCode(byte);
+    return btoa(binary).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/g,"");
+  };
+  const showStatus = (message,kind="error") => {
+    formStatus.textContent = message;
+    formStatus.className = "status " + kind;
+  };
+  const clearStatus = () => {
+    formStatus.textContent = "";
+    formStatus.className = "status hidden";
+  };
+  const currentValue = (field) => field==="managedLink"
+    ? String(state.route?.destination || "")
+    : String(state.record?.[field] || "");
+
+  const parsePinnedLocation = (value) => {
+    const match = String(value || "").match(/(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)/);
+    if(!match) return null;
+    const latitude = Number(match[1]);
+    const longitude = Number(match[2]);
+    if(!Number.isFinite(latitude) || !Number.isFinite(longitude)) return null;
+    if(latitude < -85.05112878 || latitude > 85.05112878 || longitude < -180 || longitude > 180) return null;
+    return {latitude,longitude};
+  };
+
+  const worldPixelFromLatLng = (latitude,longitude,zoom) => {
+    const lat = Math.max(-85.05112878,Math.min(85.05112878,Number(latitude)));
+    const lng = Math.max(-180,Math.min(180,Number(longitude)));
+    const scale = 256 * (2 ** zoom);
+    const sinLat = Math.sin(lat * Math.PI / 180);
+    return {
+      x:((lng+180)/360)*scale,
+      y:(0.5-Math.log((1+sinLat)/(1-sinLat))/(4*Math.PI))*scale
+    };
+  };
+
+  const latLngFromWorldPixel = (x,y,zoom) => {
+    const scale = 256 * (2 ** zoom);
+    const lng = x / scale * 360 - 180;
+    const n = Math.PI - (2 * Math.PI * y / scale);
+    const lat = 180 / Math.PI * Math.atan(Math.sinh(n));
+    return {
+      latitude:Math.max(-85.05112878,Math.min(85.05112878,lat)),
+      longitude:((lng+540)%360)-180
+    };
+  };
+
+  const googleMapsUrlForPin = (latitude,longitude) =>
+    "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(Number(latitude).toFixed(7)+","+Number(longitude).toFixed(7));
+
+  const syncLocationPinFields = (latitude,longitude) => {
+    const lat = Number(latitude);
+    const lng = Number(longitude);
+    if(!Number.isFinite(lat) || !Number.isFinite(lng)) return;
+
+    const value = "Pinned location (" + lat.toFixed(5) + ", " + lng.toFixed(5) + ")";
+    form.elements.location.value = value;
+    form.elements.latitude.value = String(lat);
+    form.elements.longitude.value = String(lng);
+    form.elements.googleMapsUrl.value = googleMapsUrlForPin(lat,lng);
+    state.locationPin = {
+      latitude:lat,
+      longitude:lng,
+      googleMapsUrl:form.elements.googleMapsUrl.value
+    };
+
+    const output = document.querySelector("[data-location-value]");
+    if(output) output.textContent = value;
+  };
+
+  const paintCustomerLocationMap = (map,latitude,longitude,zoom=19) => {
+    if(!map) return;
+    const width = Math.max(280,map.clientWidth || 320);
+    const height = Math.max(220,map.clientHeight || 260);
+    const center = worldPixelFromLatLng(latitude,longitude,zoom);
+    const left = center.x - width / 2;
+    const top = center.y - height / 2;
+    const minTileX = Math.floor(left / 256) - 1;
+    const maxTileX = Math.floor((left + width) / 256) + 1;
+    const minTileY = Math.floor(top / 256) - 1;
+    const maxTileY = Math.floor((top + height) / 256) + 1;
+    const tileCount = 2 ** zoom;
+    const tiles = [];
+
+    for(let y=minTileY;y<=maxTileY;y+=1){
+      if(y<0 || y>=tileCount) continue;
+      for(let x=minTileX;x<=maxTileX;x+=1){
+        const wrappedX = ((x % tileCount) + tileCount) % tileCount;
+        tiles.push('<img draggable="false" alt="" src="https://tile.openstreetmap.org/'+zoom+'/'+wrappedX+'/'+y+'.png" style="left:'+Math.round(x*256-left)+'px;top:'+Math.round(y*256-top)+'px" />');
+      }
+    }
+
+    const layer = map.querySelector("[data-location-tiles]");
+    if(layer){
+      layer.innerHTML = tiles.join("");
+      layer.style.transform = "translate3d(0,0,0)";
+    }
+    map.dataset.latitude = String(latitude);
+    map.dataset.longitude = String(longitude);
+    map.dataset.zoom = String(zoom);
+
+    const coords = map.closest(".location-picker-card")?.querySelector("[data-picker-coordinates]");
+    if(coords) coords.textContent = Number(latitude).toFixed(6)+", "+Number(longitude).toFixed(6);
+  };
+
+  const closeCustomerLocationPicker = () => {
+    document.querySelector(".location-picker-layer")?.remove();
+  };
+
+  const openCustomerLocationPicker = () => {
+    const existing = state.locationPin || parsePinnedLocation(state.record?.location);
+    const initialLat = existing?.latitude ?? 14.599512;
+    const initialLng = existing?.longitude ?? 120.984222;
+
+    const layer = document.createElement("div");
+    layer.className = "location-picker-layer";
+    layer.innerHTML = `
+      <button class="location-picker-scrim" type="button" aria-label="Close location picker"></button>
+      <section class="location-picker-card" role="dialog" aria-modal="true" aria-label="Choose QR location">
+        <div class="location-picker-head">
+          <div><span class="detail-kicker">QR LOCATION</span><h2>Choose location</h2></div>
+          <button type="button" class="icon-button" data-close-location aria-label="Close">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
+          </button>
+        </div>
+        <div class="location-map" data-location-map>
+          <div class="location-tile-layer" data-location-tiles></div>
+          <div class="location-map-shade"></div>
+          <div class="location-center-pin" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>
+          </div>
+          <div class="location-map-zoom" aria-label="Map zoom controls">
+            <button type="button" data-map-zoom-in aria-label="Zoom in">+</button>
+            <button type="button" data-map-zoom-out aria-label="Zoom out">−</button>
+          </div>
+          <div class="location-map-hint">Drag map · use + / − to zoom</div>
+        </div>
+        <div class="location-picker-coordinates">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>
+          <span data-picker-coordinates>${initialLat.toFixed(6)}, ${initialLng.toFixed(6)}</span>
+        </div>
+        <div class="location-picker-actions">
+          <button type="button" data-use-live-location>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/><circle cx="12" cy="12" r="8"/></svg>
+            <span>Use precise live location</span>
+          </button>
+          <button type="button" data-open-picker-google>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 3h7v7"/><path d="M10 14 21 3"/><path d="M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5"/></svg>
+            <span>Open in Google Maps</span>
+          </button>
+        </div>
+        <p class="location-picker-status" data-location-status>Drag the map and zoom for exact placement, or use your phone's high-accuracy GPS location.</p>
+        <div class="location-picker-save-row">
+          <button type="button" class="detail-cancel" data-close-location>Cancel</button>
+          <button type="button" class="detail-save" data-save-location>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m5 12 4 4L19 6"/></svg>
+            <span>Use this location</span>
+          </button>
+        </div>
+        <small class="map-attribution">Map © OpenStreetMap contributors</small>
+      </section>
+    `;
+
+    document.body.append(layer);
+    const map = layer.querySelector("[data-location-map]");
+    requestAnimationFrame(()=>paintCustomerLocationMap(map,initialLat,initialLng,19));
+
+    const close = () => closeCustomerLocationPicker();
+    layer.querySelector(".location-picker-scrim")?.addEventListener("click",close);
+    layer.querySelectorAll("[data-close-location]").forEach((button)=>button.addEventListener("click",close));
+
+    let dragging=false;
+    let startX=0;
+    let startY=0;
+    let startWorld=null;
+
+    map.addEventListener("pointerdown",(event)=>{
+      if(event.target.closest("button")) return;
+      dragging=true;
+      startX=event.clientX;
+      startY=event.clientY;
+      startWorld=worldPixelFromLatLng(Number(map.dataset.latitude),Number(map.dataset.longitude),Number(map.dataset.zoom||19));
+      map.setPointerCapture?.(event.pointerId);
+    });
+
+    map.addEventListener("pointermove",(event)=>{
+      if(!dragging) return;
+      const dx=event.clientX-startX;
+      const dy=event.clientY-startY;
+      const tiles=map.querySelector("[data-location-tiles]");
+      if(tiles) tiles.style.transform="translate3d("+dx+"px,"+dy+"px,0)";
+    });
+
+    const finishDrag=(event)=>{
+      if(!dragging || !startWorld) return;
+      dragging=false;
+      const dx=event.clientX-startX;
+      const dy=event.clientY-startY;
+      const zoom=Number(map.dataset.zoom||19);
+      const next=latLngFromWorldPixel(startWorld.x-dx,startWorld.y-dy,zoom);
+      paintCustomerLocationMap(map,next.latitude,next.longitude,zoom);
+    };
+
+    map.addEventListener("pointerup",finishDrag);
+    map.addEventListener("pointercancel",finishDrag);
+
+    layer.querySelector("[data-use-live-location]")?.addEventListener("click",(event)=>{
+      const button=event.currentTarget;
+      const status=layer.querySelector("[data-location-status]");
+      if(!navigator.geolocation){
+        if(status) status.textContent="Location is not available in this browser.";
+        return;
+      }
+      button.disabled=true;
+      if(status) status.textContent="Getting a high-accuracy GPS location...";
+      navigator.geolocation.getCurrentPosition(
+        (position)=>{
+          paintCustomerLocationMap(map,position.coords.latitude,position.coords.longitude,Number(map.dataset.zoom||19));
+          if(status) status.textContent=Number.isFinite(position.coords.accuracy)
+            ? "Live location found (about ±"+Math.round(position.coords.accuracy)+" m accuracy)."
+            : "Live location found.";
+          button.disabled=false;
+        },
+        (error)=>{
+          if(status) status.textContent=error?.message||"Current location could not be read.";
+          button.disabled=false;
+        },
+        {enableHighAccuracy:true,timeout:15000,maximumAge:0}
+      );
+    });
+
+    layer.querySelector("[data-map-zoom-in]")?.addEventListener("click",()=>{
+      const zoom=Math.min(20,Number(map.dataset.zoom||19)+1);
+      paintCustomerLocationMap(map,Number(map.dataset.latitude),Number(map.dataset.longitude),zoom);
+    });
+    layer.querySelector("[data-map-zoom-out]")?.addEventListener("click",()=>{
+      const zoom=Math.max(13,Number(map.dataset.zoom||19)-1);
+      paintCustomerLocationMap(map,Number(map.dataset.latitude),Number(map.dataset.longitude),zoom);
+    });
+    map.addEventListener("wheel",(event)=>{
+      event.preventDefault();
+      const current=Number(map.dataset.zoom||19);
+      const zoom=Math.max(13,Math.min(20,current+(event.deltaY<0?1:-1)));
+      if(zoom!==current) paintCustomerLocationMap(map,Number(map.dataset.latitude),Number(map.dataset.longitude),zoom);
+    },{passive:false});
+
+    layer.querySelector("[data-open-picker-google]")?.addEventListener("click",()=>{
+      window.open(googleMapsUrlForPin(Number(map.dataset.latitude),Number(map.dataset.longitude)),"_blank","noopener,noreferrer");
+    });
+
+    layer.querySelector("[data-save-location]")?.addEventListener("click",()=>{
+      syncLocationPinFields(Number(map.dataset.latitude),Number(map.dataset.longitude));
+      close();
+    });
+  };
+
+  const icons = {
+    store:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10h18"/><path d="M5 10V7l2-3h10l2 3v3"/><path d="M5 10v10h14V10"/><path d="M9 20v-6h6v6"/></svg>',
+    location:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>',
+    managedLink:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>',
+    phone:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.4 19.4 0 0 1-6-6A19.8 19.8 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.9.33 1.78.62 2.62a2 2 0 0 1-.45 2.11L8 9.73a16 16 0 0 0 6 6l1.28-1.28a2 2 0 0 1 2.11-.45c.84.29 1.72.5 2.62.62A2 2 0 0 1 22 16.92Z"/></svg>',
+    email:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-10 6L2 7"/></svg>'
+  };
+
+  const setStep = (name) => {
+    const order = ["edit","review","submit"];
+    const target = order.indexOf(name);
+    document.querySelectorAll("[data-step]").forEach((node)=>{
+      const index = order.indexOf(node.dataset.step);
+      node.classList.toggle("active",index===target);
+      node.classList.toggle("complete",index<target);
+    });
+  };
+
+  const updateSelectedSummary = () => {
+    const count = document.querySelectorAll("[data-edit-card].active").length;
+    selectedSummary.textContent = count
+      ? count + (count===1 ? " field selected" : " fields selected")
+      : "No fields selected";
+  };
+
+  const renderCurrent = () => {
+    businessName.textContent = state.record.store || id;
+    profileLocation.textContent = state.record.location || "Business location";
+    profileId.textContent = id;
+    currentLink.textContent = state.route.destination || "Not configured";
+
+    const rows = [
+      ["store","Store name",state.record.store || "Not provided",false],
+      ["location","Location",state.record.location || "Not provided",false],
+      ["managedLink","Managed link",state.route.destination || "Not configured",false],
+      ["phone","Phone","Private in QwerNFC Manager",true],
+      ["email","Email","Private in QwerNFC Manager",true]
+    ];
+
+    currentList.innerHTML = rows.map(([key,label,value,isPrivate]) =>
+      '<div class="info-row"><span class="small-icon">'+icons[key]+'</span><span class="info-copy"><span>'+esc(label)+'</span><strong>'+esc(value)+'</strong></span>'+
+      (isPrivate?'<span class="private-lock"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>':'')+
+      '</div>'
+    ).join("");
+
+    form.elements.store.value = state.record.store || "";
+    const currentPin = parsePinnedLocation(state.record.location);
+    if(currentPin){
+      state.locationPin = {
+        latitude:currentPin.latitude,
+        longitude:currentPin.longitude,
+        googleMapsUrl:googleMapsUrlForPin(currentPin.latitude,currentPin.longitude)
+      };
+      syncLocationPinFields(currentPin.latitude,currentPin.longitude);
+    }else{
+      form.elements.location.value = state.record.location || "";
+    }
+    form.elements.managedLink.value = state.route.destination || "";
+  };
+
+  document.getElementById("back-button").addEventListener("click",()=>{
+    if(!submitStage.classList.contains("hidden")){
+      submitStage.classList.add("hidden");
+      reviewStage.classList.remove("hidden");
+      setStep("review");
+      return;
+    }
+    if(!reviewStage.classList.contains("hidden")){
+      reviewStage.classList.add("hidden");
+      editStage.classList.remove("hidden");
+      editAction.classList.remove("hidden");
+      setStep("edit");
+      return;
+    }
+    history.back();
+  });
+
+  document.getElementById("help-button").addEventListener("click",()=>{
+    alert("Select only the information you want to change. Your request does not change anything until the QwerNFC admin approves it.");
+  });
+
+  if(!/^QR-\d+$/.test(id)){
+    businessName.textContent = "Invalid update link";
+    profileLocation.textContent = "QwerNFC profile unavailable";
+    profileId.textContent = "ERROR";
+    currentLink.textContent = "This update link is not valid.";
+    editStage.classList.add("hidden");
+    return;
+  }
+
+  Promise.all([
+    fetchJson("../recover/" + encodeURIComponent(id) + "/recovery.json"),
+    fetchJson("../go/" + encodeURIComponent(id) + "/route.json")
+  ]).then(([record,route])=>{
+    if(!record || record.id!==id || record.deleted || record.enabled!==true) throw new Error("This QwerNFC record is unavailable.");
+    if(!route || route.id!==id || route.deleted || route.enabled!==true) throw new Error("The managed route is unavailable.");
+    state.record = record;
+    state.route = route;
+    renderCurrent();
+  }).catch((error)=>{
+    businessName.textContent = "Could not load profile";
+    profileLocation.textContent = id;
+    currentLink.textContent = error?.message || "Update information unavailable.";
+    editStage.classList.add("hidden");
+  });
+
+  document.getElementById("copy-current-link").addEventListener("click",async()=>{
+    const value = String(state.route?.destination || "");
+    if(!value) return;
+    try{await navigator.clipboard.writeText(value);}catch{}
+  });
+
+  document.querySelectorAll("[data-edit-toggle]").forEach((button)=>{
+    button.addEventListener("click",()=>{
+      clearStatus();
+      const field = button.dataset.editToggle;
+      const card = document.querySelector('[data-edit-card="'+field+'"]');
+      const input = form.elements[field];
+      const active = !card.classList.contains("active");
+      card.classList.toggle("active",active);
+      input.disabled = !active;
+
+      if(field==="location"){
+        for(const name of ["latitude","longitude","googleMapsUrl"]){
+          form.elements[name].disabled = !active;
+        }
+        if(active) openCustomerLocationPicker();
+      }
+
+      updateSelectedSummary();
+      if(active && field!=="location") setTimeout(()=>input.focus(),0);
+    });
+  });
+
+  document.querySelector("[data-open-location-picker]")?.addEventListener("click",()=>openCustomerLocationPicker());
+
+  form.elements.reason.addEventListener("input",()=>{
+    reasonCount.textContent = String(form.elements.reason.value || "").length;
+  });
+
+  form.addEventListener("submit",(event)=>{
+    event.preventDefault();
+    clearStatus();
+
+    const changes = {};
+    for(const card of document.querySelectorAll("[data-edit-card].active")){
+      const field = card.dataset.editCard;
+      const value = String(form.elements[field].value || "").trim();
+      if(field==="location" && !state.locationPin) return showStatus("Choose the new location on the map.");
+      if(!value) return showStatus("Enter the new " + field + " value.");
+
+      if(field==="managedLink"){
+        try{
+          const url = new URL(value);
+          if(!["http:","https:"].includes(url.protocol)) throw new Error();
+          changes[field] = url.href;
+        }catch{
+          return showStatus("Managed link must be a complete http:// or https:// URL.");
+        }
+      }else if(field==="email"){
+        if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return showStatus("Enter a valid email address.");
+        changes[field] = value;
+      }else{
+        changes[field] = value;
+      }
+    }
+
+    const reason = String(form.elements.reason.value || "").trim();
+    if(!Object.keys(changes).length) return showStatus("Select at least one item to edit.");
+    if(reason.length<3) return showStatus("Tell the admin why you are requesting these changes.");
+    if(reason.length>500) return showStatus("Reason is too long.");
+
+    state.changes = changes;
+    state.reason = reason;
+    state.locationPin = Object.prototype.hasOwnProperty.call(changes,"location")
+      ? {
+          latitude:Number(form.elements.latitude.value),
+          longitude:Number(form.elements.longitude.value),
+          googleMapsUrl:String(form.elements.googleMapsUrl.value || "")
+        }
+      : null;
+
+    const labels = {store:"Store name",location:"Location",managedLink:"Managed link",phone:"Phone number",email:"Email address"};
+    reviewList.innerHTML = Object.entries(changes).map(([field,value])=>{
+      const oldValue = (field==="phone" || field==="email")
+        ? "Private in QwerNFC Manager"
+        : (currentValue(field) || "Not provided");
+      return '<article class="review-item"><strong>'+esc(labels[field] || field)+'</strong><div class="diff-grid"><div class="diff-box"><span>Current</span><p>'+esc(oldValue)+'</p></div><div class="diff-arrow">→</div><div class="diff-box new"><span>New</span><p>'+esc(value)+'</p></div></div></article>';
+    }).join("");
+
+    reviewReason.textContent = reason;
+    editStage.classList.add("hidden");
+    reviewStage.classList.remove("hidden");
+    submitStage.classList.add("hidden");
+    editAction.classList.add("hidden");
+    setStep("review");
+    window.scrollTo({top:0,behavior:"smooth"});
+  });
+
+  document.getElementById("back-edit").addEventListener("click",()=>{
+    reviewStage.classList.add("hidden");
+    editStage.classList.remove("hidden");
+    editAction.classList.remove("hidden");
+    setStep("edit");
+    window.scrollTo({top:0,behavior:"smooth"});
+  });
+
+  document.getElementById("create-request").addEventListener("click",()=>{
+    if(!state.changes) return;
+
+    const payload = {
+      type:"customer-info-update",
+      version:1,
+      id,
+      requestedAt:new Date().toISOString(),
+      reason:state.reason,
+      changes:state.changes,
+      ...(state.locationPin ? {locationPin:state.locationPin} : {})
+    };
+
+    state.request = PREFIX + encode(JSON.stringify(payload));
+    qrBox.innerHTML = "";
+    requestCode.textContent = state.request;
+
+    if(typeof QRCode==="function"){
+      new QRCode(qrBox,{text:state.request,width:270,height:270,correctLevel:QRCode.CorrectLevel.M});
+    }else{
+      qrBox.innerHTML = '<div style="color:#111;text-align:center;padding:28px">QR generator unavailable. Use Copy secure request code.</div>';
+    }
+
+    reviewStage.classList.add("hidden");
+    editStage.classList.add("hidden");
+    submitStage.classList.remove("hidden");
+    setStep("submit");
+    window.scrollTo({top:0,behavior:"smooth"});
+  });
+
+  document.getElementById("copy-request").addEventListener("click",async()=>{
+    if(!state.request) return;
+    const status = document.getElementById("request-status");
+    try{
+      await navigator.clipboard.writeText(state.request);
+      status.textContent = "Secure request code copied.";
+    }catch{
+      status.textContent = "Could not copy automatically. Keep this page open and show the QR to the admin.";
+    }
+  });
+
+  document.getElementById("done-button").addEventListener("click",()=>{
+    history.back();
+  });
+
+  updateSelectedSummary();
+  setStep("edit");
+})();
+</script>
+</body>
+</html>
