@@ -1,0 +1,5 @@
+QwerNFC debug APK
+Commit: f453e1d7a6d09c2961a3fbbb1ad518b42d78096c
+Branch: android-app
+Package: com.keishirogane.permanentqr
+Build: debug
