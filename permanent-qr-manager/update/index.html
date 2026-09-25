@@ -8,330 +8,359 @@
 <meta http-equiv="cache-control" content="no-store,no-cache,must-revalidate,max-age=0" />
 <meta http-equiv="pragma" content="no-cache" />
 <meta http-equiv="expires" content="0" />
-<title>QwerNFC · Update Info</title>
+<title>QwerNFC Update Info</title>
 <style>
 :root{
   color-scheme:dark;
   font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
   --bg:#020705;
-  --panel:#06110b;
-  --panel-2:#08170e;
-  --panel-3:#0a1e12;
-  --panel-4:#0c2516;
-  --line:#173c26;
-  --line-2:#235f39;
-  --line-hot:#27b95d;
-  --green:#20df6d;
-  --green-2:#12bf55;
-  --green-3:#0d8f42;
+  --bg2:#03110a;
+  --card:#07150e;
+  --card2:#091c12;
+  --card3:#0b2216;
+  --line:#173e27;
+  --line2:#225f39;
+  --line3:#2ca95c;
+  --green:#37e879;
+  --green2:#16c95a;
+  --green3:#0c9e45;
   --text:#f4fbf6;
-  --muted:#91a69a;
-  --muted-2:#687d70;
-  --muted-3:#4f6257;
+  --muted:#92a79a;
+  --muted2:#6c8073;
+  --muted3:#53655a;
   --danger:#ff8b80;
-  --warning:#e8c26e;
-  --shadow:0 22px 60px rgba(0,0,0,.32);
-  background:var(--bg);
-  color:var(--text);
+  --warning:#e5bf6b;
+  --shadow:0 20px 54px rgba(0,0,0,.32);
 }
 *{box-sizing:border-box}
 html{background:var(--bg);scroll-behavior:smooth}
 body{
   margin:0;
   min-height:100dvh;
-  color:var(--text);
   background:
-    radial-gradient(circle at 50% -10%,rgba(22,157,76,.20),transparent 34%),
-    linear-gradient(180deg,#03100a 0,#020705 40%,#020705 100%);
+    radial-gradient(circle at 50% -6%,rgba(20,146,69,.20),transparent 31%),
+    linear-gradient(180deg,var(--bg2),var(--bg) 38%);
+  color:var(--text);
   -webkit-font-smoothing:antialiased;
-  text-rendering:optimizeLegibility;
 }
 button,input,textarea{font:inherit}
 button{cursor:pointer}
-button:disabled{cursor:not-allowed;opacity:.5}
-a{color:inherit}
+button:disabled{cursor:not-allowed;opacity:.55}
 svg{display:block}
-.shell{
-  width:min(100%,560px);
+.hidden{display:none!important}
+
+.app{
+  width:min(100%,440px);
   min-height:100dvh;
   margin:0 auto;
-  position:relative;
-  overflow-x:hidden;
-  padding:calc(10px + env(safe-area-inset-top)) 14px calc(112px + env(safe-area-inset-bottom));
+  padding:calc(10px + env(safe-area-inset-top)) 14px calc(96px + env(safe-area-inset-bottom));
 }
-.appbar{
-  position:sticky;
-  top:0;
-  z-index:30;
+
+.topbar{
   display:grid;
-  grid-template-columns:44px minmax(0,1fr) auto;
+  grid-template-columns:42px 1fr 42px;
   align-items:center;
-  gap:10px;
-  min-height:66px;
-  margin:0 -14px 12px;
-  padding:8px 14px;
-  background:linear-gradient(180deg,rgba(2,7,5,.98),rgba(2,7,5,.92) 78%,rgba(2,7,5,0));
-  backdrop-filter:blur(16px);
+  min-height:56px;
+  margin-bottom:10px;
 }
-.appbar-back{
-  width:42px;
-  height:42px;
-  border:1px solid #1b5733;
+.icon-btn{
+  width:40px;
+  height:40px;
+  border:1px solid #1a5632;
   border-radius:14px;
-  background:#082016;
-  color:#dff9e7;
+  background:#082117;
+  color:#e7f8ec;
   display:grid;
   place-items:center;
 }
-.appbar-back svg{width:20px;height:20px}
-.appbar-title{min-width:0}
-.appbar-title strong{
-  display:block;
-  font-size:1.08rem;
-  line-height:1.15;
-  letter-spacing:-.01em;
+.icon-btn svg{width:20px;height:20px}
+.brand{
+  text-align:center;
+  font-weight:950;
+  font-size:1.03rem;
+  letter-spacing:-.02em;
 }
-.appbar-title span{
-  display:block;
-  margin-top:3px;
-  color:var(--muted);
-  font-size:.72rem;
-}
-.appbar-id{
-  padding:6px 9px;
-  border:1px solid #1d6139;
-  border-radius:999px;
-  background:#082417;
-  color:#72e99a;
-  font-size:.66rem;
-  font-weight:900;
-  letter-spacing:.04em;
-}
-.progress{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:8px;
-  margin-bottom:12px;
-}
-.progress-step{
-  min-width:0;
-  padding:8px 9px;
-  border:1px solid #153822;
-  border-radius:12px;
-  background:#06110b;
-  color:#61766a;
-}
-.progress-step b{
-  display:inline-grid;
-  place-items:center;
-  width:19px;
-  height:19px;
-  margin-right:5px;
+.brand span{color:var(--green)}
+.help-btn{
+  justify-self:end;
+  width:34px;
+  height:34px;
+  border:1px solid #1a5632;
   border-radius:50%;
-  background:#0b1d12;
-  color:#668072;
-  font-size:.63rem;
+  background:#071a11;
+  color:#9fb6a7;
+  display:grid;
+  place-items:center;
+  font-weight:900;
 }
-.progress-step span{
+
+.stepper{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  align-items:start;
+  margin:4px 0 16px;
+}
+.step{
+  position:relative;
+  text-align:center;
+  color:#62766a;
   font-size:.66rem;
-  font-weight:850;
+  font-weight:800;
 }
-.progress-step.active{
-  border-color:#217744;
-  background:#082216;
-  color:#dff8e7;
+.step:not(:last-child)::after{
+  content:"";
+  position:absolute;
+  top:14px;
+  left:calc(50% + 17px);
+  right:calc(-50% + 17px);
+  height:2px;
+  background:#173b26;
 }
-.progress-step.active b{
-  background:#18c85a;
-  color:#001d0b;
+.step.complete:not(:last-child)::after,
+.step.active:not(:last-child)::after{
+  background:linear-gradient(90deg,var(--green2),#1d7a44);
 }
-.surface{
+.step-dot{
+  position:relative;
+  z-index:2;
+  width:30px;
+  height:30px;
+  margin:0 auto 6px;
+  border:1px solid #345143;
+  border-radius:50%;
+  background:#102019;
+  display:grid;
+  place-items:center;
+  color:#8ca093;
+  font-size:.73rem;
+  font-weight:900;
+}
+.step.active{color:#f0faf3}
+.step.active .step-dot{
+  border-color:#47ec83;
+  background:linear-gradient(145deg,#3df07f,#17c95a);
+  color:#00200c;
+  box-shadow:0 0 0 5px rgba(40,213,101,.08);
+}
+.step.complete{color:#b7c8bd}
+.step.complete .step-dot{
+  border-color:#2ebf63;
+  background:#0b351d;
+  color:#62e68f;
+}
+.step.complete .step-dot::before{
+  content:"✓";
+  font-size:.83rem;
+}
+.step.complete .step-number{display:none}
+
+.card{
   border:1px solid var(--line);
-  border-radius:20px;
-  background:linear-gradient(180deg,rgba(8,25,15,.98),rgba(4,14,9,.99));
+  border-radius:18px;
+  background:linear-gradient(180deg,rgba(8,25,16,.98),rgba(4,14,9,.99));
   box-shadow:var(--shadow);
 }
-.profile{
-  padding:15px;
-}
-.profile-top{
-  display:flex;
-  align-items:center;
+
+.profile-card{padding:14px}
+.profile-main{
+  display:grid;
+  grid-template-columns:58px minmax(0,1fr) auto;
   gap:12px;
+  align-items:center;
 }
 .profile-logo{
   width:58px;
   height:58px;
-  flex:0 0 58px;
-  border:1px solid #1f7b44;
-  border-radius:17px;
+  border:1px solid #1f7d44;
+  border-radius:16px;
   background:
-    radial-gradient(circle at 30% 22%,rgba(43,220,106,.22),transparent 42%),
-    linear-gradient(145deg,#0a321d,#07180f);
+    radial-gradient(circle at 30% 20%,rgba(55,232,121,.24),transparent 45%),
+    linear-gradient(145deg,#0b3b20,#071b10);
   display:grid;
   place-items:center;
-  color:#89f1ab;
+  color:#8cf4ae;
 }
 .profile-logo svg{width:29px;height:29px}
-.profile-copy{min-width:0;flex:1}
+.profile-copy{min-width:0}
 .profile-copy h1{
   margin:0;
-  font-size:1.22rem;
+  font-size:1.08rem;
   line-height:1.15;
-  letter-spacing:-.02em;
+  letter-spacing:-.015em;
 }
 .profile-copy p{
   margin:4px 0 0;
   color:var(--muted);
-  font-size:.75rem;
+  font-size:.72rem;
 }
-.profile-badge{
+.id-chip{
+  align-self:start;
+  padding:5px 8px;
+  border:1px solid #245f3a;
+  border-radius:999px;
+  background:#0a2115;
+  color:#b7d5c0;
+  font-size:.61rem;
+  font-weight:900;
+}
+.active-pill{
   display:inline-flex;
   align-items:center;
   gap:5px;
   margin-top:8px;
   padding:5px 8px;
-  border:1px solid #1f6d3e;
   border-radius:999px;
-  background:#0a2919;
-  color:#78e99d;
-  font-size:.62rem;
+  background:#0b3b20;
+  color:#69ea92;
+  font-size:.61rem;
   font-weight:900;
 }
-.profile-link{
-  margin-top:13px;
-  padding:11px 12px;
-  border:1px solid #175432;
-  border-radius:14px;
+.active-pill::before{
+  content:"";
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:#3af27c;
+}
+.link-panel{
+  margin-top:12px;
+  padding:11px;
+  border:1px solid #195532;
+  border-radius:13px;
   background:#04120b;
 }
-.profile-link-head{
+.link-head{
   display:flex;
   align-items:center;
   justify-content:space-between;
   gap:8px;
 }
-.profile-link-head span{
-  color:#79d99a;
-  font-size:.65rem;
+.link-head span{
+  color:#80d99e;
+  font-size:.62rem;
   font-weight:850;
   text-transform:uppercase;
-  letter-spacing:.05em;
+  letter-spacing:.055em;
 }
-.icon-button{
-  width:32px;
-  height:32px;
-  border:1px solid #24583a;
+.copy-btn{
+  width:30px;
+  height:30px;
+  border:1px solid #285e3d;
   border-radius:9px;
   background:#0a1f14;
-  color:#b9ddc5;
+  color:#baddc5;
   display:grid;
   place-items:center;
 }
-.icon-button svg{width:15px;height:15px}
-.profile-link strong{
+.copy-btn svg{width:14px;height:14px}
+.link-value{
   display:block;
   margin-top:6px;
-  color:#eef9f1;
-  font-size:.82rem;
+  color:#eef8f1;
+  font-size:.78rem;
   line-height:1.38;
-  overflow-wrap:anywhere;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
 }
-.section-heading{
+
+.section-head{
   margin:20px 2px 9px;
 }
-.section-heading .eyebrow{
-  display:block;
-  margin-bottom:5px;
-  color:#5fce85;
-  font-size:.62rem;
-  font-weight:950;
-  letter-spacing:.09em;
-  text-transform:uppercase;
-}
-.section-heading h2{
+.section-head h2{
   margin:0;
-  font-size:1.12rem;
-  line-height:1.2;
+  font-size:1.02rem;
   letter-spacing:-.015em;
 }
-.section-heading p{
-  margin:6px 0 0;
+.section-head p{
+  margin:5px 0 0;
   color:var(--muted);
-  font-size:.75rem;
-  line-height:1.5;
+  font-size:.72rem;
+  line-height:1.45;
 }
-.current-info{
-  padding:11px;
+.eyebrow{
+  display:block;
+  margin-bottom:5px;
+  color:#63d98b;
+  font-size:.58rem;
+  font-weight:950;
+  letter-spacing:.1em;
+  text-transform:uppercase;
 }
-.current-list{
+
+.info-card{padding:10px}
+.info-list{display:grid;gap:7px}
+.info-row{
+  min-height:55px;
   display:grid;
-  gap:7px;
-}
-.current-item{
-  display:grid;
-  grid-template-columns:36px minmax(0,1fr);
-  gap:10px;
+  grid-template-columns:34px minmax(0,1fr) auto;
+  gap:9px;
   align-items:center;
-  min-height:58px;
   padding:9px 10px;
-  border:1px solid #153923;
-  border-radius:13px;
+  border:1px solid #153922;
+  border-radius:12px;
   background:#06130c;
 }
-.current-icon{
+.small-icon{
   width:34px;
   height:34px;
-  border:1px solid #1d5d37;
+  border:1px solid #1c5c36;
   border-radius:10px;
-  background:#092418;
-  color:#67d98d;
+  background:#092417;
+  color:#65d889;
   display:grid;
   place-items:center;
 }
-.current-icon svg{width:17px;height:17px}
-.current-copy{min-width:0}
-.current-copy span{
+.small-icon svg{width:17px;height:17px}
+.info-copy{min-width:0}
+.info-copy span{
   display:block;
-  color:#697f71;
-  font-size:.61rem;
+  color:#687f70;
+  font-size:.58rem;
   font-weight:850;
   text-transform:uppercase;
   letter-spacing:.05em;
 }
-.current-copy strong{
+.info-copy strong{
   display:block;
   margin-top:3px;
-  color:#edf7f0;
-  font-size:.78rem;
+  color:#edf7ef;
+  font-size:.75rem;
   line-height:1.35;
-  overflow-wrap:anywhere;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
 }
+.private-lock{
+  color:#587064;
+}
+.private-lock svg{width:15px;height:15px}
+
 .edit-list{
   display:grid;
-  gap:9px;
+  gap:8px;
 }
 .edit-card{
-  border:1px solid #173f27;
-  border-radius:17px;
+  border:1px solid #173d26;
+  border-radius:16px;
   background:linear-gradient(180deg,#07180f,#051109);
   overflow:hidden;
-  transition:border-color .16s ease,background .16s ease,box-shadow .16s ease;
+  transition:.16s ease;
 }
 .edit-card.active{
   border-color:#2a9d58;
   background:linear-gradient(180deg,#092619,#06170f);
-  box-shadow:0 0 0 1px rgba(35,211,97,.08) inset;
+  box-shadow:0 0 0 1px rgba(42,206,97,.08) inset;
 }
 .edit-trigger{
   width:100%;
-  min-height:68px;
-  padding:12px;
+  min-height:64px;
+  padding:11px;
   border:0;
   background:transparent;
   color:inherit;
   display:grid;
-  grid-template-columns:42px minmax(0,1fr) 28px;
+  grid-template-columns:40px minmax(0,1fr) 27px;
   gap:10px;
   align-items:center;
   text-align:left;
@@ -342,77 +371,77 @@ svg{display:block}
   border:1px solid #1d663a;
   border-radius:12px;
   background:#0a2c19;
-  color:#68df8e;
+  color:#69e290;
   display:grid;
   place-items:center;
 }
 .edit-icon svg{width:19px;height:19px}
-.edit-label{min-width:0}
-.edit-label strong{
+.edit-copy{min-width:0}
+.edit-copy strong{
   display:block;
-  font-size:.84rem;
-  line-height:1.2;
+  font-size:.81rem;
 }
-.edit-label span{
+.edit-copy span{
   display:block;
   margin-top:3px;
   color:var(--muted);
-  font-size:.66rem;
+  font-size:.64rem;
   line-height:1.35;
 }
-.toggle-box{
+.check-box{
   width:27px;
   height:27px;
-  border:1px solid #425c4d;
+  border:1px solid #455e50;
   border-radius:8px;
   background:#0a1510;
   color:transparent;
   display:grid;
   place-items:center;
 }
-.toggle-box svg{width:16px;height:16px}
-.edit-card.active .toggle-box{
-  border-color:#37eb79;
-  background:linear-gradient(145deg,#21db69,#10b94d);
-  color:#001c0a;
+.check-box svg{width:16px;height:16px}
+.edit-card.active .check-box{
+  border-color:#43ee80;
+  background:linear-gradient(145deg,#39ec78,#18c958);
+  color:#001e0b;
 }
 .edit-body{
   display:none;
-  padding:0 12px 12px 64px;
+  padding:0 11px 12px 61px;
 }
 .edit-card.active .edit-body{display:block}
 .edit-body label{
   display:block;
-  color:#789080;
-  font-size:.65rem;
+  color:#7b9383;
+  font-size:.62rem;
   font-weight:850;
 }
 .edit-body input{
   width:100%;
-  min-height:48px;
+  min-height:46px;
   margin-top:6px;
-  padding:0 12px;
+  padding:0 11px;
   border:1px solid #28583a;
-  border-radius:11px;
+  border-radius:10px;
   outline:none;
   background:#04110a;
-  color:#f2fbf5;
-  font-size:.86rem;
+  color:#f3fbf5;
+  font-size:.82rem;
 }
 .edit-body input:focus,
-.reason textarea:focus{
-  border-color:#32b861;
-  box-shadow:0 0 0 3px rgba(40,188,94,.09);
+.reason-card textarea:focus{
+  border-color:#35b963;
+  box-shadow:0 0 0 3px rgba(50,190,97,.09);
 }
 .edit-body input::placeholder,
-.reason textarea::placeholder{color:#52665a}
-.reason{
-  margin-top:10px;
-  padding:13px;
+.reason-card textarea::placeholder{color:#53675b}
+
+.reason-card{
+  margin-top:9px;
+  padding:12px;
 }
 .reason-head{
   display:grid;
-  grid-template-columns:40px minmax(0,1fr);
+  grid-template-columns:38px minmax(0,1fr);
   gap:10px;
   align-items:start;
 }
@@ -422,315 +451,384 @@ svg{display:block}
 }
 .reason-head strong{
   display:block;
-  font-size:.84rem;
+  font-size:.8rem;
 }
 .reason-head span{
   display:block;
   margin-top:3px;
   color:var(--muted);
-  font-size:.66rem;
+  font-size:.63rem;
 }
-.reason textarea{
+.reason-card textarea{
   width:100%;
-  min-height:105px;
-  margin-top:11px;
-  padding:11px 12px;
+  min-height:102px;
+  margin-top:10px;
+  padding:10px 11px;
   border:1px solid #28583a;
-  border-radius:11px;
+  border-radius:10px;
   outline:none;
   resize:vertical;
   background:#04110a;
-  color:#f2fbf5;
-  font-size:.84rem;
+  color:#f3fbf5;
+  font-size:.81rem;
   line-height:1.45;
+}
+.char-count{
+  margin-top:4px;
+  color:#61776a;
+  text-align:right;
+  font-size:.6rem;
 }
 .status{
-  margin-top:9px;
+  margin-top:8px;
   padding:9px 10px;
-  border:1px solid #6a582b;
+  border:1px solid #6d592a;
   border-radius:10px;
-  background:#201908;
-  color:#e0c176;
-  font-size:.7rem;
-  line-height:1.45;
+  background:#211a08;
+  color:#e1c275;
+  font-size:.68rem;
+  line-height:1.4;
 }
 .status.error{
-  border-color:#6f352f;
-  background:#24110f;
-  color:#f1a098;
+  border-color:#71372f;
+  background:#25110f;
+  color:#f1a299;
 }
 .status.ok{
-  border-color:#22643a;
-  background:#071c10;
-  color:#7ee2a0;
+  border-color:#24683c;
+  background:#071d10;
+  color:#79e09d;
 }
 .security-note{
   display:grid;
-  grid-template-columns:18px minmax(0,1fr);
+  grid-template-columns:17px minmax(0,1fr);
   gap:8px;
-  margin:11px 2px 0;
-  color:#627a6b;
-  font-size:.65rem;
+  margin:10px 2px 0;
+  color:#637b6c;
+  font-size:.62rem;
   line-height:1.45;
 }
 .security-note svg{
-  width:16px;
-  height:16px;
-  color:#51cb78;
+  width:15px;
+  height:15px;
+  color:#52cd78;
 }
-.review-shell,
-.request-shell{
-  padding:14px;
+
+.action-bar{
+  position:fixed;
+  left:50%;
+  bottom:0;
+  z-index:50;
+  width:min(100%,440px);
+  transform:translateX(-50%);
+  padding:10px 14px calc(12px + env(safe-area-inset-bottom));
+  background:linear-gradient(180deg,rgba(2,7,5,0),rgba(2,7,5,.94) 26%,rgba(2,7,5,.995) 54%);
+  pointer-events:none;
 }
-.review-head{
-  display:flex;
-  align-items:flex-start;
-  justify-content:space-between;
-  gap:10px;
-}
-.review-head h2{
-  margin:0;
-  font-size:1.06rem;
-}
-.review-head p{
-  margin:4px 0 0;
-  color:var(--muted);
-  font-size:.72rem;
-  line-height:1.4;
-}
-.review-badge{
-  flex:0 0 auto;
-  padding:5px 8px;
-  border:1px solid #1e6a3c;
-  border-radius:999px;
-  background:#092819;
-  color:#74e596;
-  font-size:.61rem;
-  font-weight:900;
-}
-.review-list{
+.action-inner{
   display:grid;
-  gap:9px;
-  margin-top:13px;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:10px;
+  align-items:center;
+  padding:8px 9px 8px 11px;
+  border:1px solid #17482b;
+  border-radius:15px;
+  background:#07150d;
+  box-shadow:0 18px 44px rgba(0,0,0,.4);
+  pointer-events:auto;
 }
+.action-copy strong{
+  display:block;
+  font-size:.7rem;
+}
+.action-copy span{
+  display:block;
+  margin-top:2px;
+  color:var(--muted2);
+  font-size:.59rem;
+}
+.primary{
+  min-height:44px;
+  padding:0 14px;
+  border:1px solid #43ed7f;
+  border-radius:12px;
+  background:linear-gradient(180deg,#38eb78,#16c858);
+  color:#001d0a;
+  font-size:.72rem;
+  font-weight:950;
+}
+.full-primary{
+  width:100%;
+  min-height:48px;
+  border:1px solid #43ed7f;
+  border-radius:13px;
+  background:linear-gradient(180deg,#38eb78,#16c858);
+  color:#001d0a;
+  font-weight:950;
+}
+.secondary{
+  width:100%;
+  min-height:46px;
+  margin-top:8px;
+  border:1px solid #29583a;
+  border-radius:12px;
+  background:#07180e;
+  color:#a9bdae;
+  font-weight:850;
+}
+
+.review-card{padding:12px}
+.review-list{display:grid;gap:9px}
 .review-item{
   padding:11px;
-  border:1px solid #183f28;
-  border-radius:12px;
+  border:1px solid #173e27;
+  border-radius:13px;
   background:#06140c;
 }
 .review-item>strong{
   display:block;
-  font-size:.78rem;
+  font-size:.76rem;
 }
-.diff{
+.diff-grid{
   display:grid;
+  grid-template-columns:minmax(0,1fr) 22px minmax(0,1fr);
   gap:6px;
+  align-items:stretch;
   margin-top:8px;
 }
-.diff-row{
-  display:grid;
-  grid-template-columns:48px minmax(0,1fr);
-  gap:8px;
-  padding:8px 9px;
-  border:1px solid #153721;
+.diff-box{
+  min-width:0;
+  padding:9px;
+  border:1px solid #163822;
   border-radius:9px;
   background:#041009;
 }
-.diff-row.new{
-  border-color:#277d47;
-  background:#082016;
+.diff-box.new{
+  border-color:#2b8450;
+  background:#082116;
 }
-.diff-row span{
-  color:#6d8474;
-  font-size:.6rem;
+.diff-box span{
+  display:block;
+  color:#6f8476;
+  font-size:.56rem;
   font-weight:900;
+  text-transform:uppercase;
 }
-.diff-row p{
-  margin:0;
-  color:#e8f5ec;
-  font-size:.72rem;
-  line-height:1.4;
+.diff-box p{
+  margin:4px 0 0;
+  color:#eaf5ed;
+  font-size:.68rem;
+  line-height:1.35;
   overflow-wrap:anywhere;
+}
+.diff-arrow{
+  display:grid;
+  place-items:center;
+  color:#6ed990;
+  font-weight:900;
 }
 .reason-review{
   margin-top:10px;
   padding:10px;
-  border:1px solid #225f38;
-  border-radius:11px;
-  background:#071b10;
+  border:1px solid #225e38;
+  border-radius:10px;
+  background:#071a10;
 }
 .reason-review span{
   color:#69d68c;
-  font-size:.61rem;
+  font-size:.58rem;
   font-weight:900;
-  letter-spacing:.05em;
+  letter-spacing:.06em;
 }
 .reason-review p{
   margin:5px 0 0;
-  color:#e5f3e9;
-  font-size:.73rem;
+  color:#e6f3e9;
+  font-size:.7rem;
   line-height:1.45;
 }
-.request-shell{text-align:center}
-.request-icon{
-  width:62px;
-  height:62px;
-  margin:0 auto;
-  border:1px solid #247a45;
-  border-radius:20px;
-  background:#0a2d1a;
-  color:#78e99d;
+
+.submit-card{
+  padding:18px 14px 14px;
+  text-align:center;
+}
+.success-mark{
+  width:66px;
+  height:66px;
+  margin:0 auto 12px;
+  border:1px solid #30b95f;
+  border-radius:50%;
+  background:
+    radial-gradient(circle at 34% 28%,rgba(83,255,143,.36),transparent 40%),
+    linear-gradient(145deg,#16b953,#0a6d32);
+  color:#eaffef;
   display:grid;
   place-items:center;
+  box-shadow:0 0 0 8px rgba(33,207,94,.06);
 }
-.request-icon svg{width:30px;height:30px}
-.request-shell h2{
-  margin:12px 0 5px;
-  font-size:1.05rem;
-}
-.request-shell p{
+.success-mark svg{width:32px;height:32px}
+.submit-card h2{
   margin:0;
+  font-size:1.04rem;
+}
+.submit-card>p{
+  margin:6px auto 0;
+  max-width:330px;
   color:var(--muted);
-  font-size:.73rem;
+  font-size:.71rem;
   line-height:1.5;
 }
 #qr-box{
   display:grid;
   place-items:center;
-  width:min(100%,308px);
+  width:min(100%,292px);
   margin:14px auto;
-  padding:12px;
-  border-radius:16px;
+  padding:11px;
+  border-radius:15px;
   background:#fff;
 }
-#qr-box img,#qr-box canvas{display:block;max-width:100%;height:auto}
-.primary,
-.secondary{
-  width:100%;
-  min-height:50px;
-  border-radius:13px;
+#qr-box img,#qr-box canvas{
+  display:block;
+  max-width:100%;
+  height:auto;
+}
+.request-code{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 34px;
+  gap:7px;
+  align-items:center;
+  margin:10px 0 0;
+}
+.request-code code{
+  display:block;
+  min-width:0;
+  padding:10px;
+  border:1px solid #1a442b;
+  border-radius:10px;
+  background:#04110a;
+  color:#a9c0b0;
+  font-size:.59rem;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.timeline{
+  display:grid;
+  gap:0;
+  margin-top:14px;
+  text-align:left;
+}
+.timeline-row{
+  position:relative;
+  display:grid;
+  grid-template-columns:28px minmax(0,1fr);
+  gap:9px;
+  padding-bottom:14px;
+}
+.timeline-row:not(:last-child)::after{
+  content:"";
+  position:absolute;
+  left:13px;
+  top:26px;
+  bottom:0;
+  width:2px;
+  background:#183c27;
+}
+.timeline-dot{
+  width:27px;
+  height:27px;
+  border:1px solid #3b5a49;
+  border-radius:50%;
+  background:#0a1710;
+  color:#71877a;
+  display:grid;
+  place-items:center;
+  font-size:.68rem;
   font-weight:900;
 }
-.primary{
-  border:1px solid #38e97a;
-  background:linear-gradient(180deg,#19d862,#0daf48);
-  color:#001d0a;
-  box-shadow:0 12px 28px rgba(14,177,73,.18);
+.timeline-row.done .timeline-dot{
+  border-color:#36d670;
+  background:#0b3b20;
+  color:#65e98f;
 }
-.secondary{
-  margin-top:8px;
-  border:1px solid #29573a;
-  background:#07180e;
-  color:#a8bcae;
+.timeline-copy strong{
+  display:block;
+  font-size:.72rem;
 }
-.bottom-action{
-  position:fixed;
-  left:50%;
-  bottom:0;
-  z-index:40;
-  width:min(100%,560px);
-  transform:translateX(-50%);
-  padding:12px 14px calc(12px + env(safe-area-inset-bottom));
-  background:linear-gradient(180deg,rgba(2,7,5,0),rgba(2,7,5,.94) 24%,rgba(2,7,5,.99) 52%);
-  pointer-events:none;
+.timeline-copy span{
+  display:block;
+  margin-top:3px;
+  color:var(--muted2);
+  font-size:.62rem;
+  line-height:1.4;
 }
-.bottom-action-inner{
+.bottom-buttons{
   display:grid;
-  grid-template-columns:minmax(0,1fr) auto;
-  gap:10px;
-  align-items:center;
-  padding:9px 10px 9px 12px;
-  border:1px solid #17492b;
-  border-radius:16px;
-  background:#07150d;
-  box-shadow:0 18px 45px rgba(0,0,0,.35);
-  pointer-events:auto;
+  grid-template-columns:1fr 1.3fr;
+  gap:8px;
+  margin-top:12px;
 }
-.selection-summary strong{
-  display:block;
-  font-size:.75rem;
-}
-.selection-summary span{
-  display:block;
-  margin-top:2px;
-  color:var(--muted-2);
-  font-size:.63rem;
-}
-.review-button{
-  min-width:136px;
-  min-height:44px;
-  padding:0 13px;
-  border:1px solid #36e576;
-  border-radius:12px;
-  background:linear-gradient(180deg,#18d761,#0daf48);
-  color:#001c0a;
-  font-size:.75rem;
-  font-weight:950;
-}
-.hidden{display:none!important}
+.bottom-buttons .secondary{margin-top:0}
+
 @media (min-width:520px){
-  .shell{padding-left:18px;padding-right:18px}
-  .review-pair{grid-template-columns:1fr 1fr}
+  .app{padding-left:18px;padding-right:18px}
 }
 </style>
 </head>
 <body>
-<main class="shell" aria-label="QwerNFC Update Info">
-  <header class="appbar">
-    <button class="appbar-back" type="button" id="back-button" aria-label="Go back">
+<main class="app" aria-label="QwerNFC Update Info">
+  <header class="topbar">
+    <button class="icon-btn" id="back-button" type="button" aria-label="Go back">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
     </button>
-    <div class="appbar-title">
-      <strong>Update business info</strong>
-      <span>Customer change request</span>
-    </div>
-    <span class="appbar-id" id="header-id">QR</span>
+    <div class="brand">Qwer<span>NFC</span></div>
+    <button class="help-btn" type="button" id="help-button" aria-label="About this update request">?</button>
   </header>
 
-  <div class="progress" id="progress">
-    <div class="progress-step active" data-step="edit"><b>1</b><span>Edit</span></div>
-    <div class="progress-step" data-step="review"><b>2</b><span>Review</span></div>
-    <div class="progress-step" data-step="request"><b>3</b><span>Submit</span></div>
+  <div class="stepper" aria-label="Update request progress">
+    <div class="step active" data-step="edit"><div class="step-dot"><span class="step-number">1</span></div><span>Edit Info</span></div>
+    <div class="step" data-step="review"><div class="step-dot"><span class="step-number">2</span></div><span>Review</span></div>
+    <div class="step" data-step="submit"><div class="step-dot"><span class="step-number">3</span></div><span>Submit</span></div>
   </div>
 
-  <section class="surface profile">
-    <div class="profile-top">
-      <div class="profile-logo" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10h18"/><path d="M5 10V7l2-3h10l2 3v3"/><path d="M5 10v10h14V10"/><path d="M9 20v-6h6v6"/></svg>
+  <section class="card profile-card">
+    <div class="profile-main">
+      <div class="profile-logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12c4-7 11-8 16-8-1 7-5 14-12 16"/><path d="M5 20c2-5 6-9 12-12"/></svg>
       </div>
       <div class="profile-copy">
         <h1 id="business-name">Loading…</h1>
-        <p id="profile-id">Loading QR profile</p>
-        <span class="profile-badge">Protected QwerNFC request</span>
+        <p id="profile-location">Loading business profile</p>
+        <span class="active-pill">Active</span>
       </div>
+      <span class="id-chip" id="profile-id">QR</span>
     </div>
-    <div class="profile-link">
-      <div class="profile-link-head">
+
+    <div class="link-panel">
+      <div class="link-head">
         <span>Current managed link</span>
-        <button class="icon-button" id="copy-current-link" type="button" aria-label="Copy current managed link">
+        <button class="copy-btn" id="copy-current-link" type="button" aria-label="Copy current managed link">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg>
         </button>
       </div>
-      <strong id="current-link">Loading…</strong>
+      <strong class="link-value" id="current-link">Loading…</strong>
     </div>
   </section>
 
   <section id="edit-stage">
-    <div class="section-heading">
+    <div class="section-head">
       <span class="eyebrow">CURRENT INFO</span>
-      <h2>Your current information</h2>
-      <p>Check what is currently connected to this QR before requesting an update.</p>
+      <h2>Current Information</h2>
+      <p>This is the information currently displayed for this QR.</p>
     </div>
 
-    <section class="surface current-info">
-      <div class="current-list" id="current-list"></div>
+    <section class="card info-card">
+      <div class="info-list" id="current-list"></div>
     </section>
 
-    <div class="section-heading">
+    <div class="section-head">
       <span class="eyebrow">WHAT DO YOU WANT TO EDIT?</span>
-      <h2>Select the information to change</h2>
-      <p>Only the fields you select will be sent to the admin for approval.</p>
+      <h2>Select what you want to change</h2>
+      <p>Only selected fields will be included in your request.</p>
     </div>
 
     <form id="edit-form">
@@ -738,8 +836,8 @@ svg{display:block}
         <article class="edit-card" data-edit-card="store">
           <button class="edit-trigger" type="button" data-edit-toggle="store">
             <span class="edit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10h18"/><path d="M5 10V7l2-3h10l2 3v3"/><path d="M5 10v10h14V10"/><path d="M9 20v-6h6v6"/></svg></span>
-            <span class="edit-label"><strong>Store name</strong><span>Update your business or store name</span></span>
-            <span class="toggle-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4L19 6"/></svg></span>
+            <span class="edit-copy"><strong>Store name</strong><span>Change the business or store name</span></span>
+            <span class="check-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m5 12 4 4L19 6"/></svg></span>
           </button>
           <div class="edit-body"><label>New store name<input name="store" maxlength="80" disabled /></label></div>
         </article>
@@ -747,8 +845,8 @@ svg{display:block}
         <article class="edit-card" data-edit-card="location">
           <button class="edit-trigger" type="button" data-edit-toggle="location">
             <span class="edit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg></span>
-            <span class="edit-label"><strong>Location</strong><span>Update your business location</span></span>
-            <span class="toggle-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4L19 6"/></svg></span>
+            <span class="edit-copy"><strong>Location</strong><span>Change the store location</span></span>
+            <span class="check-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m5 12 4 4L19 6"/></svg></span>
           </button>
           <div class="edit-body"><label>New location<input name="location" maxlength="180" disabled /></label></div>
         </article>
@@ -756,17 +854,17 @@ svg{display:block}
         <article class="edit-card" data-edit-card="managedLink">
           <button class="edit-trigger" type="button" data-edit-toggle="managedLink">
             <span class="edit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></span>
-            <span class="edit-label"><strong>Managed link</strong><span>Google Review, website, TikTok, or another destination</span></span>
-            <span class="toggle-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4L19 6"/></svg></span>
+            <span class="edit-copy"><strong>Managed link</strong><span>Google Review, website, TikTok, or another link</span></span>
+            <span class="check-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m5 12 4 4L19 6"/></svg></span>
           </button>
-          <div class="edit-body"><label>New managed link<input name="managedLink" type="url" inputmode="url" maxlength="2048" disabled /></label></div>
+          <div class="edit-body"><label>New link<input name="managedLink" type="url" inputmode="url" maxlength="2048" disabled /></label></div>
         </article>
 
         <article class="edit-card" data-edit-card="phone">
           <button class="edit-trigger" type="button" data-edit-toggle="phone">
             <span class="edit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.4 19.4 0 0 1-6-6A19.8 19.8 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.9.33 1.78.62 2.62a2 2 0 0 1-.45 2.11L8 9.73a16 16 0 0 0 6 6l1.28-1.28a2 2 0 0 1 2.11-.45c.84.29 1.72.5 2.62.62A2 2 0 0 1 22 16.92Z"/></svg></span>
-            <span class="edit-label"><strong>Phone</strong><span>Enter a new phone number only if changing it</span></span>
-            <span class="toggle-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4L19 6"/></svg></span>
+            <span class="edit-copy"><strong>Phone number</strong><span>Change contact phone number</span></span>
+            <span class="check-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m5 12 4 4L19 6"/></svg></span>
           </button>
           <div class="edit-body"><label>New phone number<input name="phone" type="tel" maxlength="32" placeholder="Enter new phone number" disabled /></label></div>
         </article>
@@ -774,72 +872,94 @@ svg{display:block}
         <article class="edit-card" data-edit-card="email">
           <button class="edit-trigger" type="button" data-edit-toggle="email">
             <span class="edit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-10 6L2 7"/></svg></span>
-            <span class="edit-label"><strong>Email</strong><span>Enter a new email only if changing it</span></span>
-            <span class="toggle-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4L19 6"/></svg></span>
+            <span class="edit-copy"><strong>Email address</strong><span>Change contact email address</span></span>
+            <span class="check-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m5 12 4 4L19 6"/></svg></span>
           </button>
-          <div class="edit-body"><label>New email<input name="email" type="email" maxlength="120" placeholder="Enter new email address" disabled /></label></div>
+          <div class="edit-body"><label>New email address<input name="email" type="email" maxlength="120" placeholder="Enter new email address" disabled /></label></div>
         </article>
       </div>
 
-      <section class="surface reason">
+      <section class="card reason-card">
         <div class="reason-head">
           <span class="edit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/><path d="M8 13h8"/><path d="M8 17h6"/></svg></span>
-          <div><strong>Reason for editing info</strong><span>Tell the admin why you are requesting these changes</span></div>
+          <div><strong>Reason for editing info</strong><span>Required — tell the admin why you are making these changes</span></div>
         </div>
-        <textarea name="reason" maxlength="500" required placeholder="Example: We changed our business address and review link."></textarea>
+        <textarea name="reason" maxlength="500" required placeholder="Example: We transferred to a new location and updated our Google Maps link."></textarea>
+        <div class="char-count"><span id="reason-count">0</span>/500</div>
         <div id="form-status" class="status hidden"></div>
       </section>
 
       <div class="security-note">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-        <span>Phone and email remain private in QwerNFC Manager. This public page never exposes the private backup, credentials, or permanent QR database.</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        <span>Phone and email are private. Current values are never exposed on this public page. The private backup and permanent QR database also remain protected.</span>
       </div>
 
-      <div class="bottom-action" id="edit-action">
-        <div class="bottom-action-inner">
-          <div class="selection-summary">
-            <strong id="selected-summary">No fields selected</strong>
-            <span>Admin approval is required</span>
-          </div>
-          <button class="review-button" type="submit">Review changes</button>
+      <div class="action-bar" id="edit-action">
+        <div class="action-inner">
+          <div class="action-copy"><strong id="selected-summary">No fields selected</strong><span>Admin approval is required</span></div>
+          <button class="primary" type="submit">Review changes →</button>
         </div>
       </div>
     </form>
   </section>
 
   <section id="review-stage" class="hidden">
-    <div class="section-heading">
-      <span class="eyebrow">REVIEW REQUEST</span>
-      <h2>Confirm your changes</h2>
-      <p>Check OLD → NEW before sending the request to the QwerNFC admin.</p>
+    <div class="section-head">
+      <span class="eyebrow">REVIEW</span>
+      <h2>Review your changes</h2>
+      <p>Please check the old and new information before submitting your request.</p>
     </div>
 
-    <section class="surface review-shell">
-      <div class="review-head">
-        <div><h2>Requested changes</h2><p>Nothing is live yet.</p></div>
-        <span class="review-badge" id="review-count">0 changes</span>
-      </div>
+    <section class="card review-card">
       <div id="review-list" class="review-list"></div>
-      <div class="reason-review"><span>REASON FOR EDIT</span><p id="review-reason"></p></div>
-      <button id="create-request" class="primary" type="button" style="margin-top:12px">Save request</button>
-      <button id="back-edit" class="secondary" type="button">Back to edit</button>
+      <div class="reason-review"><span>REASON FOR EDITING</span><p id="review-reason"></p></div>
+      <div class="bottom-buttons">
+        <button id="back-edit" class="secondary" type="button">← Back</button>
+        <button id="create-request" class="full-primary" type="button">Submit request →</button>
+      </div>
     </section>
   </section>
 
-  <section id="request-stage" class="hidden">
-    <div class="section-heading">
-      <span class="eyebrow">REQUEST READY</span>
-      <h2>Your request is ready for review</h2>
-      <p>The admin must approve or reject it before any information changes.</p>
+  <section id="submit-stage" class="hidden">
+    <div class="section-head">
+      <span class="eyebrow">SUBMIT</span>
+      <h2>Update Request Created</h2>
+      <p>Your request is ready for the QwerNFC admin to review.</p>
     </div>
 
-    <section class="surface request-shell">
-      <div class="request-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h6v6H3zM15 3h6v6h-6zM3 15h6v6H3z"/><path d="M15 15h2v2h-2zM19 15h2v6h-6v-2M15 19h2"/></svg></div>
-      <h2>Show this QR to the QwerNFC admin</h2>
-      <p>The admin scans it, sees your OLD → NEW changes and reason, then approves or rejects the request. Your permanent QR value stays unchanged.</p>
+    <section class="card submit-card">
+      <div class="success-mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4L19 6"/></svg>
+      </div>
+      <h2>Request ready</h2>
+      <p>Show this QR to the QwerNFC admin. The admin scans it, reviews OLD → NEW and your reason, then approves or rejects the request.</p>
+
       <div id="qr-box"></div>
-      <button id="copy-request" class="secondary" type="button">Copy secure request code</button>
+
+      <div class="request-code">
+        <code id="request-code">Preparing secure request…</code>
+        <button id="copy-request" class="copy-btn" type="button" aria-label="Copy secure request code">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg>
+        </button>
+      </div>
+
+      <div class="timeline">
+        <div class="timeline-row done">
+          <div class="timeline-dot">✓</div>
+          <div class="timeline-copy"><strong>Request created</strong><span>Your requested changes and reason are encoded in this request QR.</span></div>
+        </div>
+        <div class="timeline-row">
+          <div class="timeline-dot">2</div>
+          <div class="timeline-copy"><strong>Waiting for admin review</strong><span>Show the request QR to the QwerNFC admin for approval or rejection.</span></div>
+        </div>
+        <div class="timeline-row">
+          <div class="timeline-dot">3</div>
+          <div class="timeline-copy"><strong>Information updates after approval</strong><span>No business information changes until the admin explicitly approves it.</span></div>
+        </div>
+      </div>
+
       <div id="request-status" class="status ok">Secure request created. No private GitHub credentials were exposed.</div>
+      <button id="done-button" class="full-primary" type="button" style="margin-top:12px">✓ Done</button>
     </section>
   </section>
 </main>
@@ -853,20 +973,22 @@ svg{display:block}
   const state = { record:null, route:null, changes:null, reason:"", request:"" };
 
   const businessName = document.getElementById("business-name");
+  const profileLocation = document.getElementById("profile-location");
   const profileId = document.getElementById("profile-id");
-  const headerId = document.getElementById("header-id");
   const currentLink = document.getElementById("current-link");
   const currentList = document.getElementById("current-list");
   const form = document.getElementById("edit-form");
   const formStatus = document.getElementById("form-status");
   const selectedSummary = document.getElementById("selected-summary");
+  const reasonCount = document.getElementById("reason-count");
   const editStage = document.getElementById("edit-stage");
   const reviewStage = document.getElementById("review-stage");
-  const requestStage = document.getElementById("request-stage");
+  const submitStage = document.getElementById("submit-stage");
   const reviewList = document.getElementById("review-list");
   const reviewReason = document.getElementById("review-reason");
-  const reviewCount = document.getElementById("review-count");
   const qrBox = document.getElementById("qr-box");
+  const requestCode = document.getElementById("request-code");
+  const editAction = document.getElementById("edit-action");
 
   const esc = (value) => String(value == null ? "" : value).replace(/[&<>"']/g,(char)=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[char]));
   const fresh = (src) => src + (src.includes("?") ? "&" : "?") + "v=" + Date.now();
@@ -889,47 +1011,9 @@ svg{display:block}
     formStatus.textContent = "";
     formStatus.className = "status hidden";
   };
-  const currentValue = (field) => field === "managedLink"
+  const currentValue = (field) => field==="managedLink"
     ? String(state.route?.destination || "")
     : String(state.record?.[field] || "");
-  const setProgress = (step) => {
-    document.querySelectorAll("[data-step]").forEach((node)=>{
-      node.classList.toggle("active",node.dataset.step===step);
-    });
-  };
-  const updateSelectedSummary = () => {
-    const count = document.querySelectorAll("[data-edit-card].active").length;
-    selectedSummary.textContent = count
-      ? count + (count === 1 ? " field selected" : " fields selected")
-      : "No fields selected";
-  };
-
-  document.getElementById("back-button").addEventListener("click",()=>{
-    if(!requestStage.classList.contains("hidden")){
-      requestStage.classList.add("hidden");
-      reviewStage.classList.remove("hidden");
-      setProgress("review");
-      return;
-    }
-    if(!reviewStage.classList.contains("hidden")){
-      reviewStage.classList.add("hidden");
-      editStage.classList.remove("hidden");
-      setProgress("edit");
-      return;
-    }
-    history.back();
-  });
-
-  if(!/^QR-\d+$/.test(id)){
-    businessName.textContent = "Invalid update link";
-    profileId.textContent = "QwerNFC profile unavailable";
-    headerId.textContent = "ERROR";
-    currentLink.textContent = "This update link is not valid.";
-    editStage.classList.add("hidden");
-    return;
-  }
-
-  headerId.textContent = id;
 
   const icons = {
     store:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10h18"/><path d="M5 10V7l2-3h10l2 3v3"/><path d="M5 10v10h14V10"/><path d="M9 20v-6h6v6"/></svg>',
@@ -939,27 +1023,77 @@ svg{display:block}
     email:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-10 6L2 7"/></svg>'
   };
 
+  const setStep = (name) => {
+    const order = ["edit","review","submit"];
+    const target = order.indexOf(name);
+    document.querySelectorAll("[data-step]").forEach((node)=>{
+      const index = order.indexOf(node.dataset.step);
+      node.classList.toggle("active",index===target);
+      node.classList.toggle("complete",index<target);
+    });
+  };
+
+  const updateSelectedSummary = () => {
+    const count = document.querySelectorAll("[data-edit-card].active").length;
+    selectedSummary.textContent = count
+      ? count + (count===1 ? " field selected" : " fields selected")
+      : "No fields selected";
+  };
+
   const renderCurrent = () => {
     businessName.textContent = state.record.store || id;
-    profileId.textContent = "QR ID · " + id;
+    profileLocation.textContent = state.record.location || "Business location";
+    profileId.textContent = id;
     currentLink.textContent = state.route.destination || "Not configured";
 
-    const items = [
-      ["store","Store name",state.record.store || "Not provided"],
-      ["location","Location",state.record.location || "Not provided"],
-      ["managedLink","Managed link",state.route.destination || "Not configured"],
-      ["phone","Phone","Private in QwerNFC Manager"],
-      ["email","Email","Private in QwerNFC Manager"]
+    const rows = [
+      ["store","Store name",state.record.store || "Not provided",false],
+      ["location","Location",state.record.location || "Not provided",false],
+      ["managedLink","Managed link",state.route.destination || "Not configured",false],
+      ["phone","Phone","Private in QwerNFC Manager",true],
+      ["email","Email","Private in QwerNFC Manager",true]
     ];
 
-    currentList.innerHTML = items.map(([key,label,value]) =>
-      '<div class="current-item"><span class="current-icon">'+icons[key]+'</span><span class="current-copy"><span>'+esc(label)+'</span><strong>'+esc(value)+'</strong></span></div>'
+    currentList.innerHTML = rows.map(([key,label,value,isPrivate]) =>
+      '<div class="info-row"><span class="small-icon">'+icons[key]+'</span><span class="info-copy"><span>'+esc(label)+'</span><strong>'+esc(value)+'</strong></span>'+
+      (isPrivate?'<span class="private-lock"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>':'')+
+      '</div>'
     ).join("");
 
     form.elements.store.value = state.record.store || "";
     form.elements.location.value = state.record.location || "";
     form.elements.managedLink.value = state.route.destination || "";
   };
+
+  document.getElementById("back-button").addEventListener("click",()=>{
+    if(!submitStage.classList.contains("hidden")){
+      submitStage.classList.add("hidden");
+      reviewStage.classList.remove("hidden");
+      setStep("review");
+      return;
+    }
+    if(!reviewStage.classList.contains("hidden")){
+      reviewStage.classList.add("hidden");
+      editStage.classList.remove("hidden");
+      editAction.classList.remove("hidden");
+      setStep("edit");
+      return;
+    }
+    history.back();
+  });
+
+  document.getElementById("help-button").addEventListener("click",()=>{
+    alert("Select only the information you want to change. Your request does not change anything until the QwerNFC admin approves it.");
+  });
+
+  if(!/^QR-\d+$/.test(id)){
+    businessName.textContent = "Invalid update link";
+    profileLocation.textContent = "QwerNFC profile unavailable";
+    profileId.textContent = "ERROR";
+    currentLink.textContent = "This update link is not valid.";
+    editStage.classList.add("hidden");
+    return;
+  }
 
   Promise.all([
     fetchJson("../recover/" + encodeURIComponent(id) + "/recovery.json"),
@@ -972,7 +1106,7 @@ svg{display:block}
     renderCurrent();
   }).catch((error)=>{
     businessName.textContent = "Could not load profile";
-    profileId.textContent = id;
+    profileLocation.textContent = id;
     currentLink.textContent = error?.message || "Update information unavailable.";
     editStage.classList.add("hidden");
   });
@@ -997,11 +1131,15 @@ svg{display:block}
     });
   });
 
+  form.elements.reason.addEventListener("input",()=>{
+    reasonCount.textContent = String(form.elements.reason.value || "").length;
+  });
+
   form.addEventListener("submit",(event)=>{
     event.preventDefault();
     clearStatus();
-    const changes = {};
 
+    const changes = {};
     for(const card of document.querySelectorAll("[data-edit-card].active")){
       const field = card.dataset.editCard;
       const value = String(form.elements[field].value || "").trim();
@@ -1025,41 +1163,40 @@ svg{display:block}
 
     const reason = String(form.elements.reason.value || "").trim();
     if(!Object.keys(changes).length) return showStatus("Select at least one item to edit.");
-    if(reason.length < 3) return showStatus("Tell the admin why you are requesting these changes.");
-    if(reason.length > 500) return showStatus("Reason is too long.");
+    if(reason.length<3) return showStatus("Tell the admin why you are requesting these changes.");
+    if(reason.length>500) return showStatus("Reason is too long.");
 
     state.changes = changes;
     state.reason = reason;
 
-    const labels = {store:"Store name",location:"Location",managedLink:"Managed link",phone:"Phone",email:"Email"};
+    const labels = {store:"Store name",location:"Location",managedLink:"Managed link",phone:"Phone number",email:"Email address"};
     reviewList.innerHTML = Object.entries(changes).map(([field,value])=>{
       const oldValue = (field==="phone" || field==="email")
         ? "Private in QwerNFC Manager"
         : (currentValue(field) || "Not provided");
-      return '<article class="review-item"><strong>'+esc(labels[field] || field)+'</strong><div class="diff"><div class="diff-row"><span>OLD</span><p>'+esc(oldValue)+'</p></div><div class="diff-row new"><span>NEW</span><p>'+esc(value)+'</p></div></div></article>';
+      return '<article class="review-item"><strong>'+esc(labels[field] || field)+'</strong><div class="diff-grid"><div class="diff-box"><span>Current</span><p>'+esc(oldValue)+'</p></div><div class="diff-arrow">→</div><div class="diff-box new"><span>New</span><p>'+esc(value)+'</p></div></div></article>';
     }).join("");
 
     reviewReason.textContent = reason;
-    const count = Object.keys(changes).length;
-    reviewCount.textContent = count + (count===1 ? " change" : " changes");
-
     editStage.classList.add("hidden");
     reviewStage.classList.remove("hidden");
-    requestStage.classList.add("hidden");
-    setProgress("review");
+    submitStage.classList.add("hidden");
+    editAction.classList.add("hidden");
+    setStep("review");
     window.scrollTo({top:0,behavior:"smooth"});
   });
 
   document.getElementById("back-edit").addEventListener("click",()=>{
     reviewStage.classList.add("hidden");
     editStage.classList.remove("hidden");
-    requestStage.classList.add("hidden");
-    setProgress("edit");
+    editAction.classList.remove("hidden");
+    setStep("edit");
     window.scrollTo({top:0,behavior:"smooth"});
   });
 
   document.getElementById("create-request").addEventListener("click",()=>{
     if(!state.changes) return;
+
     const payload = {
       type:"customer-info-update",
       version:1,
@@ -1071,17 +1208,18 @@ svg{display:block}
 
     state.request = PREFIX + encode(JSON.stringify(payload));
     qrBox.innerHTML = "";
+    requestCode.textContent = state.request;
 
-    if(typeof QRCode === "function"){
-      new QRCode(qrBox,{text:state.request,width:280,height:280,correctLevel:QRCode.CorrectLevel.M});
+    if(typeof QRCode==="function"){
+      new QRCode(qrBox,{text:state.request,width:270,height:270,correctLevel:QRCode.CorrectLevel.M});
     }else{
       qrBox.innerHTML = '<div style="color:#111;text-align:center;padding:28px">QR generator unavailable. Use Copy secure request code.</div>';
     }
 
     reviewStage.classList.add("hidden");
     editStage.classList.add("hidden");
-    requestStage.classList.remove("hidden");
-    setProgress("request");
+    submitStage.classList.remove("hidden");
+    setStep("submit");
     window.scrollTo({top:0,behavior:"smooth"});
   });
 
@@ -1096,7 +1234,12 @@ svg{display:block}
     }
   });
 
+  document.getElementById("done-button").addEventListener("click",()=>{
+    history.back();
+  });
+
   updateSelectedSummary();
+  setStep("edit");
 })();
 </script>
 </body>
