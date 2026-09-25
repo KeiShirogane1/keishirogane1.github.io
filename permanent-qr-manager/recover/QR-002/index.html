@@ -8,178 +8,76 @@
 <meta http-equiv="cache-control" content="no-store,no-cache,must-revalidate,max-age=0" />
 <meta http-equiv="pragma" content="no-cache" />
 <meta http-equiv="expires" content="0" />
-<title>Recover QR-002 · QwerNFC</title>
+<title>QwerNFC Restore · QR-002</title>
 <style>
-:root{color-scheme:dark;font-family:Inter,system-ui,-apple-system,sans-serif;background:#020906;color:#edf8f0}
-*{box-sizing:border-box}body{margin:0;min-height:100dvh;background:radial-gradient(circle at 50% -10%,#0a3b1d55,transparent 34%),#020906}
-main{width:min(100%,560px);min-height:100dvh;margin:auto;padding:18px 14px 34px}
-.brand{display:flex;align-items:center;gap:10px;padding:6px 0 18px}.logo{width:42px;height:42px;border:1px solid #1d6a38;border-radius:13px;background:#0a301b;display:grid;place-items:center;font-weight:900;color:#69e38a}.brand strong{display:block}.brand small{color:#73907c}
-.hero,.card{border:1px solid #174b2a;border-radius:20px;background:#06130b}.hero{padding:20px;text-align:center}.shield{width:58px;height:58px;margin:auto;border-radius:18px;background:#0a5528;color:#76e595;display:grid;place-items:center;font-size:26px}.hero h1{margin:12px 0 5px}.hero p,.card p{color:#7f9987;line-height:1.5}.identity{margin-top:12px;padding:13px;border:1px solid #19562f;border-radius:15px;background:#07170d;text-align:left}.identity strong,.identity span{display:block}.identity strong{font-size:.92rem}.identity span{margin-top:4px;color:#799080;font-size:.75rem}
-.choice{margin-top:14px;padding:14px}.choice h2{margin:0 0 10px;font-size:1rem}.modes{display:grid;grid-template-columns:1fr 1fr;gap:9px}.mode{min-height:72px;border:1px solid #1c6034;border-radius:15px;background:#082014;color:#e9f7ec;font-weight:850}.mode.active{border-color:#37c568;background:#0a5528}
-.panel{display:none;margin-top:12px;padding:14px}.panel.show{display:block}.panel h2{margin:0 0 6px;font-size:1rem}.qrimg{width:min(100%,300px);aspect-ratio:1;margin:14px auto;padding:10px;border-radius:20px;background:#fff;display:block}
-.actions{display:grid;gap:9px}.actions button,.actions a{min-height:48px;padding:0 12px;border:1px solid #1c6034;border-radius:13px;background:#0a5528;color:#fff;display:flex;align-items:center;justify-content:center;text-decoration:none;font:inherit;font-weight:850}.actions .secondary{background:#07180e;color:#8de6a5}.status{margin-top:10px;padding:10px;border:1px solid #1a4d2b;border-radius:12px;background:#06130b;color:#8da294;font-size:.78rem;line-height:1.45}.status.ok{border-color:#238c4a;color:#7be39a}.status.bad{border-color:#78322e;color:#ef9690}
-.note{margin-top:14px;padding:12px;border:1px solid #164428;border-radius:14px;background:#051009;color:#789080;font-size:.72rem;line-height:1.5}.hidden{display:none!important}
-video{width:100%;max-height:290px;margin-top:10px;border-radius:14px;background:#000}
-footer{padding:18px 4px 0;text-align:center;color:#587263;font-size:.66rem}
-@media(max-width:360px){main{padding-inline:10px}.modes{grid-template-columns:1fr}.hero{padding:16px}}
+:root{color-scheme:dark;font-family:Inter,system-ui,-apple-system,sans-serif;background:#020906;color:#effaf2}
+*{box-sizing:border-box}body{margin:0;min-height:100dvh;background:radial-gradient(circle at 50% -8%,#0b51265e,transparent 34%),#020906}
+button,a{font:inherit}main{width:min(100%,560px);min-height:100dvh;margin:auto;padding:16px 14px 30px}
+.brand{display:flex;align-items:center;gap:10px;padding:5px 1px 15px}.brandmark{width:42px;height:42px;border:1px solid #1d6a38;border-radius:13px;background:#082916;display:grid;place-items:center;color:#71e596;font-weight:950}.brand strong,.brand small{display:block}.brand small{margin-top:2px;color:#789280;font-size:.75rem}
+.card{border:1px solid #174b2a;border-radius:19px;background:linear-gradient(180deg,#07170d,#051009)}
+.hero{padding:19px}.tag{display:inline-flex;padding:5px 8px;border:1px solid #1c6837;border-radius:999px;background:#092616;color:#66df8a;font-size:.66rem;font-weight:900;letter-spacing:.05em}.hero h1{margin:12px 0 5px;font-size:1.45rem}.hero p{margin:0;color:#809789;line-height:1.5}
+.identity{margin-top:15px;padding:13px;border:1px solid #1c6034;border-radius:14px;background:#061a0f}.identity b,.identity span{display:block}.identity b{font-size:1rem}.identity span{margin-top:4px;color:#7d9485;font-size:.76rem}
+.backup{margin-top:12px;padding:13px;border:1px solid #245d36;border-radius:14px;background:#071c10}.backup label{display:block;color:#65dc89;font-size:.67rem;font-weight:900;text-transform:uppercase;letter-spacing:.05em}.backup strong{display:block;margin-top:6px;color:#edf8f0;font-size:.86rem;overflow-wrap:anywhere}.backup small{display:block;margin-top:5px;color:#728b7a;line-height:1.4}
+.actions{margin-top:12px;padding:14px}.actions h2,.steps h2{margin:0 0 9px;font-size:1rem}.primary,.secondary,.restore-choice{width:100%;min-height:50px;border:1px solid #1f7c42;border-radius:13px;background:#0b642f;color:#fff;display:flex;align-items:center;justify-content:center;text-decoration:none;font-weight:900}.secondary{margin-top:8px;background:#071c10;color:#89e6a4}.download{border-color:#315f3d;background:#0a2114}.choices{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px}.restore-choice{min-height:72px;background:#082315;flex-direction:column;gap:3px;text-align:center}.restore-choice b{font-size:.88rem}.restore-choice span{color:#7f9a88;font-size:.68rem;font-weight:700;line-height:1.35}.restore-choice.qr{border-color:#218948}.restore-choice.nfc{border-color:#6b3fb2}
+.steps{margin-top:12px;padding:14px}.steps ol{margin:0;padding-left:20px;color:#89a091;line-height:1.55;font-size:.8rem}.steps li+li{margin-top:7px}.notice{margin-top:12px;padding:12px;border:1px solid #5d4b20;border-radius:13px;background:#211a08;color:#d5bd78;font-size:.75rem;line-height:1.45}
+.status{margin-top:10px;color:#789180;font-size:.73rem;line-height:1.45}.hidden{display:none!important}footer{padding:18px 4px 0;text-align:center;color:#587263;font-size:.66rem}
+@media(max-width:360px){main{padding-inline:10px}.choices{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <main>
-  <header class="brand"><span class="logo">Q</span><div><strong>QwerNFC</strong><small>Customer Recovery</small></div></header>
-  <section class="hero">
-    <div class="shield">↻</div>
-    <h1>Recover your QR or NFC</h1>
-    <p>Restore the permanent QwerNFC identity if a physical QR or NFC tag was replaced, rewritten or damaged.</p>
-    <div class="identity"><strong id="business">QR-002</strong><span id="location">Loading recovery record…</span></div>
-  </section>
-  <section class="card choice">
-    <h2>Choose what to recover</h2>
-    <div class="modes"><button class="mode" id="choose-qr">QR</button><button class="mode" id="choose-nfc">NFC</button></div>
-  </section>
-  <section class="card panel" id="qr-panel">
-    <h2>Recover permanent QR</h2>
-    <p>Verify the existing QR with your camera. If it was replaced or damaged, use the replacement below. It encodes the same permanent QwerNFC identity.</p>
-    <img class="qrimg" id="permanent-qr-image" alt="Permanent QwerNFC QR replacement" />
-    <div class="actions">
-      <button id="verify-qr">Verify existing permanent QR</button>
-      <a class="secondary" id="download-qr" download="QR-002-permanent-qr.svg">Download replacement QR</a>
-      <a class="secondary" id="open-permanent-qr" rel="noreferrer noopener">Test permanent QR link</a>
+  <header class="brand"><span class="brandmark">R</span><div><strong>QwerNFC Restore</strong><small>Owner recovery</small></div></header>
+
+  <section class="card hero">
+    <span class="tag">PRIVATE RESTORE</span>
+    <h1 id="business">QR-002</h1>
+    <p id="location">Loading recovery record…</p>
+    <div class="identity"><b id="identity">QR-002</b><span>Permanent QR identity — never changes</span></div>
+    <div class="backup">
+      <label>Private backup link</label>
+      <strong>Protected — open QwerNFC Restore to reveal</strong>
+      <small>The actual backup destination is kept in the private repository and is not embedded in this public webpage.</small>
     </div>
-    <video id="camera" class="hidden" playsinline></video>
-    <div class="status" id="qr-status">Choose Verify to scan the existing permanent QR.</div>
   </section>
-  <section class="card panel" id="nfc-panel">
-    <h2>Recover NFC tag</h2>
-    <p>On a supported Android browser, hold the NFC tag to your phone to rewrite the correct permanent QwerNFC managed identity.</p>
-    <div class="actions"><button id="write-nfc">Rewrite NFC</button></div>
-    <div class="status" id="nfc-status">Your private Google Review destination is never sent to this page.</div>
+
+  <section class="card actions">
+    <h2>Restore this store</h2>
+    <a class="primary" href="qwernfc://restore/QR-002">Open QwerNFC Restore</a>
+    <a class="secondary download" href="../../downloads/QwerNFC-Restore.apk" download>Download QwerNFC Restore APK</a>
+    <div class="choices">
+      <a class="restore-choice qr" href="qwernfc://restore/QR-002?kind=qr"><b>Restore QR</b><span>Scan permanent QR → restore private route</span></a>
+      <a class="restore-choice nfc" href="qwernfc://restore/QR-002?kind=nfc"><b>Restore NFC</b><span>Restore route → rewrite NFC tag</span></a>
+    </div>
+    <div class="status">After QwerNFC Restore opens, unlock with the owner's PIN or biometrics. Only then can the app read the private backup link.</div>
   </section>
-  <aside class="note">If the permanent destination itself was changed, the business owner can restore the private backup from the protected QwerNFC app. This public page never receives the private destination URL.</aside>
-  <footer>QwerNFC · QR-002</footer>
+
+  <section class="card steps">
+    <h2>How recovery works</h2>
+    <ol>
+      <li>Install or open QwerNFC Restore.</li>
+      <li>Authenticate as the owner.</li>
+      <li>The app loads this store and its private backup from private GitHub storage.</li>
+      <li>Restore QR verifies the physical permanent QR with the camera; the QR pattern stays exactly the same.</li>
+      <li>Restore NFC restores the destination and then asks you to hold the NFC tag to the phone.</li>
+    </ol>
+  </section>
+
+  <aside class="notice">Do not share your owner PIN or GitHub authorization. This public page intentionally does not expose the private backup destination.</aside>
+  <footer>QwerNFC Restore · QR-002</footer>
 </main>
 <script>
-(() => {
-  const expectedId = "QR-002";
-  const rawSrc = "https://raw.githubusercontent.com/KeiShirogane1/keishirogane1.github.io/bbmain/permanent-qr-manager/recover/QR-002/recovery.json";
-  const apiSrc = "https://api.github.com/repos/KeiShirogane1/keishirogane1.github.io/contents/permanent-qr-manager/recover/QR-002/recovery.json?ref=bbmain";
-  let state = null;
-  let stream = null;
-
-  const fresh = (src) => src + (src.includes("?") ? "&" : "?") + "v=" + Date.now();
-  const decodeApi = async (response) => {
-    if (!response.ok) throw new Error("Recovery API fetch failed");
-    const payload = await response.json();
-    const binary = atob(String(payload.content || "").replace(/\s/g, ""));
-    return JSON.parse(new TextDecoder().decode(Uint8Array.from(binary, c => c.charCodeAt(0))));
-  };
-  const fetchJson = async (src) => {
-    const response = await fetch(fresh(src), { cache:"no-store", mode:"cors" });
-    if (!response.ok) throw new Error("Recovery fetch failed");
-    return response.json();
-  };
-  const load = async () => {
-    if (apiSrc) {
-      try { return await decodeApi(await fetch(fresh(apiSrc), { cache:"no-store", mode:"cors" })); } catch {}
-    }
-    const results = await Promise.allSettled([fetchJson(rawSrc), fetchJson("./recovery.json")]);
-    const values = results.filter(r => r.status === "fulfilled").map(r => r.value);
-    return values.sort((a,b) => String(b.updatedAt||"").localeCompare(String(a.updatedAt||"")))[0] || null;
-  };
-  const setStatus = (id, message, type="") => {
-    const node = document.getElementById(id);
-    node.textContent = message;
-    node.className = "status" + (type ? " " + type : "");
-  };
-  const stopCamera = () => {
-    if (stream) stream.getTracks().forEach(track => track.stop());
-    stream = null;
-    document.getElementById("camera").classList.add("hidden");
-  };
-  const choose = (kind) => {
-    document.getElementById("choose-qr").classList.toggle("active", kind === "qr");
-    document.getElementById("choose-nfc").classList.toggle("active", kind === "nfc");
-    document.getElementById("qr-panel").classList.toggle("show", kind === "qr");
-    document.getElementById("nfc-panel").classList.toggle("show", kind === "nfc");
-    if (kind !== "qr") stopCamera();
-  };
-
-  document.getElementById("choose-qr").onclick = () => choose("qr");
-  document.getElementById("choose-nfc").onclick = () => choose("nfc");
-
-  document.getElementById("verify-qr").onclick = async () => {
-    if (!state) return;
-    if (!("BarcodeDetector" in window) || !navigator.mediaDevices?.getUserMedia) {
-      setStatus("qr-status", "Camera QR verification is not supported in this browser. You can still use the replacement permanent QR below.", "bad");
-      return;
-    }
-    try {
-      const detector = new BarcodeDetector({ formats:["qr_code"] });
-      stream = await navigator.mediaDevices.getUserMedia({ video:{ facingMode:{ ideal:"environment" } }, audio:false });
-      const video = document.getElementById("camera");
-      video.srcObject = stream;
-      video.classList.remove("hidden");
-      await video.play();
-      setStatus("qr-status", "Camera ready. Point it at the permanent business QR.");
-
-      const deadline = Date.now() + 30000;
-      while (stream && Date.now() < deadline) {
-        const codes = await detector.detect(video).catch(() => []);
-        const value = codes[0]?.rawValue || "";
-        if (value) {
-          stopCamera();
-          if (value === state.qrValue) {
-            setStatus("qr-status", "Permanent QR verified. This is the correct QwerNFC identity.", "ok");
-          } else {
-            setStatus("qr-status", "This QR does not match the permanent identity. Replace it with the recovery copy shown above.", "bad");
-          }
-          return;
-        }
-        await new Promise(resolve => setTimeout(resolve, 300));
-      }
-      stopCamera();
-      setStatus("qr-status", "No QR was detected. Try again with better lighting.", "bad");
-    } catch (error) {
-      stopCamera();
-      setStatus("qr-status", error?.message || "Camera verification failed.", "bad");
-    }
-  };
-
-  document.getElementById("write-nfc").onclick = async () => {
-    if (!state) return;
-    if (!("NDEFReader" in window)) {
-      setStatus("nfc-status", "Web NFC writing is not supported in this browser. Use Chrome on a compatible Android phone or ask the owner to use the QwerNFC app.", "bad");
-      return;
-    }
-    try {
-      setStatus("nfc-status", "Hold the NFC tag against the back of your phone and keep it still.");
-      const writer = new NDEFReader();
-      await writer.write({ records:[{ recordType:"url", data:state.nfcValue }] });
-      setStatus("nfc-status", "NFC recovered successfully. The tag now contains the correct permanent QwerNFC identity.", "ok");
-    } catch (error) {
-      setStatus("nfc-status", error?.message || "NFC recovery failed.", "bad");
-    }
-  };
-
-  load().then((value) => {
-    if (!value || value.id !== expectedId || value.deleted || value.enabled !== true) {
-      throw new Error("This recovery record is unavailable.");
-    }
-    state = value;
-    document.getElementById("business").textContent = value.store ? value.id + " · " + value.store : value.id;
+(async () => {
+  try {
+    const response = await fetch("./recovery.json?v=" + Date.now(), { cache:"no-store" });
+    if (!response.ok) throw new Error("Recovery record unavailable.");
+    const value = await response.json();
+    if (!value || value.id !== "QR-002" || value.deleted || value.enabled !== true) throw new Error("This recovery record is unavailable.");
+    document.getElementById("business").textContent = value.store || value.id;
     document.getElementById("location").textContent = value.location || "Business location not provided";
-    const qrSrc = "./permanent-qr.svg?v=" + Date.now();
-    document.getElementById("permanent-qr-image").src = qrSrc;
-    document.getElementById("download-qr").href = qrSrc;
-    document.getElementById("open-permanent-qr").href = value.qrValue;
-    choose("qr");
-  }).catch((error) => {
-    document.getElementById("business").textContent = expectedId;
+    document.getElementById("identity").textContent = value.id;
+  } catch (error) {
     document.getElementById("location").textContent = error?.message || "Recovery unavailable.";
-    document.querySelector(".choice").classList.add("hidden");
-  });
-
-  addEventListener("pagehide", stopCamera);
+  }
 })();
 </script>
 </body>
