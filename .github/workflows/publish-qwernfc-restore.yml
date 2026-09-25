@@ -1,0 +1,49 @@
+name: Publish QwerNFC Restore APK
+
+on:
+  push:
+    branches:
+      - bbmain
+    paths:
+      - ".github/workflows/publish-qwernfc-restore.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: bbmain
+
+      - name: Download verified customer Restore artifact
+        env:
+          ARTIFACT_URL: 'https://sdmntprindiasocentral.oaiusercontent.com/files/00000000-7cf4-8211-b0d8-e8b3136cc13f/raw?se=2026-09-25T03%3A19%3A37Z&sp=r&sv=2026-02-06&sr=b&scid=45d0e080-391f-5207-a998-53265e5ce33e&skoid=6fa9748a-b7b2-4b56-a932-8c1417549c47&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-09-25T03%3A13%3A49Z&ske=2026-09-26T03%3A13%3A49Z&sks=b&skv=2026-02-06&sig=Vgo%2BrFk0UfkGmhw1Xc7P5XS8PnIhyKN56YleuXPk/k4%3D'
+        run: |
+          set -euo pipefail
+          curl -L --fail --retry 3 "$ARTIFACT_URL" -o /tmp/qwernfc-restore.zip
+          rm -rf /tmp/qwernfc-restore
+          mkdir -p /tmp/qwernfc-restore
+          unzip -q /tmp/qwernfc-restore.zip -d /tmp/qwernfc-restore
+          grep -F "Commit: 259ffb4742dc2f99c2f64e4d69f8e54ccb0f14a2" /tmp/qwernfc-restore/BUILD.txt
+          grep -F "Package: com.keishirogane.qwernfcrestore" /tmp/qwernfc-restore/BUILD.txt
+          echo "1a5b0467d949b9791a768ad149ab3a034018caa27179de72e04a720948b113d7  /tmp/qwernfc-restore/QwerNFC-Restore-debug.apk" | sha256sum -c -
+          mkdir -p permanent-qr-manager/downloads
+          cp /tmp/qwernfc-restore/QwerNFC-Restore-debug.apk permanent-qr-manager/downloads/QwerNFC-Restore.apk
+          cp /tmp/qwernfc-restore/BUILD.txt permanent-qr-manager/downloads/QwerNFC-Restore-BUILD.txt
+          printf '%s  %s\n' "1a5b0467d949b9791a768ad149ab3a034018caa27179de72e04a720948b113d7" "QwerNFC-Restore.apk" > permanent-qr-manager/downloads/QwerNFC-Restore.apk.sha256
+
+      - name: Publish Restore APK to Pages
+        run: |
+          set -euo pipefail
+          git config user.name "QwerNFC Restore Publisher"
+          git config user.email "actions@users.noreply.github.com"
+          git add permanent-qr-manager/downloads/QwerNFC-Restore.apk permanent-qr-manager/downloads/QwerNFC-Restore-BUILD.txt permanent-qr-manager/downloads/QwerNFC-Restore.apk.sha256
+          if git diff --cached --quiet; then
+            echo "Restore APK already published."
+            exit 0
+          fi
+          git commit -m "feat: publish customer QwerNFC Restore APK 259ffb47 [skip ci]"
+          git push origin HEAD:bbmain
