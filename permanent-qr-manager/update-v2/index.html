@@ -719,7 +719,7 @@ svg{display:block}
   display:grid;
   grid-template-columns:38px minmax(0,1fr);
   gap:10px;
-  align-items:start;
+  align-items:center;
 }
 .reason-head .edit-icon{
   width:38px;
@@ -953,40 +953,6 @@ svg{display:block}
   font-size:.71rem;
   line-height:1.5;
 }
-#qr-box{
-  display:grid;
-  place-items:center;
-  width:min(100%,292px);
-  margin:14px auto;
-  padding:11px;
-  border-radius:15px;
-  background:#fff;
-}
-#qr-box img,#qr-box canvas{
-  display:block;
-  max-width:100%;
-  height:auto;
-}
-.request-code{
-  display:grid;
-  grid-template-columns:minmax(0,1fr) 34px;
-  gap:7px;
-  align-items:center;
-  margin:10px 0 0;
-}
-.request-code code{
-  display:block;
-  min-width:0;
-  padding:10px;
-  border:1px solid #1a442b;
-  border-radius:10px;
-  background:#04110a;
-  color:#a9c0b0;
-  font-size:.59rem;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  white-space:nowrap;
-}
 .timeline{
   display:grid;
   gap:0;
@@ -1203,6 +1169,7 @@ svg{display:block}
     <section class="card review-card">
       <div id="review-list" class="review-list"></div>
       <div class="reason-review"><span>REASON FOR EDITING</span><p id="review-reason"></p></div>
+      <div id="review-submit-status" class="status hidden"></div>
       <div class="bottom-buttons">
         <button id="back-edit" class="secondary" type="button">← Back</button>
         <button id="create-request" class="full-primary" type="button">Submit request →</button>
@@ -1213,34 +1180,25 @@ svg{display:block}
   <section id="submit-stage" class="hidden">
     <div class="section-head">
       <span class="eyebrow">SUBMIT</span>
-      <h2>Update Request Created</h2>
-      <p>Your request is ready for the QwerNFC admin to review.</p>
+      <h2>Update Request Sent</h2>
+      <p>Your request was delivered directly to the QwerNFC admin.</p>
     </div>
 
     <section class="card submit-card">
       <div class="success-mark">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4L19 6"/></svg>
       </div>
-      <h2>Request ready</h2>
-      <p>Show this QR to the QwerNFC admin. The admin scans it, reviews OLD → NEW and your reason, then approves or rejects the request.</p>
-
-      <div id="qr-box"></div>
-
-      <div class="request-code">
-        <code id="request-code">Preparing secure request…</code>
-        <button id="copy-request" class="copy-btn" type="button" aria-label="Copy secure request code">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg>
-        </button>
-      </div>
+      <h2>Admin notified</h2>
+      <p>No QR scan is needed. QwerNFC Manager receives this request in the live notification center for approval or rejection.</p>
 
       <div class="timeline">
         <div class="timeline-row done">
           <div class="timeline-dot">✓</div>
-          <div class="timeline-copy"><strong>Request created</strong><span>Your requested changes and reason are encoded in this request QR.</span></div>
+          <div class="timeline-copy"><strong>Request sent</strong><span>Your requested changes and reason were securely submitted.</span></div>
         </div>
         <div class="timeline-row">
           <div class="timeline-dot">2</div>
-          <div class="timeline-copy"><strong>Waiting for admin review</strong><span>Show the request QR to the QwerNFC admin for approval or rejection.</span></div>
+          <div class="timeline-copy"><strong>Waiting for admin review</strong><span>The admin can open the live notification and choose Approve or Reject.</span></div>
         </div>
         <div class="timeline-row">
           <div class="timeline-dot">3</div>
@@ -1248,19 +1206,18 @@ svg{display:block}
         </div>
       </div>
 
-      <div id="request-status" class="status ok">Secure request created. No private GitHub credentials were exposed.</div>
+      <div id="request-status" class="status ok">Live request delivered to QwerNFC Manager.</div>
       <button id="done-button" class="full-primary" type="button" style="margin-top:12px">✓ Done</button>
     </section>
   </section>
 </main>
 
-<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js" referrerpolicy="no-referrer"></script>
 <script>
 (() => {
-  const PREFIX = "QWERNFC-UPDATE:1:";
+  const API_BASE = "https://qwernfc-request-api-production.up.railway.app";
   const params = new URLSearchParams(location.search);
   const id = String(params.get("id") || "").toUpperCase();
-  const state = { record:null, route:null, changes:null, reason:"", request:"", locationPin:null };
+  const state = { record:null, route:null, changes:null, reason:"", requestId:"", locationPin:null, submitting:false };
 
   const businessName = document.getElementById("business-name");
   const profileLocation = document.getElementById("profile-location");
@@ -1276,8 +1233,6 @@ svg{display:block}
   const submitStage = document.getElementById("submit-stage");
   const reviewList = document.getElementById("review-list");
   const reviewReason = document.getElementById("review-reason");
-  const qrBox = document.getElementById("qr-box");
-  const requestCode = document.getElementById("request-code");
   const editAction = document.getElementById("edit-action");
 
   const esc = (value) => String(value == null ? "" : value).replace(/[&<>"']/g,(char)=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[char]));
@@ -1286,12 +1241,6 @@ svg{display:block}
     const response = await fetch(fresh(src),{cache:"no-store",mode:"cors"});
     if(!response.ok) throw new Error("Could not load current information.");
     return response.json();
-  };
-  const encode = (value) => {
-    const bytes = new TextEncoder().encode(value);
-    let binary = "";
-    for(const byte of bytes) binary += String.fromCharCode(byte);
-    return btoa(binary).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/g,"");
   };
   const showStatus = (message,kind="error") => {
     formStatus.textContent = message;
@@ -1746,6 +1695,8 @@ svg{display:block}
   });
 
   document.getElementById("back-edit").addEventListener("click",()=>{
+    document.getElementById("review-submit-status").className = "status hidden";
+    document.getElementById("review-submit-status").textContent = "";
     reviewStage.classList.add("hidden");
     editStage.classList.remove("hidden");
     editAction.classList.remove("hidden");
@@ -1753,8 +1704,17 @@ svg{display:block}
     window.scrollTo({top:0,behavior:"smooth"});
   });
 
-  document.getElementById("create-request").addEventListener("click",()=>{
-    if(!state.changes) return;
+  document.getElementById("create-request").addEventListener("click",async(event)=>{
+    if(!state.changes || state.submitting) return;
+
+    const button = event.currentTarget;
+    const originalText = button.textContent;
+    const reviewStatus = document.getElementById("review-submit-status");
+    state.submitting = true;
+    button.disabled = true;
+    button.textContent = "Sending request…";
+    reviewStatus.className = "status hidden";
+    reviewStatus.textContent = "";
 
     const payload = {
       type:"customer-info-update",
@@ -1766,34 +1726,39 @@ svg{display:block}
       ...(state.locationPin ? {locationPin:state.locationPin} : {})
     };
 
-    state.request = PREFIX + encode(JSON.stringify(payload));
-    qrBox.innerHTML = "";
-    requestCode.textContent = state.request;
-
-    if(typeof QRCode==="function"){
-      new QRCode(qrBox,{text:state.request,width:270,height:270,correctLevel:QRCode.CorrectLevel.M});
-    }else{
-      qrBox.innerHTML = '<div style="color:#111;text-align:center;padding:28px">QR generator unavailable. Use Copy secure request code.</div>';
-    }
-
-    reviewStage.classList.add("hidden");
-    editStage.classList.add("hidden");
-    submitStage.classList.remove("hidden");
-    setStep("submit");
-    window.scrollTo({top:0,behavior:"smooth"});
-  });
-
-  document.getElementById("copy-request").addEventListener("click",async()=>{
-    if(!state.request) return;
-    const status = document.getElementById("request-status");
     try{
-      await navigator.clipboard.writeText(state.request);
-      status.textContent = "Secure request code copied.";
-    }catch{
-      status.textContent = "Could not copy automatically. Keep this page open and show the QR to the admin.";
+      const response = await fetch(API_BASE + "/v1/requests",{
+        method:"POST",
+        headers:{"content-type":"application/json"},
+        body:JSON.stringify(payload),
+        cache:"no-store",
+        mode:"cors"
+      });
+      let result={};
+      try{result=await response.json();}catch{}
+      if(!response.ok) throw new Error(result?.error || "Could not send the update request.");
+
+      state.requestId=String(result.requestId || "");
+      reviewStage.classList.add("hidden");
+      editStage.classList.add("hidden");
+      submitStage.classList.remove("hidden");
+      setStep("submit");
+      const requestStatus=document.getElementById("request-status");
+      if(requestStatus){
+        requestStatus.textContent=state.requestId
+          ? "Live request sent · " + state.requestId.slice(0,8).toUpperCase()
+          : "Live request delivered to QwerNFC Manager.";
+      }
+      window.scrollTo({top:0,behavior:"smooth"});
+    }catch(error){
+      reviewStatus.textContent=error?.message || "Could not send the update request.";
+      reviewStatus.className="status error";
+    }finally{
+      state.submitting=false;
+      button.disabled=false;
+      button.textContent=originalText;
     }
   });
-
   document.getElementById("done-button").addEventListener("click",()=>{
     history.back();
   });
