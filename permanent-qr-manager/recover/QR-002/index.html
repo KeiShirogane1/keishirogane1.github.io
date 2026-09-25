@@ -12,73 +12,28 @@
 <style>
 :root{color-scheme:dark;font-family:Inter,system-ui,-apple-system,sans-serif;background:#020906;color:#effaf2}
 *{box-sizing:border-box}body{margin:0;min-height:100dvh;background:radial-gradient(circle at 50% -8%,#0b51265e,transparent 34%),#020906}
-button,a{font:inherit}main{width:min(100%,560px);min-height:100dvh;margin:auto;padding:16px 14px 30px}
+a{font:inherit}main{width:min(100%,560px);min-height:100dvh;margin:auto;padding:16px 14px 30px}
 .brand{display:flex;align-items:center;gap:10px;padding:5px 1px 15px}.brandmark{width:42px;height:42px;border:1px solid #1d6a38;border-radius:13px;background:#082916;display:grid;place-items:center;color:#71e596;font-weight:950}.brand strong,.brand small{display:block}.brand small{margin-top:2px;color:#789280;font-size:.75rem}
 .card{border:1px solid #174b2a;border-radius:19px;background:linear-gradient(180deg,#07170d,#051009)}
 .hero{padding:19px}.tag{display:inline-flex;padding:5px 8px;border:1px solid #1c6837;border-radius:999px;background:#092616;color:#66df8a;font-size:.66rem;font-weight:900;letter-spacing:.05em}.hero h1{margin:12px 0 5px;font-size:1.45rem}.hero p{margin:0;color:#809789;line-height:1.5}
 .identity{margin-top:15px;padding:13px;border:1px solid #1c6034;border-radius:14px;background:#061a0f}.identity b,.identity span{display:block}.identity b{font-size:1rem}.identity span{margin-top:4px;color:#7d9485;font-size:.76rem}
-.backup{margin-top:12px;padding:13px;border:1px solid #245d36;border-radius:14px;background:#071c10}.backup label{display:block;color:#65dc89;font-size:.67rem;font-weight:900;text-transform:uppercase;letter-spacing:.05em}.backup strong{display:block;margin-top:6px;color:#edf8f0;font-size:.86rem;overflow-wrap:anywhere}.backup small{display:block;margin-top:5px;color:#728b7a;line-height:1.4}
-.actions{margin-top:12px;padding:14px}.actions h2,.steps h2{margin:0 0 9px;font-size:1rem}.primary,.secondary,.restore-choice{width:100%;min-height:50px;border:1px solid #1f7c42;border-radius:13px;background:#0b642f;color:#fff;display:flex;align-items:center;justify-content:center;text-decoration:none;font-weight:900}.secondary{margin-top:8px;background:#071c10;color:#89e6a4}.download{border-color:#315f3d;background:#0a2114}.choices{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px}.restore-choice{min-height:72px;background:#082315;flex-direction:column;gap:3px;text-align:center}.restore-choice b{font-size:.88rem}.restore-choice span{color:#7f9a88;font-size:.68rem;font-weight:700;line-height:1.35}.restore-choice.qr{border-color:#218948}.restore-choice.nfc{border-color:#6b3fb2}
-.steps{margin-top:12px;padding:14px}.steps ol{margin:0;padding-left:20px;color:#89a091;line-height:1.55;font-size:.8rem}.steps li+li{margin-top:7px}.notice{margin-top:12px;padding:12px;border:1px solid #5d4b20;border-radius:13px;background:#211a08;color:#d5bd78;font-size:.75rem;line-height:1.45}
-.status{margin-top:10px;color:#789180;font-size:.73rem;line-height:1.45}.hidden{display:none!important}footer{padding:18px 4px 0;text-align:center;color:#587263;font-size:.66rem}
-@media(max-width:360px){main{padding-inline:10px}.choices{grid-template-columns:1fr}}
+.actions,.inside,.steps{margin-top:12px;padding:14px}.actions h2,.inside h2,.steps h2{margin:0 0 9px;font-size:1rem}.download{width:100%;min-height:52px;padding:0 14px;border:1px solid #238b4a;border-radius:13px;background:#0b6731;color:#fff;display:flex;align-items:center;justify-content:center;text-decoration:none;font-weight:900}
+.actions p{margin:10px 0 0;color:#7e9686;font-size:.75rem;line-height:1.45}.inside-grid{display:grid;gap:8px}.inside-item{padding:11px;border:1px solid #1b5832;border-radius:12px;background:#071a0f}.inside-item strong,.inside-item span{display:block}.inside-item strong{font-size:.84rem}.inside-item span{margin-top:4px;color:#789080;font-size:.72rem;line-height:1.4}
+.steps ol{margin:0;padding-left:20px;color:#89a091;line-height:1.55;font-size:.8rem}.steps li+li{margin-top:7px}.notice{margin-top:12px;padding:12px;border:1px solid #5d4b20;border-radius:13px;background:#211a08;color:#d5bd78;font-size:.75rem;line-height:1.45}footer{padding:18px 4px 0;text-align:center;color:#587263;font-size:.66rem}
 </style>
 </head>
 <body>
 <main>
-  <header class="brand"><span class="brandmark">R</span><div><strong>QwerNFC Restore</strong><small>Owner recovery</small></div></header>
-
-  <section class="card hero">
-    <span class="tag">PRIVATE RESTORE</span>
-    <h1 id="business">QR-002</h1>
-    <p id="location">Loading recovery record…</p>
-    <div class="identity"><b id="identity">QR-002</b><span>Permanent QR identity — never changes</span></div>
-    <div class="backup">
-      <label>Private backup link</label>
-      <strong>Protected — open QwerNFC Restore to reveal</strong>
-      <small>The actual backup destination is kept in the private repository and is not embedded in this public webpage.</small>
-    </div>
-  </section>
-
-  <section class="card actions">
-    <h2>Restore this store</h2>
-    <a class="primary" href="qwernfc://restore/QR-002">Open QwerNFC Restore</a>
-    <a class="secondary download" href="../../downloads/QwerNFC-Restore.apk" download>Download QwerNFC Restore APK</a>
-    <div class="choices">
-      <a class="restore-choice qr" href="qwernfc://restore/QR-002?kind=qr"><b>Restore QR</b><span>Scan permanent QR → restore private route</span></a>
-      <a class="restore-choice nfc" href="qwernfc://restore/QR-002?kind=nfc"><b>Restore NFC</b><span>Restore route → rewrite NFC tag</span></a>
-    </div>
-    <div class="status">After QwerNFC Restore opens, unlock with the owner's PIN or biometrics. Only then can the app read the private backup link.</div>
-  </section>
-
-  <section class="card steps">
-    <h2>How recovery works</h2>
-    <ol>
-      <li>Install or open QwerNFC Restore.</li>
-      <li>Authenticate as the owner.</li>
-      <li>The app loads this store and its private backup from private GitHub storage.</li>
-      <li>Restore QR verifies the physical permanent QR with the camera; the QR pattern stays exactly the same.</li>
-      <li>Restore NFC restores the destination and then asks you to hold the NFC tag to the phone.</li>
-    </ol>
-  </section>
-
-  <aside class="notice">Do not share your owner PIN or GitHub authorization. This public page intentionally does not expose the private backup destination.</aside>
-  <footer>QwerNFC Restore · QR-002</footer>
+<header class="brand"><span class="brandmark">R</span><div><strong>QwerNFC Restore</strong><small>Customer recovery</small></div></header>
+<section class="card hero"><span class="tag">STORE RESTORE</span><h1 id="business">QR-002</h1><p id="location">Loading store recovery information…</p><div class="identity"><b id="identity">QR-002</b><span>This store has its own separate RESTORE QR.</span></div></section>
+<section class="card actions"><h2>Download the Restore app</h2><a class="download" href="../../downloads/QwerNFC-Restore.apk" download>Download QwerNFC Restore APK</a><p>After installation, open <strong>QwerNFC Restore</strong> and scan this same RESTORE QR again inside the app.</p></section>
+<section class="card inside"><h2>What is inside QwerNFC Restore</h2><div class="inside-grid"><div class="inside-item"><strong>Scan RESTORE QR</strong><span>Loads the correct store and permanent recovery identity.</span></div><div class="inside-item"><strong>Restore QR</strong><span>Creates the exact same permanent QR replacement. It never changes the permanent qrValue or encodes the final destination directly.</span></div><div class="inside-item"><strong>Restore NFC</strong><span>Rewrites the store's permanent managed NFC identity to a compatible NFC tag.</span></div></div></section>
+<section class="card steps"><h2>Instructions</h2><ol><li>Download and install QwerNFC Restore.</li><li>Open the app and tap <strong>Scan RESTORE QR</strong>.</li><li>Scan this same store-specific RESTORE QR.</li><li>Confirm the store name and QR ID shown in the app.</li><li>Choose <strong>Restore QR</strong> or <strong>Restore NFC</strong>.</li></ol></section>
+<aside class="notice">The private GitHub database and credentials are never placed in the customer APK or this public page.</aside>
+<footer>QwerNFC Restore · QR-002</footer>
 </main>
 <script>
-(async () => {
-  try {
-    const response = await fetch("./recovery.json?v=" + Date.now(), { cache:"no-store" });
-    if (!response.ok) throw new Error("Recovery record unavailable.");
-    const value = await response.json();
-    if (!value || value.id !== "QR-002" || value.deleted || value.enabled !== true) throw new Error("This recovery record is unavailable.");
-    document.getElementById("business").textContent = value.store || value.id;
-    document.getElementById("location").textContent = value.location || "Business location not provided";
-    document.getElementById("identity").textContent = value.id;
-  } catch (error) {
-    document.getElementById("location").textContent = error?.message || "Recovery unavailable.";
-  }
-})();
+(async()=>{try{const r=await fetch("./recovery.json?v="+Date.now(),{cache:"no-store"});if(!r.ok)throw new Error("Recovery record unavailable.");const v=await r.json();if(!v||v.id!=="QR-002"||v.deleted||v.enabled!==true)throw new Error("This recovery record is unavailable.");document.getElementById("business").textContent=v.store||v.id;document.getElementById("location").textContent=v.location||"Business location not provided";document.getElementById("identity").textContent=v.id;}catch(e){document.getElementById("location").textContent=e?.message||"Recovery unavailable.";}})();
 </script>
 </body>
 </html>
