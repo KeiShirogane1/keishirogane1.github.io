@@ -435,6 +435,158 @@ svg{display:block}
 .edit-body input::placeholder,
 .reason-card textarea::placeholder{color:#53675b}
 
+.location-edit-body{
+  padding:0 11px 12px;
+}
+.location-edit-body > label{
+  margin-left:50px;
+}
+.location-map-box{
+  position:relative;
+  width:100%;
+  height:252px;
+  margin-top:7px;
+  border:1px solid #2aa75a;
+  border-radius:14px;
+  overflow:hidden;
+  background:#07150d;
+  touch-action:none;
+  user-select:none;
+}
+.location-tile-layer{
+  position:absolute;
+  inset:0;
+  overflow:hidden;
+}
+.location-tile-layer img{
+  position:absolute;
+  width:256px;
+  height:256px;
+  max-width:none;
+  user-select:none;
+  pointer-events:none;
+  filter:brightness(.52) saturate(.72) hue-rotate(78deg);
+}
+.location-map-shade{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:
+    radial-gradient(circle at 50% 50%,rgba(26,236,102,.04),rgba(0,0,0,.14) 55%,rgba(0,0,0,.30)),
+    linear-gradient(180deg,rgba(0,31,14,.08),rgba(0,12,7,.12));
+}
+.location-center-pin{
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:52px;
+  height:64px;
+  transform:translate(-50%,-76%);
+  color:#35ef7a;
+  filter:drop-shadow(0 8px 10px rgba(0,0,0,.55)) drop-shadow(0 0 12px rgba(36,225,104,.7));
+  pointer-events:none;
+  z-index:4;
+}
+.location-center-pin svg{
+  width:100%;
+  height:100%;
+  fill:#35ef7a;
+  stroke:#062a14;
+  stroke-width:1.3;
+}
+.location-center-pin::after{
+  content:"";
+  position:absolute;
+  left:50%;
+  bottom:-9px;
+  width:12px;
+  height:6px;
+  transform:translateX(-50%);
+  border-radius:50%;
+  background:#2eea73;
+  box-shadow:0 0 20px 8px rgba(46,234,115,.42);
+}
+.location-map-controls{
+  position:absolute;
+  right:10px;
+  top:10px;
+  z-index:6;
+  display:grid;
+  gap:7px;
+}
+.location-map-controls button{
+  width:38px;
+  height:38px;
+  border:1px solid #315e43;
+  border-radius:11px;
+  background:rgba(5,17,10,.90);
+  color:#e7f8ec;
+  display:grid;
+  place-items:center;
+  font-size:1.25rem;
+  font-weight:700;
+  backdrop-filter:blur(8px);
+}
+.location-map-controls button svg{width:18px;height:18px}
+.location-map-attribution{
+  position:absolute;
+  left:7px;
+  bottom:6px;
+  z-index:5;
+  padding:3px 5px;
+  border-radius:5px;
+  background:rgba(0,0,0,.55);
+  color:#8fa297;
+  font-size:.48rem;
+}
+.location-map-hint{
+  position:absolute;
+  left:50%;
+  top:9px;
+  z-index:5;
+  transform:translateX(-50%);
+  padding:4px 7px;
+  border:1px solid rgba(64,148,91,.45);
+  border-radius:999px;
+  background:rgba(2,12,7,.76);
+  color:#a7bcaf;
+  font-size:.52rem;
+  white-space:nowrap;
+}
+.location-value{
+  display:grid;
+  grid-template-columns:34px minmax(0,1fr);
+  gap:9px;
+  align-items:center;
+  margin-top:8px;
+  padding:8px 10px;
+  border:1px solid #2a8d50;
+  border-radius:11px;
+  background:#05150c;
+}
+.location-value-icon{
+  width:32px;
+  height:32px;
+  border-radius:10px;
+  background:#0b351d;
+  color:#5deb8b;
+  display:grid;
+  place-items:center;
+}
+.location-value-icon svg{width:17px;height:17px}
+.location-value strong{
+  display:block;
+  color:#eef9f1;
+  font-size:.69rem;
+  line-height:1.35;
+}
+.location-map-status{
+  margin-top:6px;
+  color:#668072;
+  font-size:.56rem;
+  line-height:1.35;
+}
+
 .reason-card{
   margin-top:9px;
   padding:12px;
@@ -848,7 +1000,34 @@ svg{display:block}
             <span class="edit-copy"><strong>Location</strong><span>Change the store location</span></span>
             <span class="check-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m5 12 4 4L19 6"/></svg></span>
           </button>
-          <div class="edit-body"><label>New location<input name="location" maxlength="180" disabled /></label></div>
+          <div class="edit-body location-edit-body">
+            <label>New location</label>
+            <input name="location" type="hidden" disabled />
+            <input name="latitude" type="hidden" disabled />
+            <input name="longitude" type="hidden" disabled />
+            <input name="googleMapsUrl" type="hidden" disabled />
+            <div class="location-map-box" data-customer-location-map>
+              <div class="location-tile-layer" data-customer-location-tiles></div>
+              <div class="location-map-shade"></div>
+              <div class="location-center-pin" aria-hidden="true">
+                <svg viewBox="0 0 24 30" fill="currentColor"><path d="M12 1.5a9 9 0 0 0-9 9c0 7.15 9 17.5 9 17.5s9-10.35 9-17.5a9 9 0 0 0-9-9Zm0 12.8a3.8 3.8 0 1 1 0-7.6 3.8 3.8 0 0 1 0 7.6Z"/></svg>
+              </div>
+              <div class="location-map-hint">Drag map to move pin</div>
+              <div class="location-map-controls">
+                <button type="button" data-use-my-location aria-label="Use my current location">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/><circle cx="12" cy="12" r="8"/></svg>
+                </button>
+                <button type="button" data-location-zoom-in aria-label="Zoom in">+</button>
+                <button type="button" data-location-zoom-out aria-label="Zoom out">−</button>
+              </div>
+              <span class="location-map-attribution">© OpenStreetMap</span>
+            </div>
+            <div class="location-value">
+              <span class="location-value-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg></span>
+              <strong data-location-value>Pinned location</strong>
+            </div>
+            <div class="location-map-status" data-location-status>Drag the map to position the pin exactly, or tap the target button to use your current location.</div>
+          </div>
         </article>
 
         <article class="edit-card" data-edit-card="managedLink">
@@ -970,7 +1149,7 @@ svg{display:block}
   const PREFIX = "QWERNFC-UPDATE:1:";
   const params = new URLSearchParams(location.search);
   const id = String(params.get("id") || "").toUpperCase();
-  const state = { record:null, route:null, changes:null, reason:"", request:"" };
+  const state = { record:null, route:null, changes:null, reason:"", request:"", locationPin:null };
 
   const businessName = document.getElementById("business-name");
   const profileLocation = document.getElementById("profile-location");
@@ -1014,6 +1193,105 @@ svg{display:block}
   const currentValue = (field) => field==="managedLink"
     ? String(state.route?.destination || "")
     : String(state.record?.[field] || "");
+
+  const parsePinnedLocation = (value) => {
+    const match = String(value || "").match(/(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)/);
+    if(!match) return null;
+    const latitude = Number(match[1]);
+    const longitude = Number(match[2]);
+    if(!Number.isFinite(latitude) || !Number.isFinite(longitude)) return null;
+    if(latitude < -85.05112878 || latitude > 85.05112878 || longitude < -180 || longitude > 180) return null;
+    return {latitude,longitude};
+  };
+
+  const worldPixelFromLatLng = (latitude,longitude,zoom) => {
+    const lat = Math.max(-85.05112878,Math.min(85.05112878,Number(latitude)));
+    const lng = Math.max(-180,Math.min(180,Number(longitude)));
+    const scale = 256 * (2 ** zoom);
+    const sinLat = Math.sin(lat * Math.PI / 180);
+    return {
+      x:((lng+180)/360)*scale,
+      y:(0.5-Math.log((1+sinLat)/(1-sinLat))/(4*Math.PI))*scale
+    };
+  };
+
+  const latLngFromWorldPixel = (x,y,zoom) => {
+    const scale = 256 * (2 ** zoom);
+    const lng = x / scale * 360 - 180;
+    const n = Math.PI - (2 * Math.PI * y / scale);
+    const lat = 180 / Math.PI * Math.atan(Math.sinh(n));
+    return {
+      latitude:Math.max(-85.05112878,Math.min(85.05112878,lat)),
+      longitude:((lng+540)%360)-180
+    };
+  };
+
+  const googleMapsUrlForPin = (latitude,longitude) =>
+    "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(Number(latitude).toFixed(7)+","+Number(longitude).toFixed(7));
+
+  const locationMap = () => document.querySelector("[data-customer-location-map]");
+
+  const syncLocationPinFields = (latitude,longitude) => {
+    const lat = Number(latitude);
+    const lng = Number(longitude);
+    if(!Number.isFinite(lat) || !Number.isFinite(lng)) return;
+
+    const value = "Pinned location (" + lat.toFixed(5) + ", " + lng.toFixed(5) + ")";
+    form.elements.location.value = value;
+    form.elements.latitude.value = String(lat);
+    form.elements.longitude.value = String(lng);
+    form.elements.googleMapsUrl.value = googleMapsUrlForPin(lat,lng);
+    state.locationPin = {
+      latitude:lat,
+      longitude:lng,
+      googleMapsUrl:form.elements.googleMapsUrl.value
+    };
+
+    const output = document.querySelector("[data-location-value]");
+    if(output) output.textContent = value;
+  };
+
+  const paintCustomerLocationMap = (latitude,longitude,zoom=18) => {
+    const map = locationMap();
+    if(!map) return;
+
+    const width = Math.max(300,map.clientWidth || 360);
+    const height = Math.max(240,map.clientHeight || 252);
+    const center = worldPixelFromLatLng(latitude,longitude,zoom);
+    const left = center.x - width / 2;
+    const top = center.y - height / 2;
+    const minTileX = Math.floor(left / 256) - 1;
+    const maxTileX = Math.floor((left + width) / 256) + 1;
+    const minTileY = Math.floor(top / 256) - 1;
+    const maxTileY = Math.floor((top + height) / 256) + 1;
+    const tileCount = 2 ** zoom;
+    const tiles = [];
+
+    for(let y=minTileY;y<=maxTileY;y+=1){
+      if(y<0 || y>=tileCount) continue;
+      for(let x=minTileX;x<=maxTileX;x+=1){
+        const wrappedX = ((x % tileCount) + tileCount) % tileCount;
+        tiles.push('<img draggable="false" alt="" src="https://tile.openstreetmap.org/'+zoom+'/'+wrappedX+'/'+y+'.png" style="left:'+Math.round(x*256-left)+'px;top:'+Math.round(y*256-top)+'px" />');
+      }
+    }
+
+    const layer = map.querySelector("[data-customer-location-tiles]");
+    if(layer){
+      layer.innerHTML = tiles.join("");
+      layer.style.transform = "translate3d(0,0,0)";
+    }
+    map.dataset.latitude = String(latitude);
+    map.dataset.longitude = String(longitude);
+    map.dataset.zoom = String(zoom);
+    syncLocationPinFields(latitude,longitude);
+  };
+
+  const initializeCustomerLocationMap = () => {
+    const existing = state.locationPin || parsePinnedLocation(state.record?.location);
+    const latitude = existing?.latitude ?? 14.599512;
+    const longitude = existing?.longitude ?? 120.984222;
+    requestAnimationFrame(()=>paintCustomerLocationMap(latitude,longitude,18));
+  };
 
   const icons = {
     store:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10h18"/><path d="M5 10V7l2-3h10l2 3v3"/><path d="M5 10v10h14V10"/><path d="M9 20v-6h6v6"/></svg>',
@@ -1061,7 +1339,17 @@ svg{display:block}
     ).join("");
 
     form.elements.store.value = state.record.store || "";
-    form.elements.location.value = state.record.location || "";
+    const currentPin = parsePinnedLocation(state.record.location);
+    if(currentPin){
+      state.locationPin = {
+        latitude:currentPin.latitude,
+        longitude:currentPin.longitude,
+        googleMapsUrl:googleMapsUrlForPin(currentPin.latitude,currentPin.longitude)
+      };
+      syncLocationPinFields(currentPin.latitude,currentPin.longitude);
+    }else{
+      form.elements.location.value = state.record.location || "";
+    }
     form.elements.managedLink.value = state.route.destination || "";
   };
 
@@ -1126,9 +1414,91 @@ svg{display:block}
       const active = !card.classList.contains("active");
       card.classList.toggle("active",active);
       input.disabled = !active;
+
+      if(field==="location"){
+        for(const name of ["latitude","longitude","googleMapsUrl"]){
+          form.elements[name].disabled = !active;
+        }
+        if(active) initializeCustomerLocationMap();
+      }
+
       updateSelectedSummary();
-      if(active) setTimeout(()=>input.focus(),0);
+      if(active && field!=="location") setTimeout(()=>input.focus(),0);
     });
+  });
+
+  let locationDragging = false;
+  let locationStartX = 0;
+  let locationStartY = 0;
+  let locationStartWorld = null;
+
+  document.querySelector("[data-customer-location-map]")?.addEventListener("pointerdown",(event)=>{
+    const map = locationMap();
+    if(!map || event.target.closest("button")) return;
+    locationDragging = true;
+    locationStartX = event.clientX;
+    locationStartY = event.clientY;
+    locationStartWorld = worldPixelFromLatLng(Number(map.dataset.latitude),Number(map.dataset.longitude),Number(map.dataset.zoom || 18));
+    map.setPointerCapture?.(event.pointerId);
+  });
+
+  document.querySelector("[data-customer-location-map]")?.addEventListener("pointermove",(event)=>{
+    if(!locationDragging) return;
+    const map = locationMap();
+    const layer = map?.querySelector("[data-customer-location-tiles]");
+    if(layer) layer.style.transform = "translate3d("+(event.clientX-locationStartX)+"px,"+(event.clientY-locationStartY)+"px,0)";
+  });
+
+  const finishLocationDrag = (event) => {
+    if(!locationDragging || !locationStartWorld) return;
+    locationDragging = false;
+    const map = locationMap();
+    if(!map) return;
+    const dx = event.clientX-locationStartX;
+    const dy = event.clientY-locationStartY;
+    const zoom = Number(map.dataset.zoom || 18);
+    const next = latLngFromWorldPixel(locationStartWorld.x-dx,locationStartWorld.y-dy,zoom);
+    paintCustomerLocationMap(next.latitude,next.longitude,zoom);
+  };
+
+  document.querySelector("[data-customer-location-map]")?.addEventListener("pointerup",finishLocationDrag);
+  document.querySelector("[data-customer-location-map]")?.addEventListener("pointercancel",finishLocationDrag);
+
+  document.querySelector("[data-location-zoom-in]")?.addEventListener("click",()=>{
+    const map = locationMap();
+    if(!map) return;
+    const zoom = Math.min(20,Number(map.dataset.zoom || 18)+1);
+    paintCustomerLocationMap(Number(map.dataset.latitude),Number(map.dataset.longitude),zoom);
+  });
+
+  document.querySelector("[data-location-zoom-out]")?.addEventListener("click",()=>{
+    const map = locationMap();
+    if(!map) return;
+    const zoom = Math.max(13,Number(map.dataset.zoom || 18)-1);
+    paintCustomerLocationMap(Number(map.dataset.latitude),Number(map.dataset.longitude),zoom);
+  });
+
+  document.querySelector("[data-use-my-location]")?.addEventListener("click",()=>{
+    const status = document.querySelector("[data-location-status]");
+    if(!navigator.geolocation){
+      if(status) status.textContent = "Location is not available in this browser.";
+      return;
+    }
+    if(status) status.textContent = "Getting your precise location…";
+    navigator.geolocation.getCurrentPosition(
+      (position)=>{
+        const map = locationMap();
+        const zoom = Number(map?.dataset.zoom || 18);
+        paintCustomerLocationMap(position.coords.latitude,position.coords.longitude,zoom);
+        if(status) status.textContent = Number.isFinite(position.coords.accuracy)
+          ? "Location found (about ±"+Math.round(position.coords.accuracy)+" m accuracy). Drag the map if you need to adjust the pin."
+          : "Location found. Drag the map if you need to adjust the pin.";
+      },
+      (error)=>{
+        if(status) status.textContent = error?.message || "Your current location could not be read.";
+      },
+      {enableHighAccuracy:true,timeout:15000,maximumAge:0}
+    );
   });
 
   form.elements.reason.addEventListener("input",()=>{
@@ -1168,6 +1538,13 @@ svg{display:block}
 
     state.changes = changes;
     state.reason = reason;
+    state.locationPin = Object.prototype.hasOwnProperty.call(changes,"location")
+      ? {
+          latitude:Number(form.elements.latitude.value),
+          longitude:Number(form.elements.longitude.value),
+          googleMapsUrl:String(form.elements.googleMapsUrl.value || "")
+        }
+      : null;
 
     const labels = {store:"Store name",location:"Location",managedLink:"Managed link",phone:"Phone number",email:"Email address"};
     reviewList.innerHTML = Object.entries(changes).map(([field,value])=>{
@@ -1203,7 +1580,8 @@ svg{display:block}
       id,
       requestedAt:new Date().toISOString(),
       reason:state.reason,
-      changes:state.changes
+      changes:state.changes,
+      ...(state.locationPin ? {locationPin:state.locationPin} : {})
     };
 
     state.request = PREFIX + encode(JSON.stringify(payload));
