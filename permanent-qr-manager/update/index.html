@@ -438,25 +438,120 @@ svg{display:block}
 .location-edit-body{
   padding:0 11px 12px;
 }
-.location-edit-body > label{
-  margin-left:50px;
+.location-coordinate-summary{
+  min-height:42px;
+  padding:0 10px;
+  border:1px solid #173c25;
+  border-radius:11px;
+  background:#07150c;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  color:#cfe4d5;
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  font-size:.66rem;
 }
-.location-map-box{
-  position:relative;
+.location-coordinate-summary svg{
+  width:17px;
+  height:17px;
+  flex:0 0 17px;
+  color:#58c879;
+}
+.location-open-button{
   width:100%;
-  height:252px;
-  margin-top:7px;
-  border:1px solid #2aa75a;
-  border-radius:14px;
-  overflow:hidden;
-  background:#07150d;
-  touch-action:none;
-  user-select:none;
+  min-height:44px;
+  margin-top:8px;
+  border:1px solid #1b4b2d;
+  border-radius:12px;
+  background:#0a1e11;
+  color:#dff1e4;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  font-size:.67rem;
+  font-weight:800;
 }
+.location-open-button svg{width:17px;height:17px;color:#65bf7f}
+.location-edit-body small{
+  display:block;
+  margin-top:8px;
+  color:#738b7a;
+  font-size:.61rem;
+  line-height:1.45;
+}
+.location-picker-layer{
+  position:fixed;
+  inset:0;
+  z-index:260;
+}
+.location-picker-scrim{
+  position:absolute;
+  inset:0;
+  width:100%;
+  border:0;
+  background:rgba(0,0,0,.72);
+}
+.location-picker-card{
+  position:absolute;
+  left:12px;
+  right:12px;
+  bottom:max(12px,env(safe-area-inset-bottom));
+  width:min(calc(100% - 24px),520px);
+  max-height:calc(100dvh - 24px);
+  overflow:auto;
+  margin-inline:auto;
+  padding:14px;
+  border:1px solid #1e4a2c;
+  border-radius:22px;
+  background:#051009;
+  box-shadow:0 24px 60px rgba(0,0,0,.52);
+}
+.location-picker-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:11px;
+}
+.location-picker-head h2{
+  margin:3px 0 0;
+  font-size:1.05rem;
+}
+.detail-kicker{
+  display:block;
+  margin-bottom:4px;
+  color:#7aa68a;
+  font-size:.64rem;
+  font-weight:850;
+  letter-spacing:.12em;
+}
+.location-picker-card .icon-button{
+  width:44px;
+  height:44px;
+  border:1px solid #173c25;
+  border-radius:14px;
+  background:#07150c;
+  color:#dff1e4;
+  display:grid;
+  place-items:center;
+}
+.location-picker-card .icon-button svg{width:19px;height:19px}
+.location-map{
+  position:relative;
+  height:280px;
+  overflow:hidden;
+  border:1px solid #1f4b2e;
+  border-radius:17px;
+  background:#0a1710;
+  touch-action:none;
+  cursor:grab;
+}
+.location-map:active{cursor:grabbing}
 .location-tile-layer{
   position:absolute;
   inset:0;
-  overflow:hidden;
+  will-change:transform;
 }
 .location-tile-layer img{
   position:absolute;
@@ -465,126 +560,155 @@ svg{display:block}
   max-width:none;
   user-select:none;
   pointer-events:none;
-  filter:brightness(.52) saturate(.72) hue-rotate(78deg);
+  filter:brightness(.68) saturate(.58) hue-rotate(76deg);
 }
 .location-map-shade{
   position:absolute;
   inset:0;
   pointer-events:none;
   background:
-    radial-gradient(circle at 50% 50%,rgba(26,236,102,.04),rgba(0,0,0,.14) 55%,rgba(0,0,0,.30)),
-    linear-gradient(180deg,rgba(0,31,14,.08),rgba(0,12,7,.12));
+    linear-gradient(180deg,rgba(1,7,3,.13),rgba(1,7,3,.10)),
+    radial-gradient(circle at 50% 50%,transparent 0 32%,rgba(0,0,0,.16) 78%);
 }
 .location-center-pin{
   position:absolute;
   left:50%;
   top:50%;
-  width:52px;
-  height:64px;
-  transform:translate(-50%,-76%);
-  color:#35ef7a;
-  filter:drop-shadow(0 8px 10px rgba(0,0,0,.55)) drop-shadow(0 0 12px rgba(36,225,104,.7));
+  width:42px;
+  height:42px;
+  margin:-38px 0 0 -21px;
+  border:1px solid #43b66a;
+  border-radius:50% 50% 50% 8px;
+  background:#084515;
+  color:white;
+  display:grid;
+  place-items:center;
+  transform:rotate(-45deg);
+  box-shadow:0 9px 20px rgba(0,0,0,.42);
   pointer-events:none;
-  z-index:4;
+  z-index:3;
 }
 .location-center-pin svg{
-  width:100%;
-  height:100%;
-  fill:#35ef7a;
-  stroke:#062a14;
-  stroke-width:1.3;
+  width:19px;
+  height:19px;
+  transform:rotate(45deg);
 }
-.location-center-pin::after{
-  content:"";
-  position:absolute;
-  left:50%;
-  bottom:-9px;
-  width:12px;
-  height:6px;
-  transform:translateX(-50%);
-  border-radius:50%;
-  background:#2eea73;
-  box-shadow:0 0 20px 8px rgba(46,234,115,.42);
-}
-.location-map-controls{
+.location-map-zoom{
   position:absolute;
   right:10px;
   top:10px;
-  z-index:6;
+  z-index:4;
   display:grid;
-  gap:7px;
+  gap:6px;
 }
-.location-map-controls button{
-  width:38px;
-  height:38px;
-  border:1px solid #315e43;
+.location-map-zoom button{
+  width:40px;
+  height:40px;
+  padding:0;
+  border:1px solid #28573a;
   border-radius:11px;
-  background:rgba(5,17,10,.90);
-  color:#e7f8ec;
+  background:rgba(2,9,6,.92);
+  color:#f0f8f2;
   display:grid;
   place-items:center;
   font-size:1.25rem;
-  font-weight:700;
-  backdrop-filter:blur(8px);
+  font-weight:800;
+  line-height:1;
+  box-shadow:0 5px 15px rgba(0,0,0,.28);
 }
-.location-map-controls button svg{width:18px;height:18px}
-.location-map-attribution{
-  position:absolute;
-  left:7px;
-  bottom:6px;
-  z-index:5;
-  padding:3px 5px;
-  border-radius:5px;
-  background:rgba(0,0,0,.55);
-  color:#8fa297;
-  font-size:.48rem;
-}
+.location-map-zoom button:active{background:#0b2b18}
 .location-map-hint{
   position:absolute;
   left:50%;
-  top:9px;
-  z-index:5;
+  bottom:9px;
+  z-index:4;
   transform:translateX(-50%);
-  padding:4px 7px;
-  border:1px solid rgba(64,148,91,.45);
+  max-width:calc(100% - 28px);
+  padding:6px 10px;
+  border:1px solid rgba(255,255,255,.08);
   border-radius:999px;
-  background:rgba(2,12,7,.76);
-  color:#a7bcaf;
-  font-size:.52rem;
+  background:rgba(2,9,6,.82);
+  color:#d8e7dc;
+  font-size:.61rem;
   white-space:nowrap;
+  pointer-events:none;
 }
-.location-value{
-  display:grid;
-  grid-template-columns:34px minmax(0,1fr);
-  gap:9px;
-  align-items:center;
-  margin-top:8px;
-  padding:8px 10px;
-  border:1px solid #2a8d50;
+.location-picker-coordinates{
+  margin-top:10px;
+  min-height:38px;
+  padding:0 10px;
+  border:1px solid #173c25;
   border-radius:11px;
-  background:#05150c;
+  background:#07150c;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  color:#cfe4d5;
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  font-size:.66rem;
 }
-.location-value-icon{
-  width:32px;
-  height:32px;
-  border-radius:10px;
-  background:#0b351d;
-  color:#5deb8b;
+.location-picker-coordinates svg{width:17px;height:17px;color:#58c879}
+.location-picker-actions{
   display:grid;
-  place-items:center;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin-top:9px;
 }
-.location-value-icon svg{width:17px;height:17px}
-.location-value strong{
+.location-picker-actions button{
+  min-height:44px;
+  border:1px solid #1b4b2d;
+  border-radius:12px;
+  background:#0a1e11;
+  color:#dff1e4;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  font-size:.67rem;
+  font-weight:800;
+}
+.location-picker-actions button svg{width:17px;height:17px;color:#65bf7f}
+.location-picker-status{
+  min-height:35px;
+  margin:9px 2px 2px;
+  color:#809487;
+  font-size:.63rem;
+  line-height:1.45;
+  text-align:center;
+}
+.location-picker-save-row{
+  display:grid;
+  grid-template-columns:.85fr 1.15fr;
+  gap:9px;
+  margin-top:8px;
+}
+.detail-cancel,.detail-save{
+  min-height:50px;
+  border-radius:14px;
+  font-weight:850;
+}
+.detail-cancel{
+  border:1px solid #173c25;
+  background:#07150c;
+  color:#b9c7d9;
+}
+.detail-save{
+  border:0;
+  background:linear-gradient(180deg,#0d6a2b,#084515);
+  color:#f2fbf5;
+  box-shadow:0 10px 24px rgba(8,69,21,.22);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+}
+.detail-save svg{width:18px;height:18px}
+.map-attribution{
   display:block;
-  color:#eef9f1;
-  font-size:.69rem;
-  line-height:1.35;
-}
-.location-map-status{
-  margin-top:6px;
-  color:#668072;
-  font-size:.56rem;
-  line-height:1.35;
+  margin-top:7px;
+  color:#51645a;
+  font-size:.52rem;
+  text-align:center;
 }
 
 .reason-card{
@@ -1001,32 +1125,19 @@ svg{display:block}
             <span class="check-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m5 12 4 4L19 6"/></svg></span>
           </button>
           <div class="edit-body location-edit-body">
-            <label>New location</label>
             <input name="location" type="hidden" disabled />
             <input name="latitude" type="hidden" disabled />
             <input name="longitude" type="hidden" disabled />
             <input name="googleMapsUrl" type="hidden" disabled />
-            <div class="location-map-box" data-customer-location-map>
-              <div class="location-tile-layer" data-customer-location-tiles></div>
-              <div class="location-map-shade"></div>
-              <div class="location-center-pin" aria-hidden="true">
-                <svg viewBox="0 0 24 30" fill="currentColor"><path d="M12 1.5a9 9 0 0 0-9 9c0 7.15 9 17.5 9 17.5s9-10.35 9-17.5a9 9 0 0 0-9-9Zm0 12.8a3.8 3.8 0 1 1 0-7.6 3.8 3.8 0 0 1 0 7.6Z"/></svg>
-              </div>
-              <div class="location-map-hint">Drag map to move pin</div>
-              <div class="location-map-controls">
-                <button type="button" data-use-my-location aria-label="Use my current location">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/><circle cx="12" cy="12" r="8"/></svg>
-                </button>
-                <button type="button" data-location-zoom-in aria-label="Zoom in">+</button>
-                <button type="button" data-location-zoom-out aria-label="Zoom out">−</button>
-              </div>
-              <span class="location-map-attribution">© OpenStreetMap</span>
+            <div class="location-coordinate-summary" data-location-summary>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>
+              <span data-location-value>Pinned location</span>
             </div>
-            <div class="location-value">
-              <span class="location-value-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg></span>
-              <strong data-location-value>Pinned location</strong>
-            </div>
-            <div class="location-map-status" data-location-status>Drag the map to position the pin exactly, or tap the target button to use your current location.</div>
+            <button class="location-open-button" type="button" data-open-location-picker>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>
+              <span>Edit map pin</span>
+            </button>
+            <small>Use the same map picker as QwerNFC Manager. Drag the map, zoom, or use your precise live location.</small>
           </div>
         </article>
 
@@ -1229,8 +1340,6 @@ svg{display:block}
   const googleMapsUrlForPin = (latitude,longitude) =>
     "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(Number(latitude).toFixed(7)+","+Number(longitude).toFixed(7));
 
-  const locationMap = () => document.querySelector("[data-customer-location-map]");
-
   const syncLocationPinFields = (latitude,longitude) => {
     const lat = Number(latitude);
     const lng = Number(longitude);
@@ -1251,12 +1360,10 @@ svg{display:block}
     if(output) output.textContent = value;
   };
 
-  const paintCustomerLocationMap = (latitude,longitude,zoom=18) => {
-    const map = locationMap();
+  const paintCustomerLocationMap = (map,latitude,longitude,zoom=19) => {
     if(!map) return;
-
-    const width = Math.max(300,map.clientWidth || 360);
-    const height = Math.max(240,map.clientHeight || 252);
+    const width = Math.max(280,map.clientWidth || 320);
+    const height = Math.max(220,map.clientHeight || 260);
     const center = worldPixelFromLatLng(latitude,longitude,zoom);
     const left = center.x - width / 2;
     const top = center.y - height / 2;
@@ -1275,7 +1382,7 @@ svg{display:block}
       }
     }
 
-    const layer = map.querySelector("[data-customer-location-tiles]");
+    const layer = map.querySelector("[data-location-tiles]");
     if(layer){
       layer.innerHTML = tiles.join("");
       layer.style.transform = "translate3d(0,0,0)";
@@ -1283,14 +1390,160 @@ svg{display:block}
     map.dataset.latitude = String(latitude);
     map.dataset.longitude = String(longitude);
     map.dataset.zoom = String(zoom);
-    syncLocationPinFields(latitude,longitude);
+
+    const coords = map.closest(".location-picker-card")?.querySelector("[data-picker-coordinates]");
+    if(coords) coords.textContent = Number(latitude).toFixed(6)+", "+Number(longitude).toFixed(6);
   };
 
-  const initializeCustomerLocationMap = () => {
+  const closeCustomerLocationPicker = () => {
+    document.querySelector(".location-picker-layer")?.remove();
+  };
+
+  const openCustomerLocationPicker = () => {
     const existing = state.locationPin || parsePinnedLocation(state.record?.location);
-    const latitude = existing?.latitude ?? 14.599512;
-    const longitude = existing?.longitude ?? 120.984222;
-    requestAnimationFrame(()=>paintCustomerLocationMap(latitude,longitude,18));
+    const initialLat = existing?.latitude ?? 14.599512;
+    const initialLng = existing?.longitude ?? 120.984222;
+
+    const layer = document.createElement("div");
+    layer.className = "location-picker-layer";
+    layer.innerHTML = `
+      <button class="location-picker-scrim" type="button" aria-label="Close location picker"></button>
+      <section class="location-picker-card" role="dialog" aria-modal="true" aria-label="Choose QR location">
+        <div class="location-picker-head">
+          <div><span class="detail-kicker">QR LOCATION</span><h2>Choose location</h2></div>
+          <button type="button" class="icon-button" data-close-location aria-label="Close">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
+          </button>
+        </div>
+        <div class="location-map" data-location-map>
+          <div class="location-tile-layer" data-location-tiles></div>
+          <div class="location-map-shade"></div>
+          <div class="location-center-pin" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>
+          </div>
+          <div class="location-map-zoom" aria-label="Map zoom controls">
+            <button type="button" data-map-zoom-in aria-label="Zoom in">+</button>
+            <button type="button" data-map-zoom-out aria-label="Zoom out">−</button>
+          </div>
+          <div class="location-map-hint">Drag map · use + / − to zoom</div>
+        </div>
+        <div class="location-picker-coordinates">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>
+          <span data-picker-coordinates>${initialLat.toFixed(6)}, ${initialLng.toFixed(6)}</span>
+        </div>
+        <div class="location-picker-actions">
+          <button type="button" data-use-live-location>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/><circle cx="12" cy="12" r="8"/></svg>
+            <span>Use precise live location</span>
+          </button>
+          <button type="button" data-open-picker-google>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 3h7v7"/><path d="M10 14 21 3"/><path d="M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5"/></svg>
+            <span>Open in Google Maps</span>
+          </button>
+        </div>
+        <p class="location-picker-status" data-location-status>Drag the map and zoom for exact placement, or use your phone's high-accuracy GPS location.</p>
+        <div class="location-picker-save-row">
+          <button type="button" class="detail-cancel" data-close-location>Cancel</button>
+          <button type="button" class="detail-save" data-save-location>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m5 12 4 4L19 6"/></svg>
+            <span>Use this location</span>
+          </button>
+        </div>
+        <small class="map-attribution">Map © OpenStreetMap contributors</small>
+      </section>
+    `;
+
+    document.body.append(layer);
+    const map = layer.querySelector("[data-location-map]");
+    requestAnimationFrame(()=>paintCustomerLocationMap(map,initialLat,initialLng,19));
+
+    const close = () => closeCustomerLocationPicker();
+    layer.querySelector(".location-picker-scrim")?.addEventListener("click",close);
+    layer.querySelectorAll("[data-close-location]").forEach((button)=>button.addEventListener("click",close));
+
+    let dragging=false;
+    let startX=0;
+    let startY=0;
+    let startWorld=null;
+
+    map.addEventListener("pointerdown",(event)=>{
+      if(event.target.closest("button")) return;
+      dragging=true;
+      startX=event.clientX;
+      startY=event.clientY;
+      startWorld=worldPixelFromLatLng(Number(map.dataset.latitude),Number(map.dataset.longitude),Number(map.dataset.zoom||19));
+      map.setPointerCapture?.(event.pointerId);
+    });
+
+    map.addEventListener("pointermove",(event)=>{
+      if(!dragging) return;
+      const dx=event.clientX-startX;
+      const dy=event.clientY-startY;
+      const tiles=map.querySelector("[data-location-tiles]");
+      if(tiles) tiles.style.transform="translate3d("+dx+"px,"+dy+"px,0)";
+    });
+
+    const finishDrag=(event)=>{
+      if(!dragging || !startWorld) return;
+      dragging=false;
+      const dx=event.clientX-startX;
+      const dy=event.clientY-startY;
+      const zoom=Number(map.dataset.zoom||19);
+      const next=latLngFromWorldPixel(startWorld.x-dx,startWorld.y-dy,zoom);
+      paintCustomerLocationMap(map,next.latitude,next.longitude,zoom);
+    };
+
+    map.addEventListener("pointerup",finishDrag);
+    map.addEventListener("pointercancel",finishDrag);
+
+    layer.querySelector("[data-use-live-location]")?.addEventListener("click",(event)=>{
+      const button=event.currentTarget;
+      const status=layer.querySelector("[data-location-status]");
+      if(!navigator.geolocation){
+        if(status) status.textContent="Location is not available in this browser.";
+        return;
+      }
+      button.disabled=true;
+      if(status) status.textContent="Getting a high-accuracy GPS location...";
+      navigator.geolocation.getCurrentPosition(
+        (position)=>{
+          paintCustomerLocationMap(map,position.coords.latitude,position.coords.longitude,Number(map.dataset.zoom||19));
+          if(status) status.textContent=Number.isFinite(position.coords.accuracy)
+            ? "Live location found (about ±"+Math.round(position.coords.accuracy)+" m accuracy)."
+            : "Live location found.";
+          button.disabled=false;
+        },
+        (error)=>{
+          if(status) status.textContent=error?.message||"Current location could not be read.";
+          button.disabled=false;
+        },
+        {enableHighAccuracy:true,timeout:15000,maximumAge:0}
+      );
+    });
+
+    layer.querySelector("[data-map-zoom-in]")?.addEventListener("click",()=>{
+      const zoom=Math.min(20,Number(map.dataset.zoom||19)+1);
+      paintCustomerLocationMap(map,Number(map.dataset.latitude),Number(map.dataset.longitude),zoom);
+    });
+    layer.querySelector("[data-map-zoom-out]")?.addEventListener("click",()=>{
+      const zoom=Math.max(13,Number(map.dataset.zoom||19)-1);
+      paintCustomerLocationMap(map,Number(map.dataset.latitude),Number(map.dataset.longitude),zoom);
+    });
+    map.addEventListener("wheel",(event)=>{
+      event.preventDefault();
+      const current=Number(map.dataset.zoom||19);
+      const zoom=Math.max(13,Math.min(20,current+(event.deltaY<0?1:-1)));
+      if(zoom!==current) paintCustomerLocationMap(map,Number(map.dataset.latitude),Number(map.dataset.longitude),zoom);
+    },{passive:false});
+
+    layer.querySelector("[data-open-picker-google]")?.addEventListener("click",()=>{
+      window.open(googleMapsUrlForPin(Number(map.dataset.latitude),Number(map.dataset.longitude)),"_blank","noopener,noreferrer");
+    });
+
+    layer.querySelector("[data-save-location]")?.addEventListener("click",()=>{
+      syncLocationPinFields(Number(map.dataset.latitude),Number(map.dataset.longitude));
+      close();
+    });
   };
 
   const icons = {
@@ -1419,7 +1672,7 @@ svg{display:block}
         for(const name of ["latitude","longitude","googleMapsUrl"]){
           form.elements[name].disabled = !active;
         }
-        if(active) initializeCustomerLocationMap();
+        if(active) openCustomerLocationPicker();
       }
 
       updateSelectedSummary();
@@ -1427,79 +1680,7 @@ svg{display:block}
     });
   });
 
-  let locationDragging = false;
-  let locationStartX = 0;
-  let locationStartY = 0;
-  let locationStartWorld = null;
-
-  document.querySelector("[data-customer-location-map]")?.addEventListener("pointerdown",(event)=>{
-    const map = locationMap();
-    if(!map || event.target.closest("button")) return;
-    locationDragging = true;
-    locationStartX = event.clientX;
-    locationStartY = event.clientY;
-    locationStartWorld = worldPixelFromLatLng(Number(map.dataset.latitude),Number(map.dataset.longitude),Number(map.dataset.zoom || 18));
-    map.setPointerCapture?.(event.pointerId);
-  });
-
-  document.querySelector("[data-customer-location-map]")?.addEventListener("pointermove",(event)=>{
-    if(!locationDragging) return;
-    const map = locationMap();
-    const layer = map?.querySelector("[data-customer-location-tiles]");
-    if(layer) layer.style.transform = "translate3d("+(event.clientX-locationStartX)+"px,"+(event.clientY-locationStartY)+"px,0)";
-  });
-
-  const finishLocationDrag = (event) => {
-    if(!locationDragging || !locationStartWorld) return;
-    locationDragging = false;
-    const map = locationMap();
-    if(!map) return;
-    const dx = event.clientX-locationStartX;
-    const dy = event.clientY-locationStartY;
-    const zoom = Number(map.dataset.zoom || 18);
-    const next = latLngFromWorldPixel(locationStartWorld.x-dx,locationStartWorld.y-dy,zoom);
-    paintCustomerLocationMap(next.latitude,next.longitude,zoom);
-  };
-
-  document.querySelector("[data-customer-location-map]")?.addEventListener("pointerup",finishLocationDrag);
-  document.querySelector("[data-customer-location-map]")?.addEventListener("pointercancel",finishLocationDrag);
-
-  document.querySelector("[data-location-zoom-in]")?.addEventListener("click",()=>{
-    const map = locationMap();
-    if(!map) return;
-    const zoom = Math.min(20,Number(map.dataset.zoom || 18)+1);
-    paintCustomerLocationMap(Number(map.dataset.latitude),Number(map.dataset.longitude),zoom);
-  });
-
-  document.querySelector("[data-location-zoom-out]")?.addEventListener("click",()=>{
-    const map = locationMap();
-    if(!map) return;
-    const zoom = Math.max(13,Number(map.dataset.zoom || 18)-1);
-    paintCustomerLocationMap(Number(map.dataset.latitude),Number(map.dataset.longitude),zoom);
-  });
-
-  document.querySelector("[data-use-my-location]")?.addEventListener("click",()=>{
-    const status = document.querySelector("[data-location-status]");
-    if(!navigator.geolocation){
-      if(status) status.textContent = "Location is not available in this browser.";
-      return;
-    }
-    if(status) status.textContent = "Getting your precise location…";
-    navigator.geolocation.getCurrentPosition(
-      (position)=>{
-        const map = locationMap();
-        const zoom = Number(map?.dataset.zoom || 18);
-        paintCustomerLocationMap(position.coords.latitude,position.coords.longitude,zoom);
-        if(status) status.textContent = Number.isFinite(position.coords.accuracy)
-          ? "Location found (about ±"+Math.round(position.coords.accuracy)+" m accuracy). Drag the map if you need to adjust the pin."
-          : "Location found. Drag the map if you need to adjust the pin.";
-      },
-      (error)=>{
-        if(status) status.textContent = error?.message || "Your current location could not be read.";
-      },
-      {enableHighAccuracy:true,timeout:15000,maximumAge:0}
-    );
-  });
+  document.querySelector("[data-open-location-picker]")?.addEventListener("click",()=>openCustomerLocationPicker());
 
   form.elements.reason.addEventListener("input",()=>{
     reasonCount.textContent = String(form.elements.reason.value || "").length;
@@ -1513,6 +1694,7 @@ svg{display:block}
     for(const card of document.querySelectorAll("[data-edit-card].active")){
       const field = card.dataset.editCard;
       const value = String(form.elements[field].value || "").trim();
+      if(field==="location" && !state.locationPin) return showStatus("Choose the new location on the map.");
       if(!value) return showStatus("Enter the new " + field + " value.");
 
       if(field==="managedLink"){
