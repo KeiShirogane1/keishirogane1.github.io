@@ -38,7 +38,12 @@ const originAllowed = (origin) => {
   if (ALLOWED_ORIGINS.has(origin)) return true;
   try {
     const url = new URL(origin);
-    return url.protocol === "https:" && url.hostname.endsWith(".app.github.dev");
+    const hostname = String(url.hostname || "").toLowerCase();
+    const localPreview =
+      url.protocol === "http:" &&
+      (hostname === "localhost" || hostname === "127.0.0.1" || hostname === "::1" || hostname === "[::1]");
+    const codespacesPreview = url.protocol === "https:" && hostname.endsWith(".app.github.dev");
+    return localPreview || codespacesPreview;
   } catch {
     return false;
   }
