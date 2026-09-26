@@ -249,7 +249,7 @@ async function sendApprovalEmail(payload) {
   return {
     configured: true,
     sent: true,
-    messageId: String(result?.id || "")
+    messageId: String(result?.messageId || "")
   };
 }
 
