@@ -2,10 +2,10 @@
   "id": "QR-002",
   "enabled": true,
   "deleted": false,
-  "store": "NEXORA",
+  "store": "NEXORA1",
   "location": "Pinned location (14.58584, 121.08459)",
   "qrValue": "https://keishirogane1.github.io/permanent-qr-manager/go/QR-002/",
   "nfcValue": "https://keishirogane1.github.io/permanent-qr-manager/go/QR-002/",
   "recoveryValue": "https://keishirogane1.github.io/permanent-qr-manager/recover/QR-002/",
-  "updatedAt": "2026-09-25T11:32:24.779Z"
+  "updatedAt": "2026-09-26T03:14:59.355Z"
 }
