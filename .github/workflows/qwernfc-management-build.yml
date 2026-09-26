@@ -15,13 +15,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - name: Checkout private QwerNFC android-app
-        uses: actions/checkout@v4
-        with:
-          repository: KeiShirogane1/permanent-qr-manager
-          ref: android-app
-          path: source
-          token: ${{ github.token }}
+      - name: Load exact private QwerNFC source
+        uses: KeiShirogane1/permanent-qr-manager@6472dca6cd4ed8eb5e2dfd2cefddb8297c38276c
 
       - uses: actions/setup-node@v4
         with:
@@ -49,11 +44,11 @@ jobs:
         with:
           gradle-version: "8.14.3"
 
-      - name: Verify exact private HEAD
-        working-directory: source
+      - name: Verify exact source marker
         shell: bash
         run: |
-          test "$(git rev-parse HEAD)" = "d973f4a96ee9c4e9e69f20d8725cd30d32678bc9"
+          test -f source/action.yml
+          grep -q "QwerNFC Private Source" source/action.yml
 
       - name: Install and verify source
         working-directory: source
@@ -96,7 +91,7 @@ jobs:
           sha256sum artifacts-owner/QwerNFC-management.apk > artifacts-owner/QwerNFC-management.apk.sha256
           cat > artifacts-owner/BUILD.txt <<EOF
           QwerNFC Management debug APK
-          Commit: d973f4a96ee9c4e9e69f20d8725cd30d32678bc9
+          Commit: 6472dca6cd4ed8eb5e2dfd2cefddb8297c38276c
           Branch: android-app
           Package: com.keishirogane.permanentqr
           Build: debug
@@ -105,7 +100,7 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: QwerNFC-management-d973f4a
+          name: QwerNFC-management-6472dca
           path: source/artifacts-owner/
           if-no-files-found: error
           retention-days: 30
