@@ -1,0 +1,111 @@
+name: QwerNFC Management APK
+
+on:
+  push:
+    branches: [bbmain]
+    paths:
+      - ".github/workflows/qwernfc-management-build.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-management-apk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout private QwerNFC android-app
+        uses: actions/checkout@v4
+        with:
+          repository: KeiShirogane1/permanent-qr-manager
+          ref: android-app
+          path: source
+          token: ${{ github.token }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: source/package-lock.json
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Prepare Android SDK 36
+        shell: bash
+        run: |
+          SDKMANAGER="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          if [ ! -x "$SDKMANAGER" ]; then
+            SDKMANAGER="$(find "$ANDROID_HOME/cmdline-tools" -type f -name sdkmanager | sort -V | tail -n 1)"
+          fi
+          test -x "$SDKMANAGER"
+          yes | "$SDKMANAGER" --licenses >/dev/null 2>&1 || true
+          "$SDKMANAGER" "platform-tools" "platforms;android-36" "build-tools;35.0.0"
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.14.3"
+
+      - name: Verify exact private HEAD
+        working-directory: source
+        shell: bash
+        run: |
+          test "$(git rev-parse HEAD)" = "d973f4a96ee9c4e9e69f20d8725cd30d32678bc9"
+
+      - name: Install and verify source
+        working-directory: source
+        run: |
+          npm ci
+          npm test
+          npm run build:mobile
+          npm run security:mobile
+
+      - name: Install Capacitor native dependencies
+        working-directory: source
+        run: |
+          npm install --no-save --package-lock=false \
+            @capacitor/core@8.5.2 \
+            @capacitor/android@8.5.2 \
+            @capacitor/cli@8.5.2 \
+            @capacitor/app@8 \
+            @capacitor/browser@8 \
+            @capacitor/haptics@8 \
+            @capacitor/network@8 \
+            @capacitor/share@8 \
+            @capacitor/status-bar@8 \
+            @capacitor/geolocation@8 \
+            @capacitor/barcode-scanner@3.1.2
+
+      - name: Sync Android
+        working-directory: source
+        run: npx cap sync android
+
+      - name: Build management debug APK
+        working-directory: source
+        run: gradle -p android :app:assembleDebug --stacktrace --no-daemon
+
+      - name: Prepare verified management artifact
+        working-directory: source
+        shell: bash
+        run: |
+          mkdir -p artifacts-owner
+          cp android/app/build/outputs/apk/debug/app-debug.apk artifacts-owner/QwerNFC-management.apk
+          sha256sum artifacts-owner/QwerNFC-management.apk > artifacts-owner/QwerNFC-management.apk.sha256
+          cat > artifacts-owner/BUILD.txt <<EOF
+          QwerNFC Management debug APK
+          Commit: d973f4a96ee9c4e9e69f20d8725cd30d32678bc9
+          Branch: android-app
+          Package: com.keishirogane.permanentqr
+          Build: debug
+          Mode: owner-management
+          EOF
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: QwerNFC-management-d973f4a
+          path: source/artifacts-owner/
+          if-no-files-found: error
+          retention-days: 30
