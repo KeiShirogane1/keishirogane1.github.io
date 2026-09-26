@@ -6,6 +6,9 @@ const { Pool } = pg;
 const PORT = Number(process.env.PORT || 3000);
 const DATABASE_URL = String(process.env.DATABASE_URL || "");
 const ADMIN_GITHUB_LOGIN = String(process.env.ADMIN_GITHUB_LOGIN || "keishirogane1").toLowerCase();
+const RESEND_API_KEY = String(process.env.RESEND_API_KEY || "");
+const MAIL_FROM = String(process.env.MAIL_FROM || "");
+const PUBLIC_BASE = "https://keishirogane1.github.io/permanent-qr-manager";
 const ALLOWED_ORIGINS = new Set([
   "https://keishirogane1.github.io"
 ]);
@@ -98,6 +101,9 @@ function normalizePayload(raw) {
     }
   }
   if (!Object.keys(changes).length) throw Object.assign(new Error("No changes were submitted."), { status: 400 });
+  if (!changes.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(changes.email)) {
+    throw Object.assign(new Error("A valid customer email is required."), { status: 400 });
+  }
 
   let locationPin = null;
   if (Object.prototype.hasOwnProperty.call(changes, "location") && raw.locationPin) {
@@ -164,6 +170,84 @@ async function verifyAdmin(req) {
   return login;
 }
 
+const escapeHtml = (value) => String(value || "").replace(/[&<>"']/g, (char) => ({
+  "&": "&amp;",
+  "<": "&lt;",
+  ">": "&gt;",
+  '"': "&quot;",
+  "'": "&#39;"
+})[char]);
+
+function restoreApkDownloadUrl(qrId) {
+  const id = String(qrId || "").toUpperCase();
+  return `${PUBLIC_BASE}/downloads/restore/${encodeURIComponent(id)}/QwerNFC-Restore-${encodeURIComponent(id)}.apk`;
+}
+
+async function sendApprovalEmail(payload) {
+  const to = String(payload?.changes?.email || "").trim();
+  if (!to) return { configured: Boolean(RESEND_API_KEY && MAIL_FROM), sent: false, reason: "missing_email" };
+  if (!RESEND_API_KEY || !MAIL_FROM) {
+    return { configured: false, sent: false, reason: "not_configured" };
+  }
+
+  const qrId = String(payload.id || "").toUpperCase();
+  const apkUrl = restoreApkDownloadUrl(qrId);
+  const changedFields = Object.keys(payload.changes || {})
+    .map((field) => ({
+      store: "Store name",
+      phone: "Phone number",
+      email: "Email address",
+      location: "Location",
+      managedLink: "Managed link"
+    })[field] || field)
+    .join(", ");
+
+  const html = `
+    <div style="font-family:Arial,sans-serif;max-width:560px;margin:auto;color:#102016">
+      <h2 style="margin-bottom:8px">QwerNFC update approved</h2>
+      <p>Your requested changes for <strong>${escapeHtml(qrId)}</strong> have been approved by the QwerNFC administrator.</p>
+      <p><strong>Approved fields:</strong> ${escapeHtml(changedFields || "Customer information")}</p>
+      <p>You can download the latest QwerNFC Restore APK for this QR below.</p>
+      <p style="margin:24px 0">
+        <a href="${escapeHtml(apkUrl)}" style="display:inline-block;padding:12px 18px;border-radius:10px;background:#0b7a39;color:white;text-decoration:none;font-weight:700">Download QwerNFC Restore APK</a>
+      </p>
+      <p style="font-size:12px;color:#607065">Permanent QR identity remains unchanged. This email does not expose private routing data.</p>
+    </div>
+  `;
+
+  const response = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      authorization: `Bearer ${RESEND_API_KEY}`,
+      "content-type": "application/json"
+    },
+    body: JSON.stringify({
+      from: MAIL_FROM,
+      to: [to],
+      subject: `QwerNFC ${qrId} update approved`,
+      html
+    })
+  });
+
+  let result = {};
+  try { result = await response.json(); } catch {}
+  if (!response.ok) {
+    return {
+      configured: true,
+      sent: false,
+      reason: "provider_error",
+      status: response.status,
+      providerMessage: String(result?.message || "Email provider rejected the message.").slice(0, 180)
+    };
+  }
+
+  return {
+    configured: true,
+    sent: true,
+    messageId: String(result?.id || "")
+  };
+}
+
 async function initDatabase() {
   await pool.query(`
     CREATE TABLE IF NOT EXISTS customer_update_requests (
@@ -173,8 +257,11 @@ async function initDatabase() {
       status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending','approved','rejected')),
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
       resolved_at TIMESTAMPTZ,
-      resolved_by TEXT
+      resolved_by TEXT,
+      approval_email_sent_at TIMESTAMPTZ
     );
+    ALTER TABLE customer_update_requests
+      ADD COLUMN IF NOT EXISTS approval_email_sent_at TIMESTAMPTZ;
     CREATE INDEX IF NOT EXISTS customer_update_requests_status_created_idx
       ON customer_update_requests(status, created_at DESC);
   `);
@@ -264,12 +351,25 @@ const server = http.createServer(async (req, res) => {
         `UPDATE customer_update_requests
             SET status=$2, resolved_at=NOW(), resolved_by=$3
           WHERE request_id=$1 AND status='pending'
-          RETURNING request_id, qr_id, status, resolved_at`,
+          RETURNING request_id, qr_id, payload, status, resolved_at`,
         [resolveMatch[1], status, login]
       );
 
       if (!result.rowCount) throw Object.assign(new Error("Pending request not found."), { status: 404 });
-      return json(res, 200, { ...result.rows[0] }, allowedOrigin);
+
+      let emailDelivery = null;
+      if (status === "approved") {
+        emailDelivery = await sendApprovalEmail(result.rows[0].payload);
+        if (emailDelivery.sent) {
+          await pool.query(
+            `UPDATE customer_update_requests SET approval_email_sent_at=NOW() WHERE request_id=$1`,
+            [resolveMatch[1]]
+          );
+        }
+      }
+
+      const { payload: _payload, ...responseRow } = result.rows[0];
+      return json(res, 200, { ...responseRow, emailDelivery }, allowedOrigin);
     }
 
     return json(res, 404, { error: "Not found." }, allowedOrigin);
