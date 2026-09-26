@@ -404,6 +404,12 @@ svg{display:block}
   background:linear-gradient(145deg,#39ec78,#18c958);
   color:#001e0b;
 }
+.required-email-card .edit-trigger{
+  cursor:default;
+}
+.required-email-card .edit-copy span{
+  color:#8fd7a5;
+}
 .edit-body{
   display:none;
   padding:0 11px 12px 61px;
@@ -724,6 +730,14 @@ svg{display:block}
 .reason-head .edit-icon{
   width:38px;
   height:38px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.reason-head .edit-icon svg{
+  width:18px;
+  height:18px;
+  margin:0;
 }
 .reason-head strong{
   display:block;
@@ -1125,13 +1139,13 @@ svg{display:block}
           <div class="edit-body"><label>New phone number<input name="phone" type="tel" maxlength="32" placeholder="Enter new phone number" disabled /></label></div>
         </article>
 
-        <article class="edit-card" data-edit-card="email">
-          <button class="edit-trigger" type="button" data-edit-toggle="email">
+        <article class="edit-card active required-email-card" data-edit-card="email">
+          <button class="edit-trigger" type="button" data-edit-toggle="email" aria-disabled="true">
             <span class="edit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-10 6L2 7"/></svg></span>
-            <span class="edit-copy"><strong>Email address</strong><span>Change contact email address</span></span>
+            <span class="edit-copy"><strong>Email address</strong><span>Required — approval result and APK download link will be sent here</span></span>
             <span class="check-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m5 12 4 4L19 6"/></svg></span>
           </button>
-          <div class="edit-body"><label>New email address<input name="email" type="email" maxlength="120" placeholder="Enter new email address" disabled /></label></div>
+          <div class="edit-body"><label>Customer email address<input name="email" type="email" maxlength="120" placeholder="Enter customer email address" autocomplete="email" required /></label></div>
         </article>
       </div>
 
@@ -1181,7 +1195,7 @@ svg{display:block}
     <div class="section-head">
       <span class="eyebrow">SUBMIT</span>
       <h2>Update Request Sent</h2>
-      <p>Your request was delivered directly to the QwerNFC admin.</p>
+      <p>Your request was delivered directly to the QwerNFC admin. After approval, the result and Restore APK download link will be sent to your email.</p>
     </div>
 
     <section class="card submit-card">
@@ -1206,7 +1220,7 @@ svg{display:block}
         </div>
       </div>
 
-      <div id="request-status" class="status ok">Live request delivered to QwerNFC Manager.</div>
+      <div id="request-status" class="status ok">Live request delivered to QwerNFC Manager. Approval email is required and included in this request.</div>
       <button id="done-button" class="full-primary" type="button" style="margin-top:12px">✓ Done</button>
     </section>
   </section>
@@ -1553,6 +1567,8 @@ svg{display:block}
       form.elements.location.value = state.record.location || "";
     }
     form.elements.managedLink.value = state.route.destination || "";
+    form.elements.email.value = "";
+    form.elements.email.disabled = false;
   };
 
   document.getElementById("back-button").addEventListener("click",()=>{
@@ -1613,6 +1629,13 @@ svg{display:block}
       const field = button.dataset.editToggle;
       const card = document.querySelector('[data-edit-card="'+field+'"]');
       const input = form.elements[field];
+      if(field==="email"){
+        card.classList.add("active");
+        input.disabled=false;
+        updateSelectedSummary();
+        setTimeout(()=>input.focus(),0);
+        return;
+      }
       const active = !card.classList.contains("active");
       card.classList.toggle("active",active);
       input.disabled = !active;
@@ -1661,6 +1684,11 @@ svg{display:block}
         changes[field] = value;
       }
     }
+
+    const approvalEmail = String(form.elements.email.value || "").trim();
+    if(!approvalEmail) return showStatus("Enter the customer email address for the approval result and APK link.");
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(approvalEmail)) return showStatus("Enter a valid customer email address.");
+    changes.email = approvalEmail;
 
     const reason = String(form.elements.reason.value || "").trim();
     if(!Object.keys(changes).length) return showStatus("Select at least one item to edit.");
