@@ -6,8 +6,9 @@ const { Pool } = pg;
 const PORT = Number(process.env.PORT || 3000);
 const DATABASE_URL = String(process.env.DATABASE_URL || "");
 const ADMIN_GITHUB_LOGIN = String(process.env.ADMIN_GITHUB_LOGIN || "keishirogane1").toLowerCase();
-const RESEND_API_KEY = String(process.env.RESEND_API_KEY || "");
-const MAIL_FROM = String(process.env.MAIL_FROM || "");
+const BREVO_API_KEY = String(process.env.BREVO_API_KEY || "");
+const BREVO_SENDER_EMAIL = String(process.env.BREVO_SENDER_EMAIL || "");
+const BREVO_SENDER_NAME = String(process.env.BREVO_SENDER_NAME || "QwerNFC");
 const PUBLIC_BASE = "https://keishirogane1.github.io/permanent-qr-manager";
 const ALLOWED_ORIGINS = new Set([
   "https://keishirogane1.github.io"
@@ -185,8 +186,8 @@ function restoreApkDownloadUrl(qrId) {
 
 async function sendApprovalEmail(payload) {
   const to = String(payload?.changes?.email || "").trim();
-  if (!to) return { configured: Boolean(RESEND_API_KEY && MAIL_FROM), sent: false, reason: "missing_email" };
-  if (!RESEND_API_KEY || !MAIL_FROM) {
+  if (!to) return { configured: Boolean(BREVO_API_KEY && BREVO_SENDER_EMAIL), sent: false, reason: "missing_email" };
+  if (!BREVO_API_KEY || !BREVO_SENDER_EMAIL) {
     return { configured: false, sent: false, reason: "not_configured" };
   }
 
@@ -215,17 +216,21 @@ async function sendApprovalEmail(payload) {
     </div>
   `;
 
-  const response = await fetch("https://api.resend.com/emails", {
+  const response = await fetch("https://api.brevo.com/v3/smtp/email", {
     method: "POST",
     headers: {
-      authorization: `Bearer ${RESEND_API_KEY}`,
+      accept: "application/json",
+      "api-key": BREVO_API_KEY,
       "content-type": "application/json"
     },
     body: JSON.stringify({
-      from: MAIL_FROM,
-      to: [to],
+      sender: {
+        name: BREVO_SENDER_NAME,
+        email: BREVO_SENDER_EMAIL
+      },
+      to: [{ email: to }],
       subject: `QwerNFC ${qrId} update approved`,
-      html
+      htmlContent: html
     })
   });
 
@@ -237,7 +242,7 @@ async function sendApprovalEmail(payload) {
       sent: false,
       reason: "provider_error",
       status: response.status,
-      providerMessage: String(result?.message || "Email provider rejected the message.").slice(0, 180)
+      providerMessage: String(result?.message || result?.code || "Brevo rejected the message.").slice(0, 180)
     };
   }
 
