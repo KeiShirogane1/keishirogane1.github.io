@@ -1477,6 +1477,26 @@ svg{display:block}
     return {latitude,longitude};
   };
 
+  const recordLocationPin = (record) => {
+    const latitudeRaw = record?.latitude;
+    const longitudeRaw = record?.longitude;
+    const hasLatitude = latitudeRaw !== null && latitudeRaw !== undefined && String(latitudeRaw).trim() !== "";
+    const hasLongitude = longitudeRaw !== null && longitudeRaw !== undefined && String(longitudeRaw).trim() !== "";
+    if(hasLatitude && hasLongitude){
+      const latitude = Number(latitudeRaw);
+      const longitude = Number(longitudeRaw);
+      if(
+        Number.isFinite(latitude) &&
+        Number.isFinite(longitude) &&
+        latitude >= -85.05112878 && latitude <= 85.05112878 &&
+        longitude >= -180 && longitude <= 180
+      ){
+        return {latitude,longitude};
+      }
+    }
+    return parsePinnedLocation(record?.location);
+  };
+
   const worldPixelFromLatLng = (latitude,longitude,zoom) => {
     const lat = Math.max(-85.05112878,Math.min(85.05112878,Number(latitude)));
     const lng = Math.max(-180,Math.min(180,Number(longitude)));
@@ -1562,7 +1582,7 @@ svg{display:block}
   };
 
   const openCustomerLocationPicker = () => {
-    const existing = state.locationPin || parsePinnedLocation(state.record?.location);
+    const existing = state.locationPin || recordLocationPin(state.record);
     const initialLat = existing?.latitude ?? 14.599512;
     const initialLng = existing?.longitude ?? 120.984222;
 
@@ -1756,7 +1776,7 @@ svg{display:block}
     ).join("");
 
     form.elements.store.value = state.record.store || "";
-    const currentPin = parsePinnedLocation(state.record.location);
+    const currentPin = recordLocationPin(state.record);
     if(currentPin){
       state.locationPin = {
         latitude:currentPin.latitude,
