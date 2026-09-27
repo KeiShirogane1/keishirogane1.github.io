@@ -215,9 +215,9 @@ const escapeHtml = (value) => String(value || "").replace(/[&<>"']/g, (char) => 
   "'": "&#39;"
 })[char]);
 
-function restoreApkDownloadUrl(qrId) {
+function restorePortalUrl(qrId) {
   const id = String(qrId || "").toUpperCase();
-  return `${PUBLIC_BASE}/downloads/restore/${encodeURIComponent(id)}/QwerNFC-Restore-${encodeURIComponent(id)}.apk`;
+  return `${PUBLIC_BASE}/recover/${encodeURIComponent(id)}/`;
 }
 
 async function sendApprovalEmail(payload) {
@@ -228,7 +228,7 @@ async function sendApprovalEmail(payload) {
   }
 
   const qrId = String(payload.id || "").toUpperCase();
-  const apkUrl = restoreApkDownloadUrl(qrId);
+  const portalUrl = restorePortalUrl(qrId);
   const changedFields = Object.keys(payload.changes || {})
     .map((field) => ({
       store: "Store name",
@@ -242,14 +242,14 @@ async function sendApprovalEmail(payload) {
 
   const html = `
     <div style="font-family:Arial,sans-serif;max-width:560px;margin:auto;color:#102016">
-      <h2 style="margin-bottom:8px">QwerNFC update approved</h2>
-      <p>Your requested changes for <strong>${escapeHtml(qrId)}</strong> have been approved by the QwerNFC administrator.</p>
+      <h2 style="margin-bottom:8px">Your QwerNFC information changes were approved</h2>
+      <p>Your requested changes for <strong>${escapeHtml(qrId)}</strong> have been approved by the QwerNFC administrator and the replacement customer app is now ready.</p>
       <p><strong>Approved fields:</strong> ${escapeHtml(changedFields || "Customer information")}</p>
-      <p>You can download the latest QwerNFC Restore APK for this QR below.</p>
+      <p><strong>Uninstall the old QwerNFC Restore app from your phone first.</strong> Then open your store's recovery page and download/install the newly published APK.</p>
       <p style="margin:24px 0">
-        <a href="${escapeHtml(apkUrl)}" style="display:inline-block;padding:12px 18px;border-radius:10px;background:#0b7a39;color:white;text-decoration:none;font-weight:700">Download QwerNFC Restore APK</a>
+        <a href="${escapeHtml(portalUrl)}" style="display:inline-block;padding:12px 18px;border-radius:10px;background:#0b7a39;color:white;text-decoration:none;font-weight:700">Open updated QwerNFC Restore page</a>
       </p>
-      <p style="font-size:12px;color:#607065">Permanent QR identity remains unchanged. This email does not expose private routing data.</p>
+      <p style="font-size:12px;color:#607065">This email is sent only after the new QR-bound APK is published. Your permanent QR identity remains unchanged and private routing data is not included.</p>
     </div>
   `;
 
@@ -266,7 +266,7 @@ async function sendApprovalEmail(payload) {
         email: BREVO_SENDER_EMAIL
       },
       to: [{ email: to }],
-      subject: `QwerNFC ${qrId} update approved`,
+      subject: `QwerNFC ${qrId} changes approved — new app ready`,
       htmlContent: html
     })
   });
@@ -290,6 +290,88 @@ async function sendApprovalEmail(payload) {
   };
 }
 
+
+function parsePublishedRestoreBuild(text) {
+  const fields = {};
+  for (const line of String(text || "").split(/\r?\n/)) {
+    const separator = line.indexOf(":");
+    if (separator < 1) continue;
+    fields[line.slice(0, separator).trim().toLowerCase()] = line.slice(separator + 1).trim();
+  }
+  return {
+    id: String(fields["restore-id"] || "").toUpperCase(),
+    commit: String(fields.commit || "").toLowerCase(),
+    sha256: String(fields["apk sha-256"] || "").toLowerCase(),
+    publishedAt: String(fields["published at"] || ""),
+    packageName: String(fields.package || "")
+  };
+}
+
+async function publishedRestoreState(qrId) {
+  const id = String(qrId || "").toUpperCase();
+  const base = `${PUBLIC_BASE}/downloads/restore/${encodeURIComponent(id)}`;
+  const nonce = Date.now();
+  const buildResponse = await fetch(`${base}/BUILD.txt?v=${nonce}`, { cache: "no-store" });
+  if (!buildResponse.ok) return null;
+  const build = parsePublishedRestoreBuild(await buildResponse.text());
+  if (
+    build.id !== id ||
+    !/^[0-9a-f]{40}$/.test(build.commit) ||
+    !/^[0-9a-f]{64}$/.test(build.sha256) ||
+    !build.publishedAt
+  ) return null;
+  const publishedAt = new Date(build.publishedAt);
+  if (Number.isNaN(publishedAt.valueOf())) return null;
+  const apkResponse = await fetch(`${base}/QwerNFC-Restore-${encodeURIComponent(id)}.apk?v=${nonce}`, {
+    method: "HEAD",
+    cache: "no-store"
+  });
+  if (!apkResponse.ok) return null;
+  return { ...build, publishedAt };
+}
+
+let approvalReleaseCheckRunning = false;
+async function processReadyApprovalEmails() {
+  if (approvalReleaseCheckRunning) return;
+  approvalReleaseCheckRunning = true;
+  try {
+    const pending = await pool.query(
+      `SELECT request_id,qr_id,payload,apk_refresh_required_at
+         FROM customer_update_requests
+        WHERE status='approved'
+          AND apk_refresh_required_at IS NOT NULL
+          AND approval_email_sent_at IS NULL
+        ORDER BY resolved_at ASC
+        LIMIT 100`
+    );
+
+    for (const row of pending.rows) {
+      try {
+        const release = await publishedRestoreState(row.qr_id);
+        if (!release) continue;
+        const requiredAt = new Date(row.apk_refresh_required_at);
+        if (Number.isNaN(requiredAt.valueOf()) || release.publishedAt <= requiredAt) continue;
+        const delivery = await sendApprovalEmail(row.payload);
+        if (!delivery.sent) continue;
+        await pool.query(
+          `UPDATE customer_update_requests
+              SET approval_email_sent_at=COALESCE(approval_email_sent_at,NOW()),
+                  apk_refresh_published_at=COALESCE(apk_refresh_published_at,NOW()),
+                  apk_refresh_build_commit=$2,
+                  apk_refresh_sha256=$3
+            WHERE request_id=$1
+              AND approval_email_sent_at IS NULL`,
+          [row.request_id, release.commit, release.sha256]
+        );
+      } catch (error) {
+        console.error("QwerNFC approval email release check failed for " + String(row.qr_id || "") + ".", error);
+      }
+    }
+  } finally {
+    approvalReleaseCheckRunning = false;
+  }
+}
+
 async function initDatabase() {
   await pool.query(`
     CREATE TABLE IF NOT EXISTS customer_update_requests (
@@ -303,9 +385,18 @@ async function initDatabase() {
       approval_email_sent_at TIMESTAMPTZ
     );
     ALTER TABLE customer_update_requests
-      ADD COLUMN IF NOT EXISTS approval_email_sent_at TIMESTAMPTZ;
+      ADD COLUMN IF NOT EXISTS approval_email_sent_at TIMESTAMPTZ,
+      ADD COLUMN IF NOT EXISTS apk_refresh_required_at TIMESTAMPTZ,
+      ADD COLUMN IF NOT EXISTS apk_refresh_published_at TIMESTAMPTZ,
+      ADD COLUMN IF NOT EXISTS apk_refresh_build_commit TEXT NOT NULL DEFAULT '',
+      ADD COLUMN IF NOT EXISTS apk_refresh_sha256 TEXT NOT NULL DEFAULT '';
     CREATE INDEX IF NOT EXISTS customer_update_requests_status_created_idx
       ON customer_update_requests(status, created_at DESC);
+    CREATE INDEX IF NOT EXISTS customer_update_requests_apk_refresh_pending_idx
+      ON customer_update_requests(qr_id,resolved_at)
+      WHERE status='approved'
+        AND apk_refresh_required_at IS NOT NULL
+        AND approval_email_sent_at IS NULL;
   `);
 }
 
@@ -362,7 +453,8 @@ const server = http.createServer(async (req, res) => {
         : "pending";
       await pool.query("DELETE FROM customer_update_requests WHERE created_at < NOW() - INTERVAL '30 days'");
       const result = await pool.query(
-        `SELECT request_id, qr_id, payload, status, created_at, resolved_at
+        `SELECT request_id, qr_id, payload, status, created_at, resolved_at,
+                apk_refresh_required_at,apk_refresh_published_at,approval_email_sent_at
            FROM customer_update_requests
           WHERE status = $1
           ORDER BY created_at DESC
@@ -377,7 +469,10 @@ const server = http.createServer(async (req, res) => {
           payload: row.payload,
           status: row.status,
           createdAt: row.created_at,
-          resolvedAt: row.resolved_at
+          resolvedAt: row.resolved_at,
+          apkRefreshRequiredAt: row.apk_refresh_required_at,
+          apkRefreshPublishedAt: row.apk_refresh_published_at,
+          approvalEmailSentAt: row.approval_email_sent_at
         }))
       }, allowedOrigin);
     }
@@ -391,23 +486,32 @@ const server = http.createServer(async (req, res) => {
 
       const result = await pool.query(
         `UPDATE customer_update_requests
-            SET status=$2, resolved_at=NOW(), resolved_by=$3
+            SET status=$2,
+                resolved_at=NOW(),
+                resolved_by=$3,
+                apk_refresh_required_at=CASE WHEN $2='approved' THEN NOW() ELSE apk_refresh_required_at END,
+                apk_refresh_published_at=CASE WHEN $2='approved' THEN NULL ELSE apk_refresh_published_at END,
+                apk_refresh_build_commit=CASE WHEN $2='approved' THEN '' ELSE apk_refresh_build_commit END,
+                apk_refresh_sha256=CASE WHEN $2='approved' THEN '' ELSE apk_refresh_sha256 END,
+                approval_email_sent_at=CASE WHEN $2='approved' THEN NULL ELSE approval_email_sent_at END
           WHERE request_id=$1 AND status='pending'
-          RETURNING request_id, qr_id, payload, status, resolved_at`,
+          RETURNING request_id, qr_id, payload, status, resolved_at,apk_refresh_required_at`,
         [resolveMatch[1], status, login]
       );
 
       if (!result.rowCount) throw Object.assign(new Error("Pending request not found."), { status: 404 });
 
-      let emailDelivery = null;
+      const emailDelivery = status === "approved"
+        ? {
+            configured: Boolean(BREVO_API_KEY && BREVO_SENDER_EMAIL),
+            sent: false,
+            deferred: true,
+            reason: "apk_refresh_pending"
+          }
+        : null;
+
       if (status === "approved") {
-        emailDelivery = await sendApprovalEmail(result.rows[0].payload);
-        if (emailDelivery.sent) {
-          await pool.query(
-            `UPDATE customer_update_requests SET approval_email_sent_at=NOW() WHERE request_id=$1`,
-            [resolveMatch[1]]
-          );
-        }
+        void processReadyApprovalEmails().catch((error) => console.error("Approval email release check failed.", error));
       }
 
       const { payload: _payload, ...responseRow } = result.rows[0];
@@ -426,6 +530,11 @@ initDatabase()
   .then(() => {
     server.listen(PORT, "0.0.0.0", () => {
       console.log("QwerNFC customer update API listening on port " + PORT);
+      void processReadyApprovalEmails().catch((error) => console.error("Approval email release check failed.", error));
+      const approvalReleaseTimer = setInterval(() => {
+        void processReadyApprovalEmails().catch((error) => console.error("Approval email release check failed.", error));
+      }, 60_000);
+      approvalReleaseTimer.unref();
     });
   })
   .catch((error) => {
