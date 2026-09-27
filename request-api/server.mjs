@@ -75,7 +75,8 @@ const readBody = async (req, limit = 32 * 1024) => {
 };
 
 const normalizeText = (value, max) => String(value || "").trim().slice(0, max);
-const allowedFields = new Set(["store", "phone", "email", "location", "managedLink"]);
+const allowedFields = new Set(["store", "phone", "email", "location", "managedLink", "storeImage"]);
+const CUSTOMER_STORE_IMAGE_MAX_BYTES = 512 * 1024;
 
 function normalizePayload(raw) {
   const id = String(raw?.id || "").toUpperCase();
@@ -89,10 +90,15 @@ function normalizePayload(raw) {
   const changes = {};
   for (const [field, value] of Object.entries(raw.changes || {})) {
     if (!allowedFields.has(field)) continue;
-    const max = field === "managedLink" ? 2048 : field === "location" ? 180 : field === "email" ? 120 : field === "store" ? 80 : 32;
+    const max = field === "managedLink" ? 2048 : field === "location" ? 180 : field === "email" ? 120 : field === "store" ? 80 : field === "storeImage" ? 16 : 32;
     const normalized = normalizeText(value, max);
     if (!normalized) continue;
-    if (field === "managedLink") {
+    if (field === "storeImage") {
+      if (!["replace", "remove"].includes(normalized)) {
+        throw Object.assign(new Error("Storefront image action is invalid."), { status: 400 });
+      }
+      changes[field] = normalized;
+    } else if (field === "managedLink") {
       let url;
       try { url = new URL(normalized); } catch { throw Object.assign(new Error("Managed link is invalid."), { status: 400 }); }
       if (!["http:", "https:"].includes(url.protocol)) throw Object.assign(new Error("Managed link is invalid."), { status: 400 });
@@ -104,6 +110,35 @@ function normalizePayload(raw) {
   if (!Object.keys(changes).length) throw Object.assign(new Error("No changes were submitted."), { status: 400 });
   if (!changes.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(changes.email)) {
     throw Object.assign(new Error("A valid customer email is required."), { status: 400 });
+  }
+
+  let storeImage = null;
+  if (Object.prototype.hasOwnProperty.call(changes, "storeImage")) {
+    const action = changes.storeImage;
+    if (action === "remove") {
+      storeImage = { action: "remove" };
+    } else {
+      const source = raw.storeImage && typeof raw.storeImage === "object" && !Array.isArray(raw.storeImage)
+        ? raw.storeImage
+        : {};
+      const mimeType = String(source.mimeType || "").toLowerCase();
+      const base64 = String(source.base64 || "").replace(/\s/g, "");
+      if (mimeType !== "image/webp" || !base64 || !/^[A-Za-z0-9+/]+={0,2}$/.test(base64)) {
+        throw Object.assign(new Error("Storefront image data is invalid."), { status: 400 });
+      }
+      const bytes = Buffer.from(base64, "base64");
+      if (!bytes.length || bytes.length > CUSTOMER_STORE_IMAGE_MAX_BYTES) {
+        throw Object.assign(new Error("Storefront image must be 512 KB or smaller."), { status: 413 });
+      }
+      if (
+        bytes.length < 12 ||
+        bytes.subarray(0,4).toString("ascii") !== "RIFF" ||
+        bytes.subarray(8,12).toString("ascii") !== "WEBP"
+      ) {
+        throw Object.assign(new Error("Storefront image must be a valid WebP image."), { status: 400 });
+      }
+      storeImage = { action: "replace", mimeType: "image/webp", base64 };
+    }
   }
 
   let locationPin = null;
@@ -131,7 +166,8 @@ function normalizePayload(raw) {
     requestedAt: new Date().toISOString(),
     reason,
     changes,
-    ...(locationPin ? { locationPin } : {})
+    ...(locationPin ? { locationPin } : {}),
+    ...(storeImage ? { storeImage } : {})
   };
 }
 
@@ -199,7 +235,8 @@ async function sendApprovalEmail(payload) {
       phone: "Phone number",
       email: "Email address",
       location: "Location",
-      managedLink: "Managed link"
+      managedLink: "Managed link",
+      storeImage: "Storefront image"
     })[field] || field)
     .join(", ");
 
@@ -301,7 +338,7 @@ const server = http.createServer(async (req, res) => {
 
     if (req.method === "POST" && url.pathname === "/v1/requests") {
       if (rateLimit(req)) return json(res, 429, { error: "Too many requests. Try again shortly." }, allowedOrigin);
-      const payload = normalizePayload(await readBody(req));
+      const payload = normalizePayload(await readBody(req, 900 * 1024));
       const requestId = randomUUID();
 
       await pool.query(
