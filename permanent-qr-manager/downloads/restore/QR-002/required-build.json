@@ -1,7 +1,7 @@
 {
-  "id": "QR-002",
-  "requiredCommit": "2992e2f32bf2a7bc3fdb5c046bea3c0d5c23c85b",
-  "versionName": "1.0.5",
-  "versionCode": 6,
-  "updatedAt": "2026-09-27T11:43:15.770Z"
+    "updatedAt":  "2026-09-27T12:00:33.4436857Z",
+    "versionCode":  6,
+    "requiredCommit":  "2992e2f32bf2a7bc3fdb5c046bea3c0d5c23c85b",
+    "id":  "QR-002",
+    "versionName":  "1.0.5"
 }
