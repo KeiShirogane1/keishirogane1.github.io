@@ -1292,6 +1292,7 @@ svg{display:block}
 <script>
 (() => {
   const API_BASE = "https://qwernfc-request-api-production.up.railway.app";
+  const FIREBASE_DB = "https://qwernfc-f8bf4-default-rtdb.asia-southeast1.firebasedatabase.app";
   const params = new URLSearchParams(location.search);
   const id = String(params.get("id") || "").toUpperCase();
   const state = { record:null, route:null, changes:null, reason:"", requestId:"", locationPin:null, submitting:false, storeImageDraft:null };
@@ -1692,7 +1693,9 @@ svg{display:block}
     ).join("");
 
     form.elements.store.value = state.record.store || "";
-    const currentPin = parsePinnedLocation(state.record.location);
+    const currentPin = Number.isFinite(state.record?.latitude) && Number.isFinite(state.record?.longitude)
+      ? { latitude:Number(state.record.latitude), longitude:Number(state.record.longitude) }
+      : parsePinnedLocation(state.record.location);
     if(currentPin){
       state.locationPin = {
         latitude:currentPin.latitude,
@@ -1738,9 +1741,61 @@ svg{display:block}
     return;
   }
 
+  const newestByUpdatedAt = (values) => values
+    .filter(Boolean)
+    .sort((a,b)=>String(b.updatedAt||"").localeCompare(String(a.updatedAt||"")))[0] || null;
+
+  const loadCurrentRecord = async () => {
+    const firebaseUrl = FIREBASE_DB + "/public/customerProfiles/" + encodeURIComponent(id) + ".json";
+    const staticUrl = "../recover/" + encodeURIComponent(id) + "/recovery.json";
+    const results = await Promise.allSettled([
+      fetchJson(firebaseUrl),
+      fetchJson(staticUrl)
+    ]);
+    const values = results
+      .filter((result)=>result.status==="fulfilled")
+      .map((result)=>result.value)
+      .filter((value)=>value && value.id===id);
+    const record = newestByUpdatedAt(values);
+    if(!record) throw new Error("This QwerNFC record is unavailable.");
+    return record;
+  };
+
+  const normalizeRoute = (value) => {
+    if(!value || value.id!==id) return null;
+    return {
+      id:value.id,
+      enabled:value.enabled===true,
+      deleted:value.deleted===true,
+      destination:String(value.destination || value.qrDestination || ""),
+      linkVersion:Number(value.linkVersion || 0),
+      updatedAt:String(value.updatedAt || value.linkChangedAt || "")
+    };
+  };
+
+  const loadCurrentRoute = async () => {
+    const firebaseUrl = FIREBASE_DB + "/public/routes/" + encodeURIComponent(id) + ".json";
+    const staticUrl = "../go/" + encodeURIComponent(id) + "/route.json";
+    const results = await Promise.allSettled([
+      fetchJson(firebaseUrl),
+      fetchJson(staticUrl)
+    ]);
+    const routes = results
+      .filter((result)=>result.status==="fulfilled")
+      .map((result)=>normalizeRoute(result.value))
+      .filter(Boolean)
+      .sort((a,b)=>{
+        const versionDelta = Number(b.linkVersion||0)-Number(a.linkVersion||0);
+        if(versionDelta) return versionDelta;
+        return String(b.updatedAt||"").localeCompare(String(a.updatedAt||""));
+      });
+    if(!routes.length) throw new Error("The managed route is unavailable.");
+    return routes[0];
+  };
+
   Promise.all([
-    fetchJson("../recover/" + encodeURIComponent(id) + "/recovery.json"),
-    fetchJson("../go/" + encodeURIComponent(id) + "/route.json")
+    loadCurrentRecord(),
+    loadCurrentRoute()
   ]).then(([record,route])=>{
     if(!record || record.id!==id || record.deleted || record.enabled!==true) throw new Error("This QwerNFC record is unavailable.");
     if(!route || route.id!==id || route.deleted || route.enabled!==true) throw new Error("The managed route is unavailable.");
