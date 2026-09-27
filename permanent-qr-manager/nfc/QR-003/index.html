@@ -21,12 +21,15 @@
 </main>
 <script>
 (() => {
+  const expectedId = "QR-003";
+  const routeKind = "NFC";
   const title = document.getElementById("route-title");
   const status = document.getElementById("route-status");
   const link = document.getElementById("route-link");
   const show = (heading, message) => { title.textContent = heading; status.textContent = message; };
   const rawSrc = "https://raw.githubusercontent.com/KeiShirogane1/keishirogane1.github.io/bbmain/permanent-qr-manager/nfc/QR-003/route.json";
   const apiSrc = "https://api.github.com/repos/KeiShirogane1/keishirogane1.github.io/contents/permanent-qr-manager/nfc/QR-003/route.json?ref=bbmain";
+  const firebaseSrc = "https://qwernfc-f8bf4-default-rtdb.asia-southeast1.firebasedatabase.app/public/routes/QR-003.json";
   const fresh = (src) => src + (src.includes("?") ? "&" : "?") + "v=" + Date.now();
 
   const decodeApiRoute = async (response) => {
@@ -44,35 +47,51 @@
     return response.json();
   };
 
+  const fromApi = async () => decodeApiRoute(
+    await fetch(fresh(apiSrc), { cache: "no-store", mode: "cors" })
+  );
+
+  const fromFirebase = async () => {
+    const payload = await fetchJson(firebaseSrc);
+    if (!payload || payload.id !== expectedId) throw new Error("Firebase route unavailable");
+    return {
+      id: payload.id,
+      kind: routeKind,
+      enabled: payload.enabled === true,
+      deleted: payload.deleted === true,
+      destination: routeKind === "NFC"
+        ? String(payload.nfcDestination || "")
+        : String(payload.qrDestination || ""),
+      linkVersion: Number(payload.linkVersion || 0),
+      updatedAt: String(payload.updatedAt || "")
+    };
+  };
+
   const newest = (routes) => routes
     .filter(Boolean)
-    .sort((a, b) => String(b.updatedAt || "").localeCompare(String(a.updatedAt || "")))[0] || null;
+    .sort((a, b) => {
+      const versionDelta = Number(b.linkVersion || 0) - Number(a.linkVersion || 0);
+      if (versionDelta) return versionDelta;
+      return String(b.updatedAt || b.linkChangedAt || "").localeCompare(String(a.updatedAt || a.linkChangedAt || ""));
+    })[0] || null;
 
   const resolveLatest = async () => {
-    if (apiSrc) {
-      try {
-        return await decodeApiRoute(await fetch(fresh(apiSrc), { cache: "no-store", mode: "cors" }));
-      } catch {
-        // Public GitHub API can rate-limit anonymous clients; fall through to CDN/Page sources.
-      }
-    }
-
-    const localSrc = "./route.json";
     const results = await Promise.allSettled([
+      fromFirebase(),
+      fromApi(),
       fetchJson(rawSrc),
-      fetchJson(localSrc)
+      fetchJson("./route.json")
     ]);
-    const routes = results
+    const route = newest(results
       .filter((result) => result.status === "fulfilled")
-      .map((result) => result.value);
-    const route = newest(routes);
+      .map((result) => result.value));
     if (!route) throw new Error("Route fetch failed");
     return route;
   };
 
   resolveLatest()
     .then((route) => {
-      if (!route || route.id !== "QR-003") {
+      if (!route || route.id !== expectedId) {
         show("Route unavailable", "The latest destination could not be verified.");
         return;
       }
