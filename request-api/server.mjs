@@ -531,10 +531,9 @@ initDatabase()
     server.listen(PORT, "0.0.0.0", () => {
       console.log("QwerNFC customer update API listening on port " + PORT);
       void processReadyApprovalEmails().catch((error) => console.error("Approval email release check failed.", error));
-      const approvalReleaseTimer = setInterval(() => {
+      setInterval(() => {
         void processReadyApprovalEmails().catch((error) => console.error("Approval email release check failed.", error));
       }, 60_000);
-      approvalReleaseTimer.unref();
     });
   })
   .catch((error) => {
