@@ -867,6 +867,15 @@ svg{display:block}
   font-weight:850;
 }
 
+.auth-card{padding:14px;margin-bottom:14px}
+.auth-card h2{margin:0 0 6px;font-size:1.05rem}
+.auth-card p{margin:0;color:var(--muted);font-size:.72rem;line-height:1.5}
+.auth-card label{display:block;margin-top:12px;color:#8da394;font-size:.65rem;font-weight:850}
+.auth-card input{width:100%;min-height:48px;margin-top:6px;padding:0 12px;border:1px solid #28583a;border-radius:11px;background:#04110a;color:#f3fbf5;outline:none}
+.auth-card input:focus{border-color:#35b963;box-shadow:0 0 0 3px rgba(50,190,97,.09)}
+.auth-actions{display:grid;gap:8px;margin-top:10px}
+.auth-note{display:grid;grid-template-columns:17px minmax(0,1fr);gap:8px;margin-top:10px;color:#637b6c;font-size:.62rem;line-height:1.45}
+.auth-note svg{width:15px;height:15px;color:#52cd78}
 .review-card{padding:12px}
 .review-list{display:grid;gap:9px}
 .review-item{
@@ -1029,35 +1038,25 @@ svg{display:block}
   .app{padding-left:18px;padding-right:18px}
 }
 
-/* Storefront-first Update Info */
-.profile-card{padding:14px}
-.profile-hero{display:grid;grid-template-columns:minmax(0,1.22fr) minmax(225px,.9fr);gap:14px;align-items:stretch}
-.profile-storefront{
-  position:relative;min-height:220px;border:1px solid #267543;border-radius:16px;overflow:hidden;
-  background:radial-gradient(circle at 42% 18%,rgba(46,205,103,.18),transparent 38%),linear-gradient(155deg,#092217,#041009)
-}
-.profile-storefront img{width:100%;height:100%;min-height:220px;object-fit:cover;display:block}
-.profile-storefront-placeholder{position:absolute;inset:0;padding:24px;display:grid;place-items:center;align-content:center;gap:9px;text-align:center;color:#769184}
-.profile-storefront-placeholder svg{width:36px;height:36px}.profile-storefront-placeholder strong{font-size:.74rem;color:#a3b9ab}.profile-storefront-placeholder small{max-width:250px;font-size:.59rem;line-height:1.45}
-.profile-image-edit{position:absolute;right:10px;bottom:10px;width:auto;min-height:37px;padding:0 12px;border:1px solid #32985a;border-radius:10px;background:rgba(3,18,9,.92);color:#eaf8ee;font-weight:900;font-size:.66rem;display:flex;align-items:center;gap:7px}
+/* Storefront-first Update Info redesign */
+.profile-card{padding:14px}.profile-hero{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(220px,.9fr);gap:14px;align-items:stretch}
+.profile-storefront{position:relative;min-height:210px;border:1px solid #246f40;border-radius:16px;overflow:hidden;background:radial-gradient(circle at 40% 15%,rgba(51,184,99,.2),transparent 36%),#06140b}
+.profile-storefront img{width:100%;height:100%;min-height:210px;object-fit:cover;display:block}.profile-storefront-placeholder{position:absolute;inset:0;display:grid;place-items:center;align-content:center;gap:8px;color:#729681}
+.profile-storefront-placeholder svg{width:34px;height:34px}.profile-storefront-placeholder strong{font-size:.72rem}
+.profile-image-edit{position:absolute;right:10px;bottom:10px;width:auto;min-height:36px;padding:0 12px;border:1px solid #32985a;border-radius:10px;background:rgba(3,18,9,.9);color:#eaf8ee;font-weight:900;font-size:.67rem;display:flex;align-items:center;gap:7px}
 .profile-image-edit svg{width:15px;height:15px}.profile-side{min-width:0;display:flex;flex-direction:column;gap:11px}.profile-side .profile-main{margin:0}.profile-side .link-panel{margin-top:auto}
-.storefront-edit-card .storefront-static-head{cursor:default}
-.storefront-editor{padding:0 11px 12px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.storefront-label{display:block;margin-bottom:6px;color:#91a99a;font-size:.61rem;font-weight:850}
+.storefront-edit-card .storefront-static-head{cursor:default}.storefront-editor{padding:0 11px 12px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.storefront-preview-panel,.storefront-upload-panel{min-width:0}.storefront-label{display:block;margin-bottom:6px;color:#91a99a;font-size:.61rem;font-weight:850}
 .storefront-current,.storefront-new{height:172px;border:1px solid #214e31;border-radius:12px;overflow:hidden;background:#06140b;display:grid;place-items:center}
-.storefront-new img{width:100%;height:100%;object-fit:cover}
-.storefront-image-empty{display:grid;place-items:center;align-content:center;gap:7px;color:#688271;text-align:center;padding:14px}
+.storefront-current img,.storefront-new img{width:100%;height:100%;object-fit:cover}.storefront-image-empty{display:grid;place-items:center;align-content:center;gap:7px;color:#688271;text-align:center;padding:14px}
 .storefront-image-empty svg{width:30px;height:30px}.storefront-image-empty small{font-size:.61rem;line-height:1.4}
-.storefront-upload-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:8px}
-.storefront-upload-actions button,.storefront-reset{min-height:39px;border:1px solid #2c7143;border-radius:10px;background:#092417;color:#aee9bd;font-size:.64rem;font-weight:900}
-.storefront-upload-actions .primary-image{background:#1fd05a;color:#001b08;border-color:#31e970}
-.storefront-remove{width:100%;margin-top:7px;min-height:39px;border:1px solid #70403a;border-radius:10px;background:#1c0d0b;color:#d98a7d;font-size:.64rem;font-weight:900}
-.storefront-reset{width:100%;margin-top:7px;border-color:#4e554f;background:#101611;color:#a3ada6}
-.storefront-status{margin-top:8px;color:#7e9687;font-size:.59rem;line-height:1.45}
-.storefront-review-grid{display:grid;grid-template-columns:1fr 34px 1fr;gap:8px;align-items:center;margin-top:8px}
-.storefront-review-image{height:145px;border:1px solid #285f3b;border-radius:12px;overflow:hidden;background:#06140b;display:grid;place-items:center}
-.storefront-review-image img{width:100%;height:100%;object-fit:cover}.storefront-review-image.remove{border-color:#754039;color:#df8b7f}
-@media(max-width:700px){.profile-hero{grid-template-columns:1fr}.profile-storefront{min-height:195px}.profile-storefront img{min-height:195px}.storefront-editor{grid-template-columns:1fr}}
+.storefront-upload-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:8px}.storefront-upload-actions button,.storefront-reset{min-height:38px;border:1px solid #2c7143;border-radius:10px;background:#092417;color:#aee9bd;font-size:.64rem;font-weight:900}
+.storefront-upload-actions .primary-image{background:#1fd05a;color:#001b08;border-color:#31e970}.storefront-reset{width:100%;margin-top:7px;border-color:#4e554f;background:#101611;color:#a3ada6}
+.storefront-remove{width:100%;margin-top:7px;min-height:38px;border:1px solid #70403a;border-radius:10px;background:#1c0d0b;color:#d98a7d;font-size:.64rem;font-weight:900}
+.storefront-status{margin-top:8px;color:#7e9687;font-size:.59rem;line-height:1.45}.storefront-review-grid{display:grid;grid-template-columns:1fr 34px 1fr;gap:8px;align-items:center;margin-top:8px}
+.storefront-review-image{height:145px;border:1px solid #285f3b;border-radius:12px;overflow:hidden;background:#06140b;display:grid;place-items:center}.storefront-review-image img{width:100%;height:100%;object-fit:cover}
+.storefront-review-image.remove{border-color:#754039;color:#df8b7f}
+@media(max-width:700px){.profile-hero{grid-template-columns:1fr}.profile-storefront{min-height:190px}.profile-storefront img{min-height:190px}.storefront-editor{grid-template-columns:1fr}}
 @media(max-width:430px){.storefront-upload-actions{grid-template-columns:1fr}.storefront-review-grid{grid-template-columns:1fr}.storefront-review-grid .diff-arrow{transform:rotate(90deg);margin:auto}}
 
 </style>
@@ -1072,6 +1071,38 @@ svg{display:block}
     <button class="help-btn" type="button" id="help-button" aria-label="About this update request">?</button>
   </header>
 
+  <section id="auth-stage" class="card auth-card">
+    <span class="eyebrow">SECURE CUSTOMER ACCESS</span>
+    <h2>Verify this QwerNFC record</h2>
+    <p>Changing the QR ID in the address does not grant access. Use the email registered to this record and the one-time code sent to that email.</p>
+
+    <div id="auth-email-step">
+      <label>Registered email
+        <input id="auth-email" type="email" maxlength="160" autocomplete="email" placeholder="you@example.com" />
+      </label>
+      <div class="auth-actions">
+        <button id="auth-send-code" class="full-primary" type="button">Send verification code</button>
+      </div>
+    </div>
+
+    <div id="auth-code-step" class="hidden">
+      <label>6-digit verification code
+        <input id="auth-code" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="one-time-code" placeholder="000000" />
+      </label>
+      <div class="auth-actions">
+        <button id="auth-verify-code" class="full-primary" type="button">Verify and continue</button>
+        <button id="auth-change-email" class="secondary" type="button">Use another email</button>
+      </div>
+    </div>
+
+    <div id="auth-status" class="status hidden"></div>
+    <div class="auth-note">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      <span>No store name, location, phone, email, or managed destination is loaded until verification succeeds.</span>
+    </div>
+  </section>
+
+  <div id="protected-content" class="hidden">
   <div class="stepper" aria-label="Update request progress">
     <div class="step active" data-step="edit"><div class="step-dot"><span class="step-number">1</span></div><span>Edit Info</span></div>
     <div class="step" data-step="review"><div class="step-dot"><span class="step-number">2</span></div><span>Review</span></div>
@@ -1080,21 +1111,21 @@ svg{display:block}
 
   <section class="card profile-card">
     <div class="profile-hero">
-      <div class="profile-storefront">
-        <img id="profile-storefront-image" class="hidden" alt="Requested storefront preview" />
+      <div class="profile-storefront" id="profile-storefront">
+        <img id="profile-storefront-image" class="hidden" alt="Current storefront" />
         <div id="profile-storefront-placeholder" class="profile-storefront-placeholder">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="m21 15-5-5L5 20"/></svg>
-          <strong>Storefront photo</strong>
-          <small>The approved current photo stays private. Choose a new photo below to preview your requested replacement.</small>
+          <strong>No storefront image yet</strong>
         </div>
         <button class="profile-image-edit" id="profile-edit-image" type="button">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"/></svg>
-          <span>Edit image</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"/></svg><span>Edit image</span>
         </button>
       </div>
       <div class="profile-side">
         <div class="profile-main">
-          <div class="profile-logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12c4-7 11-8 16-8-1 7-5 14-12 16"/><path d="M5 20c2-5 6-9 12-12"/></svg></div>
+          <div class="profile-logo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12c4-7 11-8 16-8-1 7-5 14-12 16"/><path d="M5 20c2-5 6-9 12-12"/></svg>
+          </div>
           <div class="profile-copy"><h1 id="business-name">Loading…</h1><p id="profile-location">Loading business profile</p><span class="active-pill">Active</span></div>
           <span class="id-chip" id="profile-id">QR</span>
         </div>
@@ -1128,26 +1159,16 @@ svg{display:block}
         <article class="edit-card storefront-edit-card" data-edit-card="storeImage">
           <div class="edit-trigger storefront-static-head">
             <span class="edit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="m21 15-5-5L5 20"/></svg></span>
-            <span class="edit-copy"><strong>Storefront image</strong><span>Replace or request removal of the front-store photo</span></span>
+            <span class="edit-copy"><strong>Storefront image</strong><span>Replace or remove the front-store photo</span></span>
             <span class="check-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m5 12 4 4L19 6"/></svg></span>
           </div>
           <div class="storefront-editor">
-            <div>
-              <span class="storefront-label">Current image</span>
-              <div class="storefront-current"><div class="storefront-image-empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 17v.01"/><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M8 10h8"/></svg><small>Current approved storefront photo remains private in QwerNFC Manager.</small></div></div>
-            </div>
-            <div>
-              <span class="storefront-label">Requested image</span>
-              <div class="storefront-new">
-                <img id="new-store-image" class="hidden" alt="New storefront image preview" />
-                <div id="new-store-image-empty" class="storefront-image-empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 16V4"/><path d="m7 9 5-5 5 5"/><path d="M5 20h14"/></svg><small>Choose or take a clear front-store photo.</small></div>
-              </div>
-              <input id="store-image-file" type="file" accept="image/jpeg,image/png,image/webp" hidden />
-              <input id="store-image-camera" type="file" accept="image/*" capture="environment" hidden />
+            <div class="storefront-preview-panel"><span class="storefront-label">Current image</span><div class="storefront-current"><img id="current-store-image" class="hidden" alt="Current storefront image" /><div id="current-store-image-empty" class="storefront-image-empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="m21 15-5-5L5 20"/></svg><small>No current storefront image</small></div></div></div>
+            <div class="storefront-upload-panel"><span class="storefront-label">Requested image</span><div class="storefront-new"><img id="new-store-image" class="hidden" alt="New storefront image preview" /><div id="new-store-image-empty" class="storefront-image-empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 16V4"/><path d="m7 9 5-5 5 5"/><path d="M5 20h14"/></svg><small>Choose or take a clear front-store photo.</small></div></div>
+              <input id="store-image-file" type="file" accept="image/jpeg,image/png,image/webp" hidden /><input id="store-image-camera" type="file" accept="image/*" capture="environment" hidden />
               <div class="storefront-upload-actions"><button class="primary-image" id="choose-store-image" type="button">Choose image</button><button id="take-store-photo" type="button">Take photo</button></div>
-              <button class="storefront-remove" id="remove-store-image" type="button">Request image removal</button>
-              <button class="storefront-reset hidden" id="reset-store-image" type="button">Keep current image</button>
-              <div class="storefront-status" id="store-image-status">JPG, PNG, or WebP. QwerNFC compresses the request to private WebP before submission.</div>
+              <button class="storefront-remove" id="remove-store-image" type="button">Remove current image</button><button class="storefront-reset hidden" id="reset-store-image" type="button">Keep current image</button>
+              <div class="storefront-status" id="store-image-status">JPG, PNG, or WebP. QwerNFC compresses it to private WebP before submitting.</div>
             </div>
           </div>
         </article>
@@ -1224,7 +1245,7 @@ svg{display:block}
 
       <div class="security-note">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-        <span>Phone and email are private. Current values are never exposed on this public page. The private backup and permanent QR database also remain protected.</span>
+        <span>Current customer values are shown only after registered-email OTP verification. The private backup and permanent QR database remain protected.</span>
       </div>
 
       <div class="action-bar" id="edit-action">
@@ -1283,18 +1304,34 @@ svg{display:block}
         </div>
       </div>
 
-      <div id="request-status" class="status ok">Live request delivered to QwerNFC Manager. Approval email is required and included in this request.</div>
+      <div id="request-status" class="status ok">Live request delivered to QwerNFC Manager. Waiting for the administrator to approve or reject it.</div>
+      <a id="approved-restore-download" class="full-primary hidden" href="#" style="margin-top:12px;display:flex;align-items:center;justify-content:center;text-decoration:none">Download updated QwerNFC Restore APK</a>
       <button id="done-button" class="full-primary" type="button" style="margin-top:12px">✓ Done</button>
     </section>
   </section>
+  </div>
 </main>
 
 <script>
 (() => {
-  const API_BASE = "https://qwernfc-request-api-production.up.railway.app";
   const params = new URLSearchParams(location.search);
   const id = String(params.get("id") || "").toUpperCase();
-  const state = { record:null, route:null, changes:null, reason:"", requestId:"", locationPin:null, submitting:false, storeImageDraft:null };
+  const state = {
+    record:null,
+    route:null,
+    changes:null,
+    reason:"",
+    requestId:"",
+    locationPin:null,
+    submitting:false,
+    apiBase:"",
+    accessToken:"",
+    challengeId:"",
+    authEmail:"",
+    requestPollTimer:0,
+    currentStoreImageDataUrl:"",
+    storeImageDraft:null
+  };
 
   const businessName = document.getElementById("business-name");
   const profileLocation = document.getElementById("profile-location");
@@ -1311,18 +1348,75 @@ svg{display:block}
   const reviewList = document.getElementById("review-list");
   const reviewReason = document.getElementById("review-reason");
   const editAction = document.getElementById("edit-action");
+  const authStage = document.getElementById("auth-stage");
+  const authEmailStep = document.getElementById("auth-email-step");
+  const authCodeStep = document.getElementById("auth-code-step");
+  const authEmail = document.getElementById("auth-email");
+  const authCode = document.getElementById("auth-code");
+  const authStatus = document.getElementById("auth-status");
+  const protectedContent = document.getElementById("protected-content");
   const profileStorefrontImage = document.getElementById("profile-storefront-image");
   const profileStorefrontPlaceholder = document.getElementById("profile-storefront-placeholder");
+  const currentStoreImage = document.getElementById("current-store-image");
+  const currentStoreImageEmpty = document.getElementById("current-store-image-empty");
   const newStoreImage = document.getElementById("new-store-image");
   const newStoreImageEmpty = document.getElementById("new-store-image-empty");
   const storeImageStatus = document.getElementById("store-image-status");
 
   const esc = (value) => String(value == null ? "" : value).replace(/[&<>"']/g,(char)=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[char]));
   const fresh = (src) => src + (src.includes("?") ? "&" : "?") + "v=" + Date.now();
-  const fetchJson = async (src) => {
-    const response = await fetch(fresh(src),{cache:"no-store",mode:"cors"});
-    if(!response.ok) throw new Error("Could not load current information.");
-    return response.json();
+
+  const loadApiBase = async () => {
+    if(state.apiBase) return state.apiBase;
+    const response = await fetch(fresh("../runtime.json"),{cache:"no-store",mode:"cors"});
+    if(!response.ok) throw new Error("Secure QwerNFC customer service is not configured yet.");
+    const config = await response.json();
+    const value = String(config?.apiBase || "").trim().replace(/\/+$/,"");
+    if(!value) throw new Error("Secure QwerNFC customer service is not configured yet.");
+    const url = new URL(value);
+    const local = ["localhost","127.0.0.1"].includes(String(url.hostname).toLowerCase());
+    if(url.protocol!=="https:" && !(url.protocol==="http:" && local)) {
+      throw new Error("Secure QwerNFC customer service is unavailable.");
+    }
+    state.apiBase=value;
+    return value;
+  };
+
+  const apiJson = async (path,options={}) => {
+    const base = await loadApiBase();
+    const headers = {...(options.headers||{})};
+    if(options.body && !headers["content-type"]) headers["content-type"]="application/json";
+    const response = await fetch(base + path,{
+      method:options.method||"GET",
+      headers,
+      body:options.body ? JSON.stringify(options.body) : undefined,
+      cache:"no-store",
+      mode:"cors"
+    });
+    let data={}; try{data=await response.json();}catch{}
+    if(!response.ok) {
+      const error=new Error(data?.error || "Secure QwerNFC request failed.");
+      error.status=response.status;
+      throw error;
+    }
+    return data;
+  };
+
+  const logoutCustomerSession = async () => {
+    const token = state.accessToken;
+    state.accessToken = "";
+    if(!token) return;
+    try{
+      await apiJson("/v1/auth/logout",{
+        method:"POST",
+        headers:{authorization:"Bearer " + token}
+      });
+    }catch{}
+  };
+
+  const showAuthStatus = (message,kind="") => {
+    authStatus.textContent=message;
+    authStatus.className="status" + (kind ? " " + kind : "");
   };
   const showStatus = (message,kind="error") => {
     formStatus.textContent = message;
@@ -1333,75 +1427,45 @@ svg{display:block}
     formStatus.className = "status hidden";
   };
   const blobToBase64 = async (blob) => {
-    const bytes = new Uint8Array(await blob.arrayBuffer());
-    let binary = "";
-    for (const byte of bytes) binary += String.fromCharCode(byte);
+    const bytes=new Uint8Array(await blob.arrayBuffer()); let binary="";
+    for(const byte of bytes) binary+=String.fromCharCode(byte);
     return btoa(binary);
   };
-  const loadImageElement = (file) => new Promise((resolve,reject)=>{
-    const url=URL.createObjectURL(file);
-    const image=new Image();
-    image.onload=()=>{URL.revokeObjectURL(url);resolve(image)};
-    image.onerror=()=>{URL.revokeObjectURL(url);reject(new Error("This image could not be opened."))};
-    image.src=url;
+  const imageFromFile = (file) => new Promise((resolve,reject)=>{
+    const url=URL.createObjectURL(file); const image=new Image();
+    image.onload=()=>{URL.revokeObjectURL(url);resolve(image)}; image.onerror=()=>{URL.revokeObjectURL(url);reject(new Error("This image could not be opened."))}; image.src=url;
   });
-  const webpBlob = (canvas,quality) => new Promise((resolve,reject)=>{
-    canvas.toBlob((blob)=>blob?resolve(blob):reject(new Error("Could not optimize this storefront image.")),"image/webp",quality);
-  });
+  const canvasWebpBlob = (canvas,quality) => new Promise((resolve,reject)=>canvas.toBlob((blob)=>blob?resolve(blob):reject(new Error("Could not optimize this storefront image.")),"image/webp",quality));
   const optimizeStoreImage = async (file) => {
     if(!file || !/^image\/(jpeg|png|webp)$/i.test(String(file.type||""))) throw new Error("Choose a JPG, PNG, or WebP image.");
     if(file.size>12*1024*1024) throw new Error("Choose an image smaller than 12 MB.");
-    const image=await loadImageElement(file);
-    const scale=Math.min(1,1280/Math.max(image.naturalWidth||1,image.naturalHeight||1));
-    let width=Math.max(1,Math.round((image.naturalWidth||1)*scale));
-    let height=Math.max(1,Math.round((image.naturalHeight||1)*scale));
-    let quality=.84;
+    const image=await imageFromFile(file); const ratio=Math.min(1,1280/Math.max(image.naturalWidth||1,image.naturalHeight||1));
+    let width=Math.max(1,Math.round((image.naturalWidth||1)*ratio)); let height=Math.max(1,Math.round((image.naturalHeight||1)*ratio)); let quality=.84; let blob=null;
     const canvas=document.createElement("canvas");
-    let blob=null;
     for(let attempt=0;attempt<8;attempt+=1){
-      canvas.width=width;canvas.height=height;
-      const context=canvas.getContext("2d",{alpha:false});
-      context.fillStyle="#fff";context.fillRect(0,0,width,height);context.drawImage(image,0,0,width,height);
-      blob=await webpBlob(canvas,quality);
-      if(blob.size<=480*1024) break;
-      if(quality>.56) quality-=.08;
-      else{width=Math.max(1,Math.round(width*.82));height=Math.max(1,Math.round(height*.82))}
+      canvas.width=width;canvas.height=height;const ctx=canvas.getContext("2d",{alpha:false});ctx.fillStyle="#fff";ctx.fillRect(0,0,width,height);ctx.drawImage(image,0,0,width,height);
+      blob=await canvasWebpBlob(canvas,quality); if(blob.size<=480*1024) break; if(quality>.56) quality-=.08; else{width=Math.max(1,Math.round(width*.82));height=Math.max(1,Math.round(height*.82))}
     }
-    if(!blob || blob.size>512*1024) throw new Error("This image is still too large after optimization. Choose a smaller photo.");
-    const base64=await blobToBase64(blob);
-    return {action:"replace",mimeType:"image/webp",base64,dataUrl:"data:image/webp;base64,"+base64,byteSize:blob.size};
+    if(!blob||blob.size>512*1024) throw new Error("This image is still too large after optimization. Choose a smaller photo.");
+    const base64=await blobToBase64(blob); return {action:"replace",mimeType:"image/webp",base64,dataUrl:"data:image/webp;base64,"+base64,byteSize:blob.size};
   };
-  const renderStoreImageDraft = () => {
-    const draft=state.storeImageDraft;
-    document.querySelector('[data-edit-card="storeImage"]')?.classList.toggle("active",Boolean(draft));
-    document.getElementById("reset-store-image")?.classList.toggle("hidden",!draft);
-    if(draft?.action==="replace"){
-      newStoreImage.src=draft.dataUrl;
-      newStoreImage.classList.remove("hidden");
-      newStoreImageEmpty.classList.add("hidden");
-      profileStorefrontImage.src=draft.dataUrl;
-      profileStorefrontImage.classList.remove("hidden");
-      profileStorefrontPlaceholder.classList.add("hidden");
-      storeImageStatus.textContent="New optimized WebP · "+Math.max(1,Math.round(draft.byteSize/1024))+" KB · admin approval required.";
-    }else{
-      newStoreImage.classList.add("hidden");
-      newStoreImage.removeAttribute("src");
-      newStoreImageEmpty.classList.remove("hidden");
-      profileStorefrontImage.classList.add("hidden");
-      profileStorefrontImage.removeAttribute("src");
-      profileStorefrontPlaceholder.classList.remove("hidden");
-      newStoreImageEmpty.innerHTML=draft?.action==="remove"
-        ? '<small>Current storefront image will be removed if the admin approves this request.</small>'
-        : '<small>Choose or take a clear front-store photo.</small>';
-      storeImageStatus.textContent=draft?.action==="remove"
-        ? "Image removal requested · admin approval required."
-        : "JPG, PNG, or WebP. QwerNFC compresses the request to private WebP before submission.";
-    }
+  const renderStoreImageUi = () => {
+    const current=state.currentStoreImageDataUrl; profileStorefrontImage.classList.toggle("hidden",!current); profileStorefrontPlaceholder.classList.toggle("hidden",Boolean(current)); currentStoreImage.classList.toggle("hidden",!current); currentStoreImageEmpty.classList.toggle("hidden",Boolean(current));
+    if(current){profileStorefrontImage.src=current;currentStoreImage.src=current}
+    const draft=state.storeImageDraft; const card=document.querySelector('[data-edit-card="storeImage"]'); card?.classList.toggle("active",Boolean(draft)); document.getElementById("reset-store-image")?.classList.toggle("hidden",!draft); document.getElementById("remove-store-image").disabled=!current&&!draft;
+    if(draft?.action==="replace"){newStoreImage.src=draft.dataUrl;newStoreImage.classList.remove("hidden");newStoreImageEmpty.classList.add("hidden");storeImageStatus.textContent="New optimized WebP · "+Math.max(1,Math.round(draft.byteSize/1024))+" KB · admin approval required."}
+    else{newStoreImage.classList.add("hidden");newStoreImage.removeAttribute("src");newStoreImageEmpty.classList.remove("hidden");newStoreImageEmpty.innerHTML=draft?.action==="remove"?'<small>Current storefront image will be removed after approval.</small>':'<small>Choose or take a clear front-store photo.</small>';storeImageStatus.textContent=draft?.action==="remove"?"Image removal selected · admin approval required.":"JPG, PNG, or WebP. QwerNFC compresses it to private WebP before submitting."}
     updateSelectedSummary();
+  };
+  const loadCurrentStoreImage = async () => {
+    state.currentStoreImageDataUrl=""; if(!state.record?.storeImagePath){renderStoreImageUi();return}
+    try{const image=await apiJson("/v1/customer/qrs/"+encodeURIComponent(id)+"/image",{headers:{authorization:"Bearer "+state.accessToken}});const base64=String(image?.base64||"").replace(/\s/g,"");if(base64)state.currentStoreImageDataUrl="data:"+String(image?.mimeType||"image/webp")+";base64,"+base64}
+    catch(error){if(error?.status!==404)storeImageStatus.textContent="Current image could not be loaded, but you can still submit a replacement."}
+    renderStoreImageUi();
   };
   const currentValue = (field) => field==="managedLink"
     ? String(state.route?.destination || "")
-    : field==="storeImage" ? "Private in QwerNFC Manager" : String(state.record?.[field] || "");
+    : field==="storeImage" ? (state.currentStoreImageDataUrl ? "Current storefront image" : "No storefront image") : String(state.record?.[field] || "");
 
   const parsePinnedLocation = (value) => {
     const match = String(value || "").match(/(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)/);
@@ -1677,12 +1741,12 @@ svg{display:block}
     currentLink.textContent = state.route.destination || "Not configured";
 
     const rows = [
-      ["storeImage","Storefront image","Private in QwerNFC Manager",true],
+      ["storeImage","Storefront image",state.record.storeImagePath ? "Photo saved" : "No photo",false],
       ["store","Store name",state.record.store || "Not provided",false],
       ["location","Location",state.record.location || "Not provided",false],
       ["managedLink","Managed link",state.route.destination || "Not configured",false],
-      ["phone","Phone","Private in QwerNFC Manager",true],
-      ["email","Email","Private in QwerNFC Manager",true]
+      ["phone","Phone",state.record.phone || "Not provided",false],
+      ["email","Email",state.record.email || state.authEmail || "Not provided",false]
     ];
 
     currentList.innerHTML = rows.map(([key,label,value,isPrivate]) =>
@@ -1704,8 +1768,9 @@ svg{display:block}
       form.elements.location.value = state.record.location || "";
     }
     form.elements.managedLink.value = state.route.destination || "";
-    form.elements.email.value = "";
+    form.elements.email.value = state.record.email || state.authEmail || "";
     form.elements.email.disabled = false;
+    void loadCurrentStoreImage();
   };
 
   document.getElementById("back-button").addEventListener("click",()=>{
@@ -1730,28 +1795,75 @@ svg{display:block}
   });
 
   if(!/^QR-\d+$/.test(id)){
-    businessName.textContent = "Invalid update link";
-    profileLocation.textContent = "QwerNFC profile unavailable";
-    profileId.textContent = "ERROR";
-    currentLink.textContent = "This update link is not valid.";
-    editStage.classList.add("hidden");
+    showAuthStatus("This QwerNFC update link is not valid.","error");
+    document.getElementById("auth-send-code").disabled=true;
     return;
   }
 
-  Promise.all([
-    fetchJson("../recover/" + encodeURIComponent(id) + "/recovery.json"),
-    fetchJson("../go/" + encodeURIComponent(id) + "/route.json")
-  ]).then(([record,route])=>{
-    if(!record || record.id!==id || record.deleted || record.enabled!==true) throw new Error("This QwerNFC record is unavailable.");
-    if(!route || route.id!==id || route.deleted || route.enabled!==true) throw new Error("The managed route is unavailable.");
-    state.record = record;
-    state.route = route;
+  const openVerifiedRecord = async () => {
+    const record = await apiJson("/v1/customer/qrs/" + encodeURIComponent(id),{
+      headers:{authorization:"Bearer " + state.accessToken}
+    });
+    if(!record || record.id!==id || record.enabled!==true) throw new Error("This QwerNFC record is unavailable.");
+    const managed = record.linkMode==="individual"
+      ? String(record.qrDestination || record.destination || "")
+      : String(record.destination || "");
+    state.record=record;
+    state.route={id,enabled:true,deleted:false,destination:managed};
     renderCurrent();
-  }).catch((error)=>{
-    businessName.textContent = "Could not load profile";
-    profileLocation.textContent = id;
-    currentLink.textContent = error?.message || "Update information unavailable.";
-    editStage.classList.add("hidden");
+    authStage.classList.add("hidden");
+    protectedContent.classList.remove("hidden");
+    window.scrollTo({top:0,behavior:"smooth"});
+  };
+
+  document.getElementById("auth-send-code").addEventListener("click",async()=>{
+    const email=String(authEmail.value||"").trim().toLowerCase();
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showAuthStatus("Enter a valid registered email.","error");
+    try{
+      const result=await apiJson("/v1/auth/otp/start",{
+        method:"POST",
+        body:{qrId:id,email}
+      });
+      state.challengeId=String(result.challengeId||"");
+      state.authEmail=email;
+      authEmailStep.classList.add("hidden");
+      authCodeStep.classList.remove("hidden");
+      showAuthStatus("If this email is registered to this QR, a 6-digit code has been sent.");
+      authCode.focus();
+    }catch(error){
+      showAuthStatus(error?.message || "Could not start verification.","error");
+    }
+  });
+
+  document.getElementById("auth-change-email").addEventListener("click",()=>{
+    state.challengeId="";
+    state.authEmail="";
+    authCode.value="";
+    authCodeStep.classList.add("hidden");
+    authEmailStep.classList.remove("hidden");
+    authStatus.classList.add("hidden");
+    authEmail.focus();
+  });
+
+  document.getElementById("auth-verify-code").addEventListener("click",async()=>{
+    const code=String(authCode.value||"").trim();
+    if(!/^\d{6}$/.test(code)) return showAuthStatus("Enter the 6-digit verification code.","error");
+    try{
+      const verified=await apiJson("/v1/auth/otp/verify",{
+        method:"POST",
+        body:{
+          challengeId:state.challengeId,
+          code,
+          sessionMode:"browser",
+          deviceName:"QwerNFC Update Info web"
+        }
+      });
+      state.accessToken=String(verified.accessToken||"");
+      if(!state.accessToken) throw new Error("Secure customer session was not created.");
+      await openVerifiedRecord();
+    }catch(error){
+      showAuthStatus(error?.message || "Verification failed.","error");
+    }
   });
 
   document.getElementById("copy-current-link").addEventListener("click",async()=>{
@@ -1761,27 +1873,17 @@ svg{display:block}
   });
 
   const handleStoreImageFile = async (input) => {
-    const file=input?.files?.[0];
-    if(!file) return;
-    try{
-      storeImageStatus.textContent="Optimizing storefront image…";
-      state.storeImageDraft=await optimizeStoreImage(file);
-      renderStoreImageDraft();
-      document.querySelector('[data-edit-card="storeImage"]')?.scrollIntoView({behavior:"smooth",block:"center"});
-    }catch(error){
-      state.storeImageDraft=null;
-      storeImageStatus.textContent=error?.message || "Could not prepare this image.";
-      renderStoreImageDraft();
-    }finally{
-      input.value="";
-    }
+    const file=input?.files?.[0]; if(!file)return;
+    try{storeImageStatus.textContent="Optimizing storefront image…";state.storeImageDraft=await optimizeStoreImage(file);renderStoreImageUi();document.querySelector('[data-edit-card="storeImage"]')?.scrollIntoView({behavior:"smooth",block:"center"})}
+    catch(error){state.storeImageDraft=null;storeImageStatus.textContent=error?.message||"Could not prepare this image.";renderStoreImageUi()}
+    finally{input.value=""}
   };
   document.getElementById("choose-store-image").addEventListener("click",()=>document.getElementById("store-image-file").click());
   document.getElementById("take-store-photo").addEventListener("click",()=>document.getElementById("store-image-camera").click());
   document.getElementById("store-image-file").addEventListener("change",(event)=>void handleStoreImageFile(event.currentTarget));
   document.getElementById("store-image-camera").addEventListener("change",(event)=>void handleStoreImageFile(event.currentTarget));
-  document.getElementById("remove-store-image").addEventListener("click",()=>{state.storeImageDraft={action:"remove"};renderStoreImageDraft()});
-  document.getElementById("reset-store-image").addEventListener("click",()=>{state.storeImageDraft=null;renderStoreImageDraft()});
+  document.getElementById("remove-store-image").addEventListener("click",()=>{state.storeImageDraft={action:"remove"};renderStoreImageUi()});
+  document.getElementById("reset-store-image").addEventListener("click",()=>{state.storeImageDraft=null;renderStoreImageUi()});
   document.getElementById("profile-edit-image").addEventListener("click",()=>document.querySelector('[data-edit-card="storeImage"]')?.scrollIntoView({behavior:"smooth",block:"center"}));
 
   document.querySelectorAll("[data-edit-toggle]").forEach((button)=>{
@@ -1826,11 +1928,7 @@ svg{display:block}
     const changes = {};
     for(const card of document.querySelectorAll("[data-edit-card].active")){
       const field = card.dataset.editCard;
-      if(field==="storeImage"){
-        if(!state.storeImageDraft) continue;
-        changes.storeImage=state.storeImageDraft.action;
-        continue;
-      }
+      if(field==="storeImage"){if(!state.storeImageDraft)continue;changes.storeImage=state.storeImageDraft.action;continue}
       const value = String(form.elements[field].value || "").trim();
       if(field==="location" && !state.locationPin) return showStatus("Choose the new location on the map.");
       if(!value) return showStatus("Enter the new " + field + " value.");
@@ -1874,15 +1972,11 @@ svg{display:block}
     const labels = {storeImage:"Storefront image",store:"Store name",location:"Location",managedLink:"Managed link",phone:"Phone number",email:"Email address"};
     reviewList.innerHTML = Object.entries(changes).map(([field,value])=>{
       if(field==="storeImage"){
-        const currentPreview='<div class="storefront-review-image"><div class="storefront-image-empty"><small>Current image remains private</small></div></div>';
-        const requestedPreview=state.storeImageDraft?.action==="remove"
-          ? '<div class="storefront-review-image remove"><div class="storefront-image-empty"><small>Request removal</small></div></div>'
-          : '<div class="storefront-review-image"><img src="'+esc(state.storeImageDraft?.dataUrl||"")+'" alt="Requested storefront image"></div>';
-        return '<article class="review-item"><strong>Storefront image</strong><div class="storefront-review-grid">'+currentPreview+'<div class="diff-arrow">→</div>'+requestedPreview+'</div></article>';
+        const currentPreview=state.currentStoreImageDataUrl?'<img src="'+esc(state.currentStoreImageDataUrl)+'" alt="Current storefront image">':'<div class="storefront-image-empty"><small>No current image</small></div>';
+        const requestedPreview=state.storeImageDraft?.action==="remove"?'<div class="storefront-review-image remove"><div class="storefront-image-empty"><small>Remove image</small></div></div>':'<div class="storefront-review-image"><img src="'+esc(state.storeImageDraft?.dataUrl||"")+'" alt="Requested storefront image"></div>';
+        return '<article class="review-item"><strong>Storefront image</strong><div class="storefront-review-grid"><div class="storefront-review-image">'+currentPreview+'</div><div class="diff-arrow">→</div>'+requestedPreview+'</div></article>'
       }
-      const oldValue = (field==="phone" || field==="email")
-        ? "Private in QwerNFC Manager"
-        : (currentValue(field) || "Not provided");
+      const oldValue = currentValue(field) || "Not provided";
       return '<article class="review-item"><strong>'+esc(labels[field] || field)+'</strong><div class="diff-grid"><div class="diff-box"><span>Current</span><p>'+esc(oldValue)+'</p></div><div class="diff-arrow">→</div><div class="diff-box new"><span>New</span><p>'+esc(value)+'</p></div></div></article>';
     }).join("");
 
@@ -1905,6 +1999,53 @@ svg{display:block}
     window.scrollTo({top:0,behavior:"smooth"});
   });
 
+  const stopRequestStatusPolling = () => {
+    if(state.requestPollTimer){
+      clearInterval(state.requestPollTimer);
+      state.requestPollTimer=0;
+    }
+  };
+
+  const pollRequestStatus = async () => {
+    if(!state.requestId || !state.accessToken) return;
+    try{
+      const result=await apiJson("/v1/customer/requests/" + encodeURIComponent(state.requestId),{
+        headers:{authorization:"Bearer " + state.accessToken}
+      });
+      const requestStatus=document.getElementById("request-status");
+      const download=document.getElementById("approved-restore-download");
+      if(result.status==="approved"){
+        stopRequestStatusPolling();
+        if(requestStatus){
+          requestStatus.textContent="Approved. Your QwerNFC information is updated. Download the updated Restore APK again.";
+          requestStatus.className="status ok";
+        }
+        if(download){
+          download.href="../recover/" + encodeURIComponent(id) + "/?v=" + Date.now();
+          download.classList.remove("hidden");
+        }
+      }else if(result.status==="rejected"){
+        stopRequestStatusPolling();
+        if(requestStatus){
+          requestStatus.textContent="Rejected. None of the requested changes were applied.";
+          requestStatus.className="status error";
+        }
+        download?.classList.add("hidden");
+      }else if(requestStatus){
+        requestStatus.textContent="Waiting for admin review… QwerNFC Manager will show this request as a live notification.";
+        requestStatus.className="status";
+      }
+    }catch(error){
+      if(error?.status===401) stopRequestStatusPolling();
+    }
+  };
+
+  const startRequestStatusPolling = () => {
+    stopRequestStatusPolling();
+    void pollRequestStatus();
+    state.requestPollTimer=setInterval(()=>{ void pollRequestStatus(); },5000);
+  };
+
   document.getElementById("create-request").addEventListener("click",async(event)=>{
     if(!state.changes || state.submitting) return;
 
@@ -1925,24 +2066,16 @@ svg{display:block}
       reason:state.reason,
       changes:state.changes,
       ...(state.locationPin ? {locationPin:state.locationPin} : {}),
-      ...(state.storeImageDraft ? {
-        storeImage: state.storeImageDraft.action==="replace"
-          ? {action:"replace",mimeType:"image/webp",base64:state.storeImageDraft.base64}
-          : {action:"remove"}
-      } : {})
+      ...(state.storeImageDraft ? {storeImage:state.storeImageDraft.action==="replace"?{action:"replace",mimeType:"image/webp",base64:state.storeImageDraft.base64}:{action:"remove"}} : {})
     };
 
     try{
-      const response = await fetch(API_BASE + "/v1/requests",{
+      if(!state.accessToken) throw new Error("Customer verification expired. Verify again before submitting.");
+      const result = await apiJson("/v1/requests",{
         method:"POST",
-        headers:{"content-type":"application/json"},
-        body:JSON.stringify(payload),
-        cache:"no-store",
-        mode:"cors"
+        headers:{authorization:"Bearer " + state.accessToken},
+        body:payload
       });
-      let result={};
-      try{result=await response.json();}catch{}
-      if(!response.ok) throw new Error(result?.error || "Could not send the update request.");
 
       state.requestId=String(result.requestId || "");
       reviewStage.classList.add("hidden");
@@ -1952,9 +2085,10 @@ svg{display:block}
       const requestStatus=document.getElementById("request-status");
       if(requestStatus){
         requestStatus.textContent=state.requestId
-          ? "Live request sent · " + state.requestId.slice(0,8).toUpperCase()
-          : "Live request delivered to QwerNFC Manager.";
+          ? "Live request sent · " + state.requestId.slice(0,8).toUpperCase() + " · waiting for admin review."
+          : "Live request delivered to QwerNFC Manager. Waiting for admin review.";
       }
+      startRequestStatusPolling();
       window.scrollTo({top:0,behavior:"smooth"});
     }catch(error){
       reviewStatus.textContent=error?.message || "Could not send the update request.";
@@ -1965,7 +2099,9 @@ svg{display:block}
       button.textContent=originalText;
     }
   });
-  document.getElementById("done-button").addEventListener("click",()=>{
+  document.getElementById("done-button").addEventListener("click",async()=>{
+    stopRequestStatusPolling();
+    await logoutCustomerSession();
     history.back();
   });
 
