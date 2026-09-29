@@ -873,6 +873,10 @@ svg{display:block}
 .auth-card label{display:block;margin-top:12px;color:#8da394;font-size:.65rem;font-weight:850}
 .auth-card input{width:100%;min-height:48px;margin-top:6px;padding:0 12px;border:1px solid #28583a;border-radius:11px;background:#04110a;color:#f3fbf5;outline:none}
 .auth-card input:focus{border-color:#35b963;box-shadow:0 0 0 3px rgba(50,190,97,.09)}
+.edit-verification-gate{display:grid;gap:12px;margin:14px 0;padding:16px;border:1px solid #1e6a3b;background:linear-gradient(155deg,#092416,#06170d)}
+.edit-verification-copy h2{margin:4px 0 6px;font-size:1rem}
+.edit-verification-copy p{margin:0;color:var(--muted);font-size:.72rem;line-height:1.5}
+.edit-verification-gate .full-primary{margin-top:2px}
 .auth-actions{display:grid;gap:8px;margin-top:10px}
 .auth-note{display:grid;grid-template-columns:17px minmax(0,1fr);gap:8px;margin-top:10px;color:#637b6c;font-size:.62rem;line-height:1.45}
 .auth-note svg{width:15px;height:15px;color:#52cd78}
@@ -1071,10 +1075,10 @@ svg{display:block}
     <button class="help-btn" type="button" id="help-button" aria-label="About this update request">?</button>
   </header>
 
-  <section id="auth-stage" class="card auth-card">
-    <span class="eyebrow">SECURE CUSTOMER ACCESS</span>
-    <h2>Verify this QwerNFC record</h2>
-    <p>Changing the QR ID in the address does not grant access. Use the email registered to this record and the one-time code sent to that email.</p>
+  <section id="auth-stage" class="card auth-card hidden">
+    <span class="eyebrow">VERIFY TO EDIT</span>
+    <h2>Verify before editing this QwerNFC record</h2>
+    <p>Viewing and restoring this record does not require email verification. Verification is required only when you choose to edit protected information.</p>
 
     <div id="auth-email-step">
       <label>Registered email
@@ -1098,12 +1102,12 @@ svg{display:block}
     <div id="auth-status" class="status hidden"></div>
     <div class="auth-note">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-      <span>No store name, location, phone, email, or managed destination is loaded until verification succeeds.</span>
+      <span>Your registered email and private editing controls remain protected until verification succeeds.</span>
     </div>
   </section>
 
-  <div id="protected-content" class="hidden">
-  <div class="stepper" aria-label="Update request progress">
+  <div id="protected-content">
+  <div id="edit-stepper" class="stepper hidden" aria-label="Update request progress">
     <div class="step active" data-step="edit"><div class="step-dot"><span class="step-number">1</span></div><span>Edit Info</span></div>
     <div class="step" data-step="review"><div class="step-dot"><span class="step-number">2</span></div><span>Review</span></div>
     <div class="step" data-step="submit"><div class="step-dot"><span class="step-number">3</span></div><span>Submit</span></div>
@@ -1137,7 +1141,20 @@ svg{display:block}
     </div>
   </section>
 
-  <section id="edit-stage">
+  <section id="edit-gate" class="card edit-verification-gate">
+    <div class="edit-verification-copy">
+      <span class="eyebrow">CUSTOMER ACCESS</span>
+      <h2>Restore and view without verification</h2>
+      <p>Your current public QwerNFC information is available here. Verification is required only when you tap Edit info.</p>
+    </div>
+    <button id="open-edit-verification" class="full-primary" type="button">Edit info</button>
+    <div class="auth-note">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      <span>Email and protected editing details stay private until you verify.</span>
+    </div>
+  </section>
+
+  <section id="edit-stage" class="hidden">
     <div class="section-head">
       <span class="eyebrow">CURRENT INFO</span>
       <h2>Current Information</h2>
@@ -1245,7 +1262,7 @@ svg{display:block}
 
       <div class="security-note">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-        <span>Current customer values are shown only after registered-email OTP verification. The private backup and permanent QR database remain protected.</span>
+        <span>Protected customer values and editing actions are unlocked only after registered-email OTP verification. The private backup and permanent QR database remain protected.</span>
       </div>
 
       <div class="action-bar" id="edit-action">
@@ -1326,6 +1343,7 @@ svg{display:block}
     submitting:false,
     apiBase:"",
     accessToken:"",
+    verified:false,
     challengeId:"",
     authEmail:"",
     requestPollTimer:0,
@@ -1355,6 +1373,8 @@ svg{display:block}
   const authCode = document.getElementById("auth-code");
   const authStatus = document.getElementById("auth-status");
   const protectedContent = document.getElementById("protected-content");
+  const editGate = document.getElementById("edit-gate");
+  const editStepper = document.getElementById("edit-stepper");
   const profileStorefrontImage = document.getElementById("profile-storefront-image");
   const profileStorefrontPlaceholder = document.getElementById("profile-storefront-placeholder");
   const currentStoreImage = document.getElementById("current-store-image");
@@ -1458,9 +1478,22 @@ svg{display:block}
     updateSelectedSummary();
   };
   const loadCurrentStoreImage = async () => {
-    state.currentStoreImageDataUrl=""; if(!state.record?.storeImagePath){renderStoreImageUi();return}
-    try{const image=await apiJson("/v1/customer/qrs/"+encodeURIComponent(id)+"/image",{headers:{authorization:"Bearer "+state.accessToken}});const base64=String(image?.base64||"").replace(/\s/g,"");if(base64)state.currentStoreImageDataUrl="data:"+String(image?.mimeType||"image/webp")+";base64,"+base64}
-    catch(error){if(error?.status!==404)storeImageStatus.textContent="Current image could not be loaded, but you can still submit a replacement."}
+    state.currentStoreImageDataUrl="";
+    if(!state.record?.storeImagePath){renderStoreImageUi();return}
+    if(!state.verified || !state.accessToken){
+      storeImageStatus.textContent="Private storefront photo is available after Edit info verification.";
+      renderStoreImageUi();
+      return;
+    }
+    try{
+      const image=await apiJson("/v1/customer/qrs/"+encodeURIComponent(id)+"/image",{headers:{authorization:"Bearer "+state.accessToken}});
+      const base64=String(image?.base64||"").replace(/\s/g,"");
+      if(base64)state.currentStoreImageDataUrl="data:"+String(image?.mimeType||"image/webp")+";base64,"+base64;
+    }catch(error){
+      storeImageStatus.textContent=error?.status===404
+        ?"Private storefront photo is not available yet. You can still submit a replacement."
+        :"Current image could not be loaded, but you can still submit a replacement.";
+    }
     renderStoreImageUi();
   };
   const currentValue = (field) => field==="managedLink"
@@ -1760,13 +1793,14 @@ svg{display:block}
     profileId.textContent = id;
     currentLink.textContent = state.route.destination || "Not configured";
 
+    const verified = state.verified === true && Boolean(state.accessToken);
     const rows = [
-      ["storeImage","Storefront image",state.record.storeImagePath ? "Photo saved" : "No photo",false],
+      ["storeImage","Storefront image",state.record.storeImagePath ? (verified ? "Photo saved" : "Private photo · verify to edit") : "No photo",!verified && Boolean(state.record.storeImagePath)],
       ["store","Store name",state.record.store || "Not provided",false],
       ["location","Location",state.record.location || "Not provided",false],
       ["managedLink","Managed link",state.route.destination || "Not configured",false],
       ["phone","Phone",state.record.phone || "Not provided",false],
-      ["email","Email",state.record.email || state.authEmail || "Not provided",false]
+      ["email","Email",verified ? (state.record.email || state.authEmail || "Not provided") : "Protected until edit verification",!verified]
     ];
 
     currentList.innerHTML = rows.map(([key,label,value,isPrivate]) =>
@@ -1789,7 +1823,7 @@ svg{display:block}
     }
     form.elements.managedLink.value = state.route.destination || "";
     form.elements.email.value = state.record.email || state.authEmail || "";
-    form.elements.email.disabled = false;
+    form.elements.email.disabled = !verified;
     void loadCurrentStoreImage();
   };
 
@@ -1807,11 +1841,17 @@ svg{display:block}
       setStep("edit");
       return;
     }
+    if(!authStage.classList.contains("hidden") && !state.verified){
+      authStage.classList.add("hidden");
+      editGate.classList.remove("hidden");
+      authStatus.className="status hidden";
+      return;
+    }
     history.back();
   });
 
   document.getElementById("help-button").addEventListener("click",()=>{
-    alert("Select only the information you want to change. Your request does not change anything until the QwerNFC admin approves it.");
+    alert("You can view and restore this QwerNFC record without email verification. Verification is required only when you tap Edit info. Requested changes still require QwerNFC admin approval.");
   });
 
   if(!/^QR-\d+$/.test(id)){
@@ -1819,6 +1859,61 @@ svg{display:block}
     document.getElementById("auth-send-code").disabled=true;
     return;
   }
+
+  const PUBLIC_DB = "https://qwernfc-f8bf4-default-rtdb.asia-southeast1.firebasedatabase.app";
+  const fetchPublicJson = async (path) => {
+    const response = await fetch(PUBLIC_DB + path + (path.includes("?") ? "&" : "?") + "v=" + Date.now(), {
+      cache:"no-store",
+      mode:"cors"
+    });
+    if(!response.ok) throw new Error("This QwerNFC record could not be loaded.");
+    return response.json();
+  };
+
+  const loadPublicRecord = async () => {
+    const [profile, route] = await Promise.all([
+      fetchPublicJson("/public/profiles/" + encodeURIComponent(id) + ".json"),
+      fetchPublicJson("/public/routes/" + encodeURIComponent(id) + ".json")
+    ]);
+    if(!profile || !route || route.enabled!==true || route.deleted===true) {
+      throw new Error("This QwerNFC record is unavailable.");
+    }
+    state.record = {
+      id,
+      store:String(profile.store || ""),
+      phone:String(profile.phone || ""),
+      email:"",
+      location:String(profile.location || ""),
+      storeImagePath:String(profile.storeImagePath || ""),
+      storeImageUpdatedAt:String(profile.updatedAt || ""),
+      enabled:true,
+      deleted:false,
+      linkMode:String(route.linkMode || "both")
+    };
+    state.route = {
+      id,
+      enabled:true,
+      deleted:false,
+      destination:String(route.qrDestination || "")
+    };
+    state.verified=false;
+    renderCurrent();
+    protectedContent.classList.remove("hidden");
+    editGate.classList.remove("hidden");
+    editStage.classList.add("hidden");
+    editStepper.classList.add("hidden");
+  };
+
+  const openEditVerification = async () => {
+    editGate.classList.add("hidden");
+    authStage.classList.remove("hidden");
+    authEmailStep.classList.remove("hidden");
+    authCodeStep.classList.add("hidden");
+    authStatus.className="status hidden";
+    await refreshCustomerAccessState();
+    authStage.scrollIntoView({behavior:"smooth",block:"start"});
+    setTimeout(()=>authEmail.focus(),250);
+  };
 
   const authSendCode = document.getElementById("auth-send-code");
   const refreshCustomerAccessState = async () => {
@@ -1839,7 +1934,12 @@ svg{display:block}
       return false;
     }
   };
-  void refreshCustomerAccessState();
+  void loadPublicRecord().catch((error)=>{
+    authStage.classList.remove("hidden");
+    editGate.classList.add("hidden");
+    showAuthStatus(error?.message || "This QwerNFC record could not be loaded.","error");
+    authSendCode.disabled=true;
+  });
 
   const openVerifiedRecord = async () => {
     const record = await apiJson("/v1/customer/qrs/" + encodeURIComponent(id),{
@@ -1851,9 +1951,15 @@ svg{display:block}
       : String(record.destination || "");
     state.record=record;
     state.route={id,enabled:true,deleted:false,destination:managed};
+    state.verified=true;
     renderCurrent();
     authStage.classList.add("hidden");
+    editGate.classList.add("hidden");
     protectedContent.classList.remove("hidden");
+    editStepper.classList.remove("hidden");
+    editStage.classList.remove("hidden");
+    editAction.classList.remove("hidden");
+    setStep("edit");
     window.scrollTo({top:0,behavior:"smooth"});
   };
 
@@ -1926,10 +2032,15 @@ svg{display:block}
   document.getElementById("store-image-camera").addEventListener("change",(event)=>void handleStoreImageFile(event.currentTarget));
   document.getElementById("remove-store-image").addEventListener("click",()=>{state.storeImageDraft={action:"remove"};renderStoreImageUi()});
   document.getElementById("reset-store-image").addEventListener("click",()=>{state.storeImageDraft=null;renderStoreImageUi()});
-  document.getElementById("profile-edit-image").addEventListener("click",()=>document.querySelector('[data-edit-card="storeImage"]')?.scrollIntoView({behavior:"smooth",block:"center"}));
+  document.getElementById("open-edit-verification").addEventListener("click",()=>void openEditVerification());
+  document.getElementById("profile-edit-image").addEventListener("click",()=>{
+    if(!state.verified) return void openEditVerification();
+    document.querySelector('[data-edit-card="storeImage"]')?.scrollIntoView({behavior:"smooth",block:"center"});
+  });
 
   document.querySelectorAll("[data-edit-toggle]").forEach((button)=>{
     button.addEventListener("click",()=>{
+      if(!state.verified) return void openEditVerification();
       clearStatus();
       const field = button.dataset.editToggle;
       const card = document.querySelector('[data-edit-card="'+field+'"]');
@@ -1965,6 +2076,7 @@ svg{display:block}
 
   form.addEventListener("submit",(event)=>{
     event.preventDefault();
+    if(!state.verified || !state.accessToken) return void openEditVerification();
     clearStatus();
 
     const changes = {};
