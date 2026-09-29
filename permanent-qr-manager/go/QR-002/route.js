@@ -1,1 +1,0 @@
-window.__QWERNFC_ROUTE__ = {"id":"QR-002","kind":"QR","enabled":true,"deleted":false,"destination":"https://www.canva.com/design/DAHTL_2Pk4w/x14-RG-rslcN3bIH-E1sYg/edit","linkVersion":3,"linkChangedAt":"2026-09-25T12:57:42.044Z","linkChangeSource":"owner","customerResponseVersion":0,"updatedAt":"2026-09-25T12:57:42.044Z"};
