@@ -15,24 +15,64 @@
 (() => {
   const match=location.pathname.match(/^\/permanent-qr-manager\/(go|nfc)\/(QR-\d{3,})\/?$/i);
   if(!match)return;
-  const kind=match[1].toLowerCase(),id=match[2].toUpperCase();
+
+  const folder=match[1].toLowerCase(),id=match[2].toUpperCase(),kind=folder==="nfc"?"NFC":"QR";
   const title=document.getElementById("title"),identity=document.getElementById("identity"),status=document.getElementById("status"),link=document.getElementById("link");
   identity.innerHTML="<code>"+id+"</code>";
   title.textContent="Opening destination";
-  status.textContent="Resolving the latest "+(kind==="nfc"?"NFC":"QR")+" destination…";
-  const source="https://qwernfc-f8bf4-default-rtdb.asia-southeast1.firebasedatabase.app/public/routes/"+encodeURIComponent(id)+".json?v="+Date.now();
-  fetch(source,{cache:"no-store",mode:"cors"})
-    .then((response)=>{if(!response.ok)throw new Error("route");return response.json();})
-    .then((route)=>{
+  status.textContent="Resolving the latest "+kind+" destination…";
+
+  const routePath="permanent-qr-manager/"+folder+"/"+id+"/route.json";
+  const firebaseSrc="https://qwernfc-f8bf4-default-rtdb.asia-southeast1.firebasedatabase.app/public/routes/"+encodeURIComponent(id)+".json";
+  const apiSrc="https://api.github.com/repos/KeiShirogane1/keishirogane1.github.io/contents/"+routePath+"?ref=bbmain";
+  const rawSrc="https://raw.githubusercontent.com/KeiShirogane1/keishirogane1.github.io/bbmain/"+routePath;
+  const pageSrc=location.origin+"/"+routePath;
+  const fresh=(src)=>src+(src.includes("?")?"&":"?")+"v="+Date.now();
+  const fetchWithTimeout=async(src,options={})=>{
+    const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),2500);
+    try{return await fetch(src,{...options,signal:controller.signal})}finally{clearTimeout(timer)}
+  };
+  const fetchJson=async(src)=>{
+    const response=await fetchWithTimeout(fresh(src),{cache:"no-store",mode:"cors"});
+    if(!response.ok)throw new Error("route");
+    return response.json();
+  };
+  const fromApi=async()=>{
+    const response=await fetchWithTimeout(fresh(apiSrc),{cache:"no-store",mode:"cors"});
+    if(!response.ok)throw new Error("api");
+    const payload=await response.json();
+    if(!payload||typeof payload.content!=="string")throw new Error("api-content");
+    const binary=atob(payload.content.replace(/\s/g,""));
+    const bytes=Uint8Array.from(binary,(char)=>char.charCodeAt(0));
+    return JSON.parse(new TextDecoder().decode(bytes));
+  };
+  const fromFirebase=async()=>{
+    const payload=await fetchJson(firebaseSrc);
+    if(!payload||String(payload.id||"").toUpperCase()!==id)throw new Error("firebase");
+    return{
+      id,kind,enabled:payload.enabled===true,deleted:payload.deleted===true,
+      destination:kind==="NFC"?String(payload.nfcDestination||""):String(payload.qrDestination||""),
+      linkVersion:Number(payload.linkVersion||0),updatedAt:String(payload.updatedAt||"")
+    };
+  };
+  const newest=(routes)=>routes.filter(Boolean).sort((a,b)=>{
+    const versionDelta=Number(b.linkVersion||0)-Number(a.linkVersion||0);
+    if(versionDelta)return versionDelta;
+    return String(b.updatedAt||b.linkChangedAt||"").localeCompare(String(a.updatedAt||a.linkChangedAt||""));
+  })[0]||null;
+
+  Promise.allSettled([fromFirebase(),fromApi(),fetchJson(rawSrc),fetchJson(pageSrc)])
+    .then((results)=>{
+      const route=newest(results.filter((result)=>result.status==="fulfilled").map((result)=>result.value));
       if(!route||String(route.id||"").toUpperCase()!==id)throw new Error("identity");
-      if(route.deleted===true||route.enabled!==true){title.textContent="Permanent QR inactive";status.textContent="This permanent QwerNFC route has been disabled.";return;}
-      const destination=kind==="nfc"?String(route.nfcDestination||""):String(route.qrDestination||"");
-      if(!destination){title.textContent="Destination not configured";status.textContent="This permanent QwerNFC route does not have a destination yet.";return;}
+      if(route.deleted===true||route.enabled!==true){title.textContent="Permanent QR inactive";status.textContent="This permanent QwerNFC route has been disabled.";return}
+      const destination=String(route.destination||"").trim();
+      if(!destination){title.textContent="Destination not configured";status.textContent="This permanent QwerNFC route does not have a destination yet.";return}
       const target=new URL(destination);
       if(!["http:","https:"].includes(target.protocol))throw new Error("scheme");
       link.href=target.href;link.hidden=false;window.location.replace(target.href);
     })
-    .catch(()=>{title.textContent="Route unavailable";status.textContent="Could not verify the latest destination. Check your connection and try again.";});
+    .catch(()=>{title.textContent="Route unavailable";status.textContent="Could not load the live route or its last published fallback destination.";});
 })();
 </script>
 </body>
