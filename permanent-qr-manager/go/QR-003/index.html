@@ -1,123 +1,16 @@
 <!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<meta name="robots" content="noindex,nofollow" />
-<meta name="referrer" content="no-referrer" />
-<meta http-equiv="cache-control" content="no-store,no-cache,must-revalidate,max-age=0" />
-<meta http-equiv="pragma" content="no-cache" />
-<meta http-equiv="expires" content="0" />
-<title>Opening destination</title>
-<style>body{margin:0;background:#06110a;color:#e9fff0;font-family:system-ui,-apple-system,sans-serif;min-height:100vh;display:grid;place-items:center}main{width:min(92vw,560px);padding:28px;border:1px solid #1d5b32;border-radius:20px;background:#0a1b10}p{line-height:1.55;color:#b9d8c2}a{color:#7de39c}code{color:#d8ffe3}</style>
-</head>
-<body>
-<main>
-<small>QwerNFC PERMANENT ROUTER</small>
-<h1 id="route-title">Opening destination</h1>
-<p><code>QR-003</code></p>
-<p id="route-status">Resolving the latest QR destination…</p>
-<p><a id="route-link" hidden rel="noreferrer noopener">Continue to destination</a></p>
-</main>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><meta name="referrer" content="no-referrer"><meta http-equiv="cache-control" content="no-store,no-cache,must-revalidate,max-age=0"><meta http-equiv="pragma" content="no-cache"><meta http-equiv="expires" content="0"><title>Opening destination</title><style>body{margin:0;background:#06110a;color:#e9fff0;font-family:system-ui,-apple-system,sans-serif;min-height:100vh;display:grid;place-items:center}main{width:min(92vw,560px);padding:28px;border:1px solid #1d5b32;border-radius:20px;background:#0a1b10}p{line-height:1.55;color:#b9d8c2}a{color:#7de39c}code{color:#d8ffe3}</style></head>
+<body><main><small>QwerNFC PERMANENT ROUTER</small><h1 id="title">Opening destination</h1><p><code>QR-003</code></p><p id="status">Resolving the latest QR destination…</p><p><a id="link" hidden rel="noreferrer noopener">Continue</a></p></main>
 <script>
-(() => {
-  const expectedId = "QR-003";
-  const routeKind = "QR";
-  const title = document.getElementById("route-title");
-  const status = document.getElementById("route-status");
-  const link = document.getElementById("route-link");
-  const show = (heading, message) => { title.textContent = heading; status.textContent = message; };
-  const rawSrc = "https://raw.githubusercontent.com/KeiShirogane1/keishirogane1.github.io/bbmain/permanent-qr-manager/go/QR-003/route.json";
-  const apiSrc = "https://api.github.com/repos/KeiShirogane1/keishirogane1.github.io/contents/permanent-qr-manager/go/QR-003/route.json?ref=bbmain";
-  const firebaseSrc = "https://qwernfc-f8bf4-default-rtdb.asia-southeast1.firebasedatabase.app/public/routes/QR-003.json";
-  const fresh = (src) => src + (src.includes("?") ? "&" : "?") + "v=" + Date.now();
-
-  const decodeApiRoute = async (response) => {
-    if (!response.ok) throw new Error("Route API fetch failed");
-    const payload = await response.json();
-    if (!payload || typeof payload.content !== "string") throw new Error("Route API content missing");
-    const binary = atob(payload.content.replace(/\s/g, ""));
-    const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0));
-    return JSON.parse(new TextDecoder().decode(bytes));
-  };
-
-  const fetchJson = async (src) => {
-    const response = await fetch(fresh(src), { cache: "no-store", mode: "cors" });
-    if (!response.ok) throw new Error("Route fetch failed");
-    return response.json();
-  };
-
-  const fromApi = async () => decodeApiRoute(
-    await fetch(fresh(apiSrc), { cache: "no-store", mode: "cors" })
-  );
-
-  const fromFirebase = async () => {
-    const payload = await fetchJson(firebaseSrc);
-    if (!payload || payload.id !== expectedId) throw new Error("Firebase route unavailable");
-    return {
-      id: payload.id,
-      kind: routeKind,
-      enabled: payload.enabled === true,
-      deleted: payload.deleted === true,
-      destination: routeKind === "NFC"
-        ? String(payload.nfcDestination || "")
-        : String(payload.qrDestination || ""),
-      linkVersion: Number(payload.linkVersion || 0),
-      updatedAt: String(payload.updatedAt || "")
-    };
-  };
-
-  const newest = (routes) => routes
-    .filter(Boolean)
-    .sort((a, b) => {
-      const versionDelta = Number(b.linkVersion || 0) - Number(a.linkVersion || 0);
-      if (versionDelta) return versionDelta;
-      return String(b.updatedAt || b.linkChangedAt || "").localeCompare(String(a.updatedAt || a.linkChangedAt || ""));
-    })[0] || null;
-
-  const resolveLatest = async () => {
-    const results = await Promise.allSettled([
-      fromFirebase(),
-      fromApi(),
-      fetchJson(rawSrc),
-      fetchJson("./route.json")
-    ]);
-    const route = newest(results
-      .filter((result) => result.status === "fulfilled")
-      .map((result) => result.value));
-    if (!route) throw new Error("Route fetch failed");
-    return route;
-  };
-
-  resolveLatest()
-    .then((route) => {
-      if (!route || route.id !== expectedId) {
-        show("Route unavailable", "The latest destination could not be verified.");
-        return;
-      }
-      if (route.deleted || route.enabled !== true) {
-        show("Permanent QR inactive", "This permanent QR has been disabled.");
-        return;
-      }
-      if (!route.destination) {
-        show("Destination not configured", "This permanent QR does not have a destination yet.");
-        return;
-      }
-
-      try {
-        const target = new URL(route.destination);
-        if (!["http:", "https:"].includes(target.protocol)) throw new Error("Unsupported URL");
-        link.href = target.href;
-        link.hidden = false;
-        window.location.replace(target.href);
-      } catch {
-        show("Invalid destination", "The saved destination is not a valid web address.");
-      }
-    })
-    .catch(() => {
-      show("Route unavailable", "Could not load the latest destination. Check your connection and try again.");
-    });
-})();
-</script>
-</body>
-</html>
+(()=>{const expectedId="QR-003",routeKind="QR",firebaseSrc="https://qwernfc-f8bf4-default-rtdb.asia-southeast1.firebasedatabase.app/public/routes/QR-003.json",apiSrc="https://api.github.com/repos/KeiShirogane1/keishirogane1.github.io/contents/permanent-qr-manager/go/QR-003/route.json?ref=bbmain",rawSrc="https://raw.githubusercontent.com/KeiShirogane1/keishirogane1.github.io/bbmain/permanent-qr-manager/go/QR-003/route.json",localSrc="./route.json";
+const title=document.getElementById("title"),status=document.getElementById("status"),link=document.getElementById("link");
+const show=(h,m)=>{title.textContent=h;status.textContent=m};
+const fresh=(src)=>src+(src.includes("?")?"&":"?")+"v="+Date.now();
+const fetchWithTimeout=async(src,options={})=>{const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),2500);try{return await fetch(src,{...options,signal:controller.signal})}finally{clearTimeout(timer)}};
+const fetchJson=async(src)=>{const response=await fetchWithTimeout(fresh(src),{cache:"no-store",mode:"cors"});if(!response.ok)throw new Error("route");return response.json()};
+const fromApi=async()=>{const response=await fetchWithTimeout(fresh(apiSrc),{cache:"no-store",mode:"cors"});if(!response.ok)throw new Error("api");const payload=await response.json();if(!payload||typeof payload.content!=="string")throw new Error("api-content");const binary=atob(payload.content.replace(/\s/g,""));const bytes=Uint8Array.from(binary,(char)=>char.charCodeAt(0));return JSON.parse(new TextDecoder().decode(bytes))};
+const fromFirebase=async()=>{const payload=await fetchJson(firebaseSrc);if(!payload||String(payload.id||"").toUpperCase()!==expectedId)throw new Error("firebase");return{id:expectedId,kind:routeKind,enabled:payload.enabled===true,deleted:payload.deleted===true,destination:routeKind==="NFC"?String(payload.nfcDestination||""):String(payload.qrDestination||""),linkVersion:Number(payload.linkVersion||0),updatedAt:String(payload.updatedAt||"")}};
+const newest=(routes)=>routes.filter(Boolean).sort((a,b)=>{const versionDelta=Number(b.linkVersion||0)-Number(a.linkVersion||0);if(versionDelta)return versionDelta;return String(b.updatedAt||b.linkChangedAt||"").localeCompare(String(a.updatedAt||a.linkChangedAt||""))})[0]||null;
+Promise.allSettled([fromFirebase(),fromApi(),fetchJson(rawSrc),fetchJson(localSrc)]).then((results)=>{const route=newest(results.filter((result)=>result.status==="fulfilled").map((result)=>result.value));if(!route||String(route.id||"").toUpperCase()!==expectedId)return show("Route unavailable","The latest destination could not be verified.");if(route.deleted===true||route.enabled!==true)return show("Permanent QR inactive","This permanent QwerNFC route has been disabled.");const destination=String(route.destination||"").trim();if(!destination)return show("Destination not configured","This permanent QwerNFC route does not have a destination yet.");let target;try{target=new URL(destination);if(!["http:","https:"].includes(target.protocol))throw new Error("scheme")}catch{return show("Invalid destination","The saved destination is not a valid web address.")}link.href=target.href;link.hidden=false;window.location.replace(target.href)}).catch(()=>show("Route unavailable","Could not load the live route or its last published fallback destination."))})();
+</script></body></html>
