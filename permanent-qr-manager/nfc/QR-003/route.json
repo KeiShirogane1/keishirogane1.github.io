@@ -1,1 +1,9 @@
-{"id":"QR-003","kind":"NFC","enabled":true,"deleted":false,"destination":"","updatedAt":"2026-09-24T16:58:47.399Z"}
+{
+  "id": "QR-003",
+  "kind": "NFC",
+  "enabled": true,
+  "deleted": false,
+  "destination": "",
+  "updatedAt": "2026-09-24T16:58:47.399Z",
+  "fallbackDestination": ""
+}
