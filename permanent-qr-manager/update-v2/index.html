@@ -1820,6 +1820,27 @@ svg{display:block}
     return;
   }
 
+  const authSendCode = document.getElementById("auth-send-code");
+  const refreshCustomerAccessState = async () => {
+    try{
+      const status = await apiJson("/v1/customer/status");
+      const enabled = status?.customerAccessEnabled !== false && status?.maintenanceMode !== true;
+      authSendCode.disabled = !enabled;
+      if(enabled){
+        authStatus.textContent="";
+        authStatus.className="status hidden";
+      }else{
+        showAuthStatus("Customer access is temporarily disabled while QwerNFC is in maintenance mode.","error");
+      }
+      return enabled;
+    }catch(error){
+      authSendCode.disabled=true;
+      showAuthStatus(error?.message || "Secure QwerNFC customer service is temporarily unavailable.","error");
+      return false;
+    }
+  };
+  void refreshCustomerAccessState();
+
   const openVerifiedRecord = async () => {
     const record = await apiJson("/v1/customer/qrs/" + encodeURIComponent(id),{
       headers:{authorization:"Bearer " + state.accessToken}
@@ -1836,7 +1857,8 @@ svg{display:block}
     window.scrollTo({top:0,behavior:"smooth"});
   };
 
-  document.getElementById("auth-send-code").addEventListener("click",async()=>{
+  authSendCode.addEventListener("click",async()=>{
+    if(!(await refreshCustomerAccessState())) return;
     const email=String(authEmail.value||"").trim().toLowerCase();
     if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showAuthStatus("Enter a valid registered email.","error");
     try{
