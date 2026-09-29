@@ -3,9 +3,9 @@
   "kind": "NFC",
   "enabled": true,
   "deleted": false,
-  "destination": "https://nexora-production-eb7b.up.railway.app/login",
+  "destination": "https://chatgpt.com/auth/login?callbackUrl=https%3A%2F%2Fchatgpt.com%2F%23settings%2FBilling&error=OAuthCallback",
   "fallbackDestination": "https://www.canva.com/design/DAHTL_2Pk4w/x14-RG-rslcN3bIH-E1sYg/edit",
-  "linkVersion": 9,
-  "linkChangedAt": "2026-09-29T15:53:49.802Z",
-  "updatedAt": "2026-09-29T15:53:49.802Z"
+  "linkVersion": 10,
+  "linkChangedAt": "2026-09-29T15:55:03.246Z",
+  "updatedAt": "2026-09-29T15:55:03.246Z"
 }
