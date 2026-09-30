@@ -1480,19 +1480,21 @@ svg{display:block}
   const loadCurrentStoreImage = async () => {
     state.currentStoreImageDataUrl="";
     if(!state.record?.storeImagePath){renderStoreImageUi();return}
-    if(!state.verified || !state.accessToken){
-      storeImageStatus.textContent="Private storefront photo is available after Edit info verification.";
-      renderStoreImageUi();
-      return;
-    }
     try{
-      const image=await apiJson("/v1/customer/qrs/"+encodeURIComponent(id)+"/image",{headers:{authorization:"Bearer "+state.accessToken}});
+      const image=state.verified && state.accessToken
+        ? await apiJson("/v1/customer/qrs/"+encodeURIComponent(id)+"/image",{headers:{authorization:"Bearer "+state.accessToken}})
+        : await apiJson("/v1/public/qrs/"+encodeURIComponent(id)+"/image");
       const base64=String(image?.base64||"").replace(/\s/g,"");
-      if(base64)state.currentStoreImageDataUrl="data:"+String(image?.mimeType||"image/webp")+";base64,"+base64;
+      if(base64){
+        state.currentStoreImageDataUrl="data:"+String(image?.mimeType||"image/webp")+";base64,"+base64;
+        if(!state.verified){
+          storeImageStatus.textContent="Current storefront photo · verification is required only to replace or remove it.";
+        }
+      }
     }catch(error){
       storeImageStatus.textContent=error?.status===404
-        ?"Private storefront photo is not available yet. You can still submit a replacement."
-        :"Current image could not be loaded, but you can still submit a replacement.";
+        ?"Current storefront photo is not available yet. You can still verify and submit a replacement."
+        :"Current image could not be loaded. You can still verify and submit a replacement.";
     }
     renderStoreImageUi();
   };
@@ -1795,7 +1797,7 @@ svg{display:block}
 
     const verified = state.verified === true && Boolean(state.accessToken);
     const rows = [
-      ["storeImage","Storefront image",state.record.storeImagePath ? (verified ? "Photo saved" : "Private photo · verify to edit") : "No photo",!verified && Boolean(state.record.storeImagePath)],
+      ["storeImage","Storefront image",state.record.storeImagePath ? "Photo saved" : "No photo",false],
       ["store","Store name",state.record.store || "Not provided",false],
       ["location","Location",state.record.location || "Not provided",false],
       ["managedLink","Managed link",state.route.destination || "Not configured",false],
