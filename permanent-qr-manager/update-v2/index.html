@@ -1478,8 +1478,13 @@ svg{display:block}
     updateSelectedSummary();
   };
   const loadCurrentStoreImage = async () => {
+    if(!state.record?.storeImagePath){state.currentStoreImageDataUrl="";renderStoreImageUi();return}
+    if(!state.verified && state.currentStoreImageDataUrl){
+      storeImageStatus.textContent="Current storefront photo · verification is required only to replace or remove it.";
+      renderStoreImageUi();
+      return;
+    }
     state.currentStoreImageDataUrl="";
-    if(!state.record?.storeImagePath){renderStoreImageUi();return}
     try{
       const image=state.verified && state.accessToken
         ? await apiJson("/v1/customer/qrs/"+encodeURIComponent(id)+"/image",{headers:{authorization:"Bearer "+state.accessToken}})
@@ -1880,6 +1885,10 @@ svg{display:block}
     if(!profile || profile.ok!==true || !route || route.enabled!==true || route.deleted===true) {
       throw new Error("This QwerNFC record is unavailable.");
     }
+    const publicImageBase64=String(profile?.storeImage?.base64||"").replace(/\s/g,"");
+    state.currentStoreImageDataUrl=publicImageBase64
+      ?"data:"+String(profile?.storeImage?.mimeType||"image/webp")+";base64,"+publicImageBase64
+      :"";
     state.record = {
       id,
       store:String(profile.store || ""),
