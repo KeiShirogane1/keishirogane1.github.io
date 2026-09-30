@@ -867,12 +867,25 @@ svg{display:block}
   font-weight:850;
 }
 
-.auth-card{padding:14px;margin-bottom:14px}
-.auth-card h2{margin:0 0 6px;font-size:1.05rem}
-.auth-card p{margin:0;color:var(--muted);font-size:.72rem;line-height:1.5}
-.auth-card label{display:block;margin-top:12px;color:#8da394;font-size:.65rem;font-weight:850}
-.auth-card input{width:100%;min-height:48px;margin-top:6px;padding:0 12px;border:1px solid #28583a;border-radius:11px;background:#04110a;color:#f3fbf5;outline:none}
-.auth-card input:focus{border-color:#35b963;box-shadow:0 0 0 3px rgba(50,190,97,.09)}
+.auth-card{padding:18px}
+.auth-card:not(.hidden){
+  position:fixed;
+  z-index:120;
+  left:50%;
+  top:50%;
+  width:min(calc(100vw - 24px),410px);
+  max-height:calc(100dvh - 24px);
+  margin:0;
+  overflow:auto;
+  transform:translate(-50%,-50%);
+  border-color:#248b4d;
+  box-shadow:0 0 0 100vmax rgba(0,0,0,.76),0 26px 70px rgba(0,0,0,.58);
+}
+.auth-card .eyebrow{display:block;text-align:center}
+.auth-card h2{margin:5px 0 2px;text-align:center;font-size:1.12rem}
+.auth-card label{display:block;margin-top:14px;color:#9bb0a1;font-size:.67rem;font-weight:850}
+.auth-card input{width:100%;min-height:50px;margin-top:6px;padding:0 13px;border:1px solid #2a7446;border-radius:12px;background:#031008;color:#f3fbf5;outline:none}
+.auth-card input:focus{border-color:#40d777;box-shadow:0 0 0 3px rgba(50,190,97,.11)}
 .edit-verification-gate{display:grid;gap:12px;margin:14px 0;padding:16px;border:1px solid #1e6a3b;background:linear-gradient(155deg,#092416,#06170d)}
 .edit-verification-copy h2{margin:4px 0 6px;font-size:1rem}
 .edit-verification-copy p{margin:0;color:var(--muted);font-size:.72rem;line-height:1.5}
@@ -1077,8 +1090,7 @@ svg{display:block}
 
   <section id="auth-stage" class="card auth-card hidden">
     <span class="eyebrow">VERIFY TO EDIT</span>
-    <h2>Verify before editing this QwerNFC record</h2>
-    <p>Viewing and restoring this record does not require email verification. Verification is required only when you choose to edit protected information.</p>
+    <h2>Verify to edit</h2>
 
     <div id="auth-email-step">
       <label>Registered email
@@ -1094,16 +1106,12 @@ svg{display:block}
         <input id="auth-code" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="one-time-code" placeholder="000000" />
       </label>
       <div class="auth-actions">
-        <button id="auth-verify-code" class="full-primary" type="button">Verify and continue</button>
+        <button id="auth-verify-code" class="full-primary" type="button">Verify to edit</button>
         <button id="auth-change-email" class="secondary" type="button">Use another email</button>
       </div>
     </div>
 
     <div id="auth-status" class="status hidden"></div>
-    <div class="auth-note">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-      <span>Your registered email and private editing controls remain protected until verification succeeds.</span>
-    </div>
   </section>
 
   <div id="protected-content">
@@ -1417,6 +1425,7 @@ svg{display:block}
     if(!response.ok) {
       const error=new Error(data?.error || "Secure QwerNFC request failed.");
       error.status=response.status;
+      error.code=String(data?.code || "");
       throw error;
     }
     return data;
@@ -1922,7 +1931,6 @@ svg{display:block}
     authCodeStep.classList.add("hidden");
     authStatus.className="status hidden";
     await refreshCustomerAccessState();
-    authStage.scrollIntoView({behavior:"smooth",block:"start"});
     setTimeout(()=>authEmail.focus(),250);
   };
 
@@ -1987,7 +1995,7 @@ svg{display:block}
       state.authEmail=email;
       authEmailStep.classList.add("hidden");
       authCodeStep.classList.remove("hidden");
-      showAuthStatus("If this email is registered to this QR, a 6-digit code has been sent.");
+      showAuthStatus("Verification code sent. Check your inbox or spam folder.","ok");
       authCode.focus();
     }catch(error){
       showAuthStatus(error?.message || "Could not start verification.","error");
