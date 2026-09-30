@@ -1872,10 +1872,10 @@ svg{display:block}
 
   const loadPublicRecord = async () => {
     const [profile, route] = await Promise.all([
-      fetchPublicJson("/public/profiles/" + encodeURIComponent(id) + ".json"),
+      apiJson("/v1/public/qrs/" + encodeURIComponent(id) + "/profile"),
       fetchPublicJson("/public/routes/" + encodeURIComponent(id) + ".json")
     ]);
-    if(!profile || !route || route.enabled!==true || route.deleted===true) {
+    if(!profile || profile.ok!==true || !route || route.enabled!==true || route.deleted===true) {
       throw new Error("This QwerNFC record is unavailable.");
     }
     state.record = {
@@ -1884,7 +1884,7 @@ svg{display:block}
       phone:String(profile.phone || ""),
       email:"",
       location:String(profile.location || ""),
-      storeImagePath:String(profile.storeImagePath || ""),
+      storeImagePath:profile.hasStoreImage ? "private" : "",
       storeImageUpdatedAt:String(profile.updatedAt || ""),
       enabled:true,
       deleted:false,
