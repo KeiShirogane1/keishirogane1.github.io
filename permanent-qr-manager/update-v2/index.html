@@ -1153,6 +1153,43 @@ svg{display:block}
   .public-entry-actions{grid-template-columns:1fr}
 }
 
+
+
+/* Customer profile status placement — 2026-09-30 */
+.public-profile-card .profile-side {
+  position: relative;
+  padding-top: 34px;
+}
+
+.public-profile-card .public-identity-row .active-pill {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 3;
+  margin: 0;
+}
+
+.public-profile-card .public-store-title-row {
+  display: block;
+  min-width: 0;
+}
+
+.public-profile-card .public-store-title-row h1 {
+  width: 100%;
+  padding-right: 0;
+}
+
+@media(max-width:420px){
+  .public-profile-card .profile-side {
+    padding-top: 31px;
+  }
+
+  .public-profile-card .public-identity-row .active-pill {
+    top: 0;
+    right: 0;
+  }
+}
+
 </style>
 </head>
 <body>
