@@ -154,6 +154,459 @@ svg{display:block}
 }
 .step.complete .step-number{display:none}
 
+.step.complete .step-dot::before{
+  content:"✓";
+  font-size:.83rem;
+}
+.step.complete .step-number{display:none}
+
+/* PIN verification fallback styles */
+.auth-card{padding:14px}
+.auth-intro{
+  margin-bottom:16px;
+  color:var(--muted);
+  font-size:.78rem;
+  line-height:1.55;
+}
+.auth-divider{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin:16px 0;
+  color:var(--muted2);
+  font-size:.66rem;
+  font-weight:800;
+  text-transform:uppercase;
+}
+.auth-divider::before,
+.auth-divider::after{
+  content:"";
+  flex:1;
+  height:1px;
+  background:var(--line);
+}
+.auth-divider span{
+  white-space:nowrap;
+}
+.auth-actions{
+  display:flex;
+  gap:10px;
+  margin-top:12px;
+}
+.auth-actions .full-primary,
+.auth-actions .secondary{
+  flex:1;
+}
+.auth-code-meta{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  margin-top:8px;
+  color:var(--muted);
+  font-size:.66rem;
+  line-height:1.4;
+}
+.auth-code-meta strong{
+  color:var(--text);
+  font-variant-numeric:tabular-nums;
+}
+.auth-code-secondary-actions{
+  margin-top:8px;
+}
+.auth-code-secondary-actions .secondary:disabled{
+  opacity:.58;
+  cursor:not-allowed;
+}
+.auth-pin-step .auth-actions{
+  flex-direction:column;
+  gap:10px;
+}
+.auth-pin-step label{
+  margin-bottom:10px;
+}
+.auth-pin-step input{
+  width:100%;
+  min-height:48px;
+  padding:0 14px;
+  border:1px solid #28583a;
+  border-radius:10px;
+  background:#04110a;
+  color:#f3fbf5;
+  font-size:1.1rem;
+  letter-spacing:.3em;
+  text-align:center;
+}
+.auth-pin-step input:focus{
+  border-color:#35b963;
+  box-shadow:0 0 0 3px rgba(50,190,97,.09);
+}
+.pin-display{
+  display:flex;
+  gap:6px;
+  margin:16px 0;
+  justify-content:center;
+}
+.pin-digit{
+  width:40px;
+  height:56px;
+  border:1px solid #2ca95c;
+  border-radius:12px;
+  background:linear-gradient(180deg,#0a2a17,#06150c);
+  color:#37e879;
+  font-size:1.4rem;
+  font-weight:900;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  animation:pinReveal .4s ease-out both;
+}
+@keyframes pinReveal{
+  from{opacity:0;transform:translateY(10px) scale(.9)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+.pin-meta{
+  display:flex;
+  justify-content:space-between;
+  margin-top:12px;
+  font-size:.66rem;
+  color:var(--muted2);
+}
+.pin-qr-id{
+  font-weight:700;
+  color:var(--text);
+}
+.pin-expires{
+  color:var(--muted);
+}
+.pin-actions{
+  display:flex;
+  gap:10px;
+  margin-top:16px;
+}
+.pin-actions .pin-copy,
+.pin-actions .pin-regenerate{
+  flex:1;
+  min-height:44px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+}
+.pin-copy svg,
+.pin-regenerate svg{
+  width:18px;
+  height:18px;
+}
+.pin-note{
+  margin-top:16px;
+  font-size:.62rem;
+  color:var(--muted3);
+  text-align:center;
+}
+.pin-error{
+  margin-top:12px;
+  padding:10px 12px;
+  background:#2a0a0a;
+  border:1px solid #5a1a1a;
+  border-radius:8px;
+  color:#ff8b80;
+  font-size:.7rem;
+  text-align:center;
+}
+.pin-fallback-note{
+  margin-top:12px;
+  font-size:.7rem;
+  color:var(--muted2);
+  text-align:center;
+}
+.auth-divider{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin:16px 0;
+  color:var(--muted2);
+  font-size:.66rem;
+  font-weight:800;
+  text-transform:uppercase;
+}
+.auth-divider::before,
+.auth-divider::after{
+  content:"";
+  flex:1;
+  height:1px;
+  background:var(--line);
+}
+.auth-divider span{
+  white-space:nowrap;
+}
+.auth-pin-step input{
+  width:100%;
+  min-height:48px;
+  padding:0 14px;
+  border:1px solid #28583a;
+  border-radius:10px;
+  background:#04110a;
+  color:#f3fbf5;
+  font-size:1.1rem;
+  letter-spacing:.3em;
+  text-align:center;
+}
+.auth-pin-step input:focus{
+  border-color:#35b963;
+  box-shadow:0 0 0 3px rgba(50,190,97,.09);
+}
+.pin-fallback-note{
+  margin-top:12px;
+  font-size:.7rem;
+  color:var(--muted2);
+  text-align:center;
+}
+.full-secondary{
+  width:100%;
+  min-height:48px;
+  padding:0 16px;
+  border:1px solid #28583a;
+  border-radius:12px;
+  background:linear-gradient(180deg,#0a2c19,#071b10);
+  color:#69e290;
+  font-weight:900;
+  font-size:.82rem;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+}
+.full-secondary svg{
+  width:20px;
+  height:20px;
+}
+.full-secondary:hover{
+  background:linear-gradient(180deg,#0c3a21,#082414);
+}
+.full-secondary:disabled{
+  opacity:.55;
+  cursor:not-allowed;
+}
+.pin-fallback-note{
+  margin-top:12px;
+  font-size:.7rem;
+  color:var(--muted2);
+  text-align:center;
+}
+.auth-card{padding:14px}
+.auth-intro{
+  margin-bottom:16px;
+  color:var(--muted);
+  font-size:.78rem;
+  line-height:1.55;
+}
+.auth-divider{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin:16px 0;
+  color:var(--muted2);
+  font-size:.66rem;
+  font-weight:800;
+  text-transform:uppercase;
+}
+.auth-divider::before,
+.auth-divider::after{
+  content:"";
+  flex:1;
+  height:1px;
+  background:var(--line);
+}
+.auth-divider span{
+  white-space:nowrap;
+}
+.auth-actions{
+  display:flex;
+  gap:10px;
+  margin-top:12px;
+}
+.auth-actions .full-primary,
+.auth-actions .secondary{
+  flex:1;
+}
+.auth-pin-step .auth-actions{
+  flex-direction:column;
+  gap:10px;
+}
+.auth-pin-step label{
+  margin-bottom:10px;
+}
+.auth-pin-step input{
+  width:100%;
+  min-height:48px;
+  padding:0 14px;
+  border:1px solid #28583a;
+  border-radius:10px;
+  background:#04110a;
+  color:#f3fbf5;
+  font-size:1.1rem;
+  letter-spacing:.3em;
+  text-align:center;
+}
+.auth-pin-step input:focus{
+  border-color:#35b963;
+  box-shadow:0 0 0 3px rgba(50,190,97,.09);
+}
+.pin-display{
+  display:flex;
+  gap:6px;
+  margin:16px 0;
+  justify-content:center;
+}
+.pin-digit{
+  width:40px;
+  height:56px;
+  border:1px solid #2ca95c;
+  border-radius:12px;
+  background:linear-gradient(180deg,#0a2a17,#06150c);
+  color:#37e879;
+  font-size:1.4rem;
+  font-weight:900;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  animation:pinReveal .4s ease-out both;
+}
+@keyframes pinReveal{
+  from{opacity:0;transform:translateY(10px) scale(.9)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+.pin-meta{
+  display:flex;
+  justify-content:space-between;
+  margin-top:12px;
+  font-size:.66rem;
+  color:var(--muted2);
+}
+.pin-qr-id{
+  font-weight:700;
+  color:var(--text);
+}
+.pin-expires{
+  color:var(--muted);
+}
+.pin-actions{
+  display:flex;
+  gap:10px;
+  margin-top:16px;
+}
+.pin-actions .pin-copy,
+.pin-actions .pin-regenerate{
+  flex:1;
+  min-height:44px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px
+}
+.pin-copy svg,
+.pin-regenerate svg{
+  width:18px;
+  height:18px
+}
+.pin-note{
+  margin-top:16px;
+  font-size:.62rem;
+  color:var(--muted3);
+  text-align:center
+}
+.pin-error{
+  margin-top:12px;
+  padding:10px 12px;
+  background:#2a0a0a;
+  border:1px solid #5a1a1a;
+  border-radius:8px;
+  color:#ff8b80;
+  font-size:.7rem;
+  text-align:center
+}
+.pin-fallback-note{
+  margin-top:12px;
+  font-size:.7rem;
+  color:var(--muted2);
+  text-align:center
+}
+.auth-divider{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin:16px 0;
+  color:var(--muted2);
+  font-size:.66rem;
+  font-weight:800;
+  text-transform:uppercase
+}
+.auth-divider::before,
+.auth-divider::after{
+  content:"";
+  flex:1;
+  height:1px;
+  background:var(--line)
+}
+.auth-divider span{
+  white-space:nowrap
+}
+.auth-pin-step input{
+  width:100%;
+  min-height:48px;
+  padding:0 14px;
+  border:1px solid #28583a;
+  border-radius:10px;
+  background:#04110a;
+  color:#f3fbf5;
+  font-size:1.1rem;
+  letter-spacing:.3em;
+  text-align:center
+}
+.auth-pin-step input:focus{
+  border-color:#35b963;
+  box-shadow:0 0 0 3px rgba(50,190,97,.09)
+}
+.pin-fallback-note{
+  margin-top:12px;
+  font-size:.7rem;
+  color:var(--muted2);
+  text-align:center
+}
+.full-secondary{
+  width:100%;
+  min-height:48px;
+  padding:0 16px;
+  border:1px solid #28583a;
+  border-radius:12px;
+  background:linear-gradient(180deg,#0a2c19,#071b10);
+  color:#69e290;
+  font-weight:900;
+  font-size:.82rem;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px
+}
+.full-secondary svg{
+  width:20px;
+  height:20px
+}
+.full-secondary:hover{
+  background:linear-gradient(180deg,#0c3a21,#082414)
+}
+.full-secondary:disabled{
+  opacity:.55;
+  cursor:not-allowed
+}
+.pin-fallback-note{
+  margin-top:12px;
+  font-size:.7rem;
+  color:var(--muted2);
+  text-align:center
+}
+
 .card{
   border:1px solid var(--line);
   border-radius:18px;
@@ -867,12 +1320,29 @@ svg{display:block}
   font-weight:850;
 }
 
-.auth-card{padding:14px;margin-bottom:14px}
-.auth-card h2{margin:0 0 6px;font-size:1.05rem}
-.auth-card p{margin:0;color:var(--muted);font-size:.72rem;line-height:1.5}
-.auth-card label{display:block;margin-top:12px;color:#8da394;font-size:.65rem;font-weight:850}
-.auth-card input{width:100%;min-height:48px;margin-top:6px;padding:0 12px;border:1px solid #28583a;border-radius:11px;background:#04110a;color:#f3fbf5;outline:none}
-.auth-card input:focus{border-color:#35b963;box-shadow:0 0 0 3px rgba(50,190,97,.09)}
+.auth-card{padding:18px}
+.auth-card:not(.hidden){
+  position:fixed;
+  z-index:120;
+  left:50%;
+  top:50%;
+  width:min(calc(100vw - 24px),410px);
+  max-height:calc(100dvh - 24px);
+  margin:0;
+  overflow:auto;
+  transform:translate(-50%,-50%);
+  border-color:#248b4d;
+  box-shadow:0 0 0 100vmax rgba(0,0,0,.76),0 26px 70px rgba(0,0,0,.58);
+}
+.auth-card .eyebrow{display:block;text-align:center}
+.auth-card h2{margin:5px 0 2px;text-align:center;font-size:1.12rem}
+.auth-card label{display:block;margin-top:14px;color:#9bb0a1;font-size:.67rem;font-weight:850}
+.auth-card input{width:100%;min-height:50px;margin-top:6px;padding:0 13px;border:1px solid #2a7446;border-radius:12px;background:#031008;color:#f3fbf5;outline:none}
+.auth-card input:focus{border-color:#40d777;box-shadow:0 0 0 3px rgba(50,190,97,.11)}
+.edit-verification-gate{display:grid;gap:12px;margin:14px 0;padding:16px;border:1px solid #1e6a3b;background:linear-gradient(155deg,#092416,#06170d)}
+.edit-verification-copy h2{margin:4px 0 6px;font-size:1rem}
+.edit-verification-copy p{margin:0;color:var(--muted);font-size:.72rem;line-height:1.5}
+.edit-verification-gate .full-primary{margin-top:2px}
 .auth-actions{display:grid;gap:8px;margin-top:10px}
 .auth-note{display:grid;grid-template-columns:17px minmax(0,1fr);gap:8px;margin-top:10px;color:#637b6c;font-size:.62rem;line-height:1.45}
 .auth-note svg{width:15px;height:15px;color:#52cd78}
@@ -1059,6 +1529,344 @@ svg{display:block}
 @media(max-width:700px){.profile-hero{grid-template-columns:1fr}.profile-storefront{min-height:190px}.profile-storefront img{min-height:190px}.storefront-editor{grid-template-columns:1fr}}
 @media(max-width:430px){.storefront-upload-actions{grid-template-columns:1fr}.storefront-review-grid{grid-template-columns:1fr}.storefront-review-grid .diff-arrow{transform:rotate(90deg);margin:auto}}
 
+
+/* QwerNFC customer public view - approved 2026-09-30 design */
+.app{width:min(100%,660px);padding:calc(10px + env(safe-area-inset-top)) 14px calc(42px + env(safe-area-inset-bottom))}
+.topbar{min-height:64px;margin-bottom:12px}
+.brand{font-size:1.12rem;text-shadow:0 0 18px rgba(55,232,121,.15)}
+.public-profile-card{position:relative;padding:18px;border:1px solid #18c963;border-radius:24px;background:radial-gradient(circle at 84% 12%,rgba(18,119,59,.16),transparent 34%),linear-gradient(150deg,#03190d 0%,#021108 62%,#020b06 100%);box-shadow:0 0 0 1px rgba(34,244,112,.12),0 0 26px rgba(22,216,91,.18),0 22px 52px rgba(0,0,0,.42),inset 0 0 42px rgba(35,238,108,.045)}
+.public-profile-card .profile-hero{grid-template-columns:minmax(0,1.02fr) minmax(0,1.18fr);gap:18px;align-items:center;min-height:246px}
+.public-profile-card .profile-storefront{height:226px;min-height:226px;border:1px solid #2af579;border-radius:22px;box-shadow:0 0 0 3px rgba(16,155,67,.30),0 0 20px rgba(36,242,111,.30),inset 0 0 0 1px rgba(129,255,173,.12);background:#06140b}
+.public-profile-card .profile-storefront img{height:100%;min-height:226px;object-fit:cover}
+.public-profile-card .profile-side{min-width:0;justify-content:center;gap:11px}
+.public-profile-main{grid-template-columns:58px minmax(0,1fr);gap:12px}
+.public-profile-main .profile-logo,.public-identity-row .profile-logo{width:62px;height:62px;border:1px solid #1ad264;border-radius:17px;background:radial-gradient(circle at 35% 25%,rgba(41,241,112,.16),transparent 48%),linear-gradient(145deg,#07351b,#03190d);color:#51f18b;box-shadow:0 0 16px rgba(39,233,106,.13)}
+.public-identity-row{display:grid;grid-template-columns:62px minmax(0,1fr);gap:12px;align-items:center}.public-store-title-row{display:flex;align-items:center;justify-content:space-between;gap:8px;min-width:0}
+.public-store-title-row h1{min-width:0;margin:0;font-size:1.08rem;letter-spacing:.01em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.public-profile-main .active-pill,.public-identity-row .active-pill{margin:0;flex:0 0 auto;padding:6px 10px;border:1px solid #18c95e;border-radius:999px;background:#063a1d;color:#54f28c;box-shadow:0 0 12px rgba(43,239,112,.09)}
+.public-contact-row{display:grid;grid-template-columns:38px minmax(0,1fr);gap:11px;align-items:center;margin-top:0;min-height:50px;padding:6px 12px 6px 6px;border:1px solid #147542;border-radius:16px;background:linear-gradient(145deg,rgba(4,42,22,.96),rgba(2,17,9,.96));color:#f0faf3;font-size:.75rem;line-height:1.3;box-shadow:inset 0 0 20px rgba(55,232,121,.025),0 5px 15px rgba(0,0,0,.14)}
+.public-contact-row svg{width:19px;height:19px;padding:8px;box-sizing:content-box;border:1px solid #1ac460;border-radius:50%;background:#073d20;color:#4ff18a}
+.public-contact-row span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.public-map{position:relative;height:260px;margin-top:16px;overflow:hidden;border:1px solid #20d16e;border-radius:17px;background:#07150e;box-shadow:inset 0 0 32px rgba(0,0,0,.22)}
+.public-map-frame{position:absolute;inset:0;width:100%;height:100%;border:0;background:#07150e;filter:brightness(.78) saturate(.92) contrast(1.05)}
+.public-map-shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(3,20,12,.06),rgba(0,7,4,.22)),radial-gradient(circle at 50% 50%,transparent 0 30%,rgba(0,0,0,.10) 75%);pointer-events:none}
+.public-map-open{position:absolute;right:10px;top:10px;z-index:4;width:40px;height:40px;border:1px solid #3c6a4d;border-radius:11px;background:rgba(1,8,4,.9);color:#fff;display:grid;place-items:center}
+.public-map-open svg{width:21px;height:21px}
+.public-link-panel{margin-top:13px;padding:12px;border-color:#0d6f3a;background:linear-gradient(145deg,#03150b,#020b06)}
+.public-link-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;margin-top:8px}
+.public-link-row .link-value{margin:0;min-height:42px;padding:10px 12px;border:1px solid #178748;border-radius:11px;background:#04160c;display:flex;align-items:center;font-size:.78rem}
+.public-copy-btn{width:auto;min-width:98px;height:42px;padding:0 14px;gap:8px;border-color:#19a655;color:#4ff28a;font-weight:900;white-space:nowrap;display:flex;align-items:center;justify-content:center;line-height:1}
+.public-copy-btn svg{width:16px;height:16px;flex:0 0 16px}
+.public-copy-btn span{display:block;line-height:1}
+.public-entry-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:11px}
+.public-entry-card{min-width:0;min-height:82px;padding:12px;border:1px solid #128b48;border-radius:18px;background:linear-gradient(150deg,#062516,#03150b);color:inherit;display:grid;grid-template-columns:50px minmax(0,1fr) 18px;gap:10px;align-items:center;text-align:left;box-shadow:inset 0 0 24px rgba(55,232,121,.025)}
+.public-entry-icon{width:50px;height:50px;border:1px solid #15964d;border-radius:14px;background:linear-gradient(145deg,#0b3d20,#051b0f);color:#42ef84;display:grid;place-items:center}
+.public-entry-icon svg{width:28px;height:28px}
+.public-entry-copy{min-width:0}
+.public-entry-copy strong,.public-entry-copy small{display:block}
+.public-entry-copy strong{font-size:.75rem}
+.public-entry-copy small{margin-top:5px;color:#87998e;font-size:.59rem}
+.public-entry-arrow{color:#37ec7b;font-size:1.7rem;line-height:1}
+.public-edit-gate{margin-top:12px;padding:16px;border-color:#138f4b;border-radius:19px;background:radial-gradient(circle at 100% 0,rgba(55,232,121,.08),transparent 34%),linear-gradient(155deg,#062416,#03150b)}
+.public-edit-gate .edit-verification-copy h2{font-size:1.12rem;margin-top:4px}
+.public-edit-gate .edit-verification-copy p{font-size:.72rem;color:#a0b1a6}
+.public-edit-button{min-height:52px;display:flex;align-items:center;justify-content:center;gap:9px;font-size:.92rem}
+.public-edit-button svg{width:20px;height:20px}
+.auth-card{padding:15px;margin-top:2px;border-radius:18px}
+.auth-card:not(.hidden){position:static;width:100%;max-height:none;margin:0;overflow:visible;transform:none;border-color:#1b7440;box-shadow:0 20px 54px rgba(0,0,0,.32)}
+.auth-card .eyebrow{display:block;text-align:left}
+.auth-card h2{margin:4px 0 6px;text-align:left;font-size:1.06rem}
+.auth-intro{margin:0 0 4px;color:#92a79a;font-size:.7rem;line-height:1.55}
+.auth-card label{margin-top:12px}
+.auth-card .full-primary{min-height:50px}
+.auth-card .secondary{min-height:49px}
+.auth-card .auth-note{display:grid}
+@media(max-width:420px){
+  .app{padding-left:12px;padding-right:12px}
+  .public-profile-card{padding:14px;border-radius:22px}
+  .public-profile-card .profile-hero{grid-template-columns:minmax(0,.96fr) minmax(0,1.04fr);gap:12px;min-height:220px}
+  .public-profile-card .profile-storefront{height:210px;min-height:210px;border-radius:19px}
+  .public-profile-card .profile-storefront img{height:100%;min-height:210px}
+  .public-identity-row{grid-template-columns:48px minmax(0,1fr);gap:9px}
+  .public-profile-main .profile-logo,.public-identity-row .profile-logo{width:48px;height:48px;border-radius:14px}
+  .public-store-title-row h1{font-size:.92rem}
+  .public-profile-main .active-pill,.public-identity-row .active-pill{padding:5px 7px;font-size:.52rem}
+  .public-contact-row{grid-template-columns:34px minmax(0,1fr);min-height:46px;padding:5px 8px 5px 5px;font-size:.60rem;border-radius:14px}
+  .public-contact-row svg{width:16px;height:16px;padding:7px}
+  .public-map{height:235px}
+  .public-entry-card{grid-template-columns:43px minmax(0,1fr) 14px;padding:10px;gap:8px}
+  .public-entry-icon{width:43px;height:43px}
+  .public-entry-copy strong{font-size:.68rem}
+  .public-entry-copy small{font-size:.54rem}
+}
+@media(max-width:345px){
+  .public-profile-card .profile-hero{grid-template-columns:minmax(0,.93fr) minmax(0,1.07fr);gap:8px}
+  .public-profile-card .profile-storefront{height:190px;min-height:190px}
+  .public-profile-card .profile-storefront img{min-height:190px}
+  .public-entry-actions{grid-template-columns:1fr}
+}
+
+
+
+/* Customer profile status placement — 2026-09-30 */
+.public-profile-card {
+  position: relative;
+}
+
+.public-profile-card .profile-hero {
+  position: relative;
+}
+
+.public-profile-card .profile-side {
+  position: static;
+  padding-top: 26px;
+}
+
+.public-profile-card .public-profile-active {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 6;
+  margin: 0;
+  min-height: 24px;
+  padding: 5px 9px;
+  border: 1px solid #18c95e;
+  border-radius: 999px;
+  background: #063a1d;
+  color: #54f28c;
+  box-shadow: 0 0 14px rgba(43,239,112,.12);
+  white-space: nowrap;
+}
+
+.public-profile-card .public-store-title-row {
+  display: block;
+  min-width: 0;
+}
+
+.public-profile-card .public-store-title-row h1 {
+  width: 100%;
+  max-width: 100%;
+  padding-right: 0;
+  overflow: visible;
+  text-overflow: clip;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  line-height: 1.15;
+}
+
+@media(max-width:420px){
+  .public-profile-card .profile-side {
+    padding-top: 27px;
+  }
+
+  .public-profile-card .public-profile-active {
+    top: 9px;
+    right: 9px;
+    min-height: 22px;
+    padding: 4px 8px;
+    font-size: .52rem;
+  }
+}
+
+/* Verified Edit Info workspace — compact, no duplicated public storefront */
+#edit-stage{
+  width:min(100%,560px);
+  margin:0 auto;
+  padding-bottom:88px;
+}
+.edit-workspace-head{
+  position:relative;
+  overflow:hidden;
+  margin:2px 0 12px;
+  padding:18px;
+  border:1px solid #1ca357;
+  border-radius:22px;
+  background:
+    radial-gradient(circle at 92% 8%,rgba(55,232,121,.18),transparent 34%),
+    linear-gradient(145deg,#082819 0%,#04160d 58%,#031009 100%);
+  box-shadow:0 14px 34px rgba(0,0,0,.26),inset 0 0 36px rgba(55,232,121,.035);
+}
+.edit-workspace-topline{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+.edit-workspace-badge,
+.edit-workspace-qr,
+.edit-current-chip{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  min-height:27px;
+  padding:0 9px;
+  border-radius:999px;
+  font-size:.59rem;
+  font-weight:900;
+  letter-spacing:.035em;
+}
+.edit-workspace-badge{
+  border:1px solid #239959;
+  background:#07391f;
+  color:#78efa0;
+}
+.edit-workspace-dot{
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:#45f486;
+  box-shadow:0 0 10px rgba(69,244,134,.7);
+}
+.edit-workspace-qr{
+  border:1px solid #23543a;
+  background:#07170f;
+  color:#b8cbbf;
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+.edit-workspace-head h1{
+  margin:15px 0 6px;
+  font-size:1.34rem;
+  line-height:1.08;
+  letter-spacing:-.025em;
+}
+.edit-workspace-head p{
+  max-width:470px;
+  margin:0;
+  color:#9eb2a5;
+  font-size:.72rem;
+  line-height:1.55;
+}
+.edit-current-card{
+  padding:13px;
+  border-color:#1a673c;
+  border-radius:19px;
+  background:linear-gradient(160deg,#061a10,#041009);
+}
+.edit-current-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+  margin:1px 1px 10px;
+}
+.edit-current-head .eyebrow{margin-bottom:3px}
+.edit-current-head h2{
+  margin:0;
+  font-size:.98rem;
+  letter-spacing:-.015em;
+}
+.edit-current-chip{
+  flex:0 0 auto;
+  border:1px solid #244937;
+  background:#08160f;
+  color:#71877a;
+}
+#edit-stage .info-list{
+  gap:3px;
+}
+#edit-stage .info-row{
+  min-height:52px;
+  border-color:#153a24;
+  background:linear-gradient(145deg,#07170e,#051109);
+}
+#edit-stage .info-copy strong{
+  white-space:normal;
+  overflow-wrap:anywhere;
+}
+.edit-choice-head{
+  display:grid;
+  grid-template-columns:38px minmax(0,1fr);
+  gap:11px;
+  align-items:start;
+  margin:18px 2px 10px;
+}
+.edit-choice-number{
+  width:36px;
+  height:36px;
+  border:1px solid #2fc267;
+  border-radius:12px;
+  background:linear-gradient(145deg,#123b24,#092417);
+  color:#62ed91;
+  display:grid;
+  place-items:center;
+  font-size:.78rem;
+  font-weight:950;
+  box-shadow:0 0 0 4px rgba(55,232,121,.04);
+}
+.edit-choice-head .eyebrow{margin:1px 0 3px}
+.edit-choice-head h2{
+  margin:0;
+  font-size:1.03rem;
+  letter-spacing:-.015em;
+}
+.edit-choice-head p{
+  margin:4px 0 0;
+  color:#83988b;
+  font-size:.68rem;
+  line-height:1.45;
+}
+#edit-stage .edit-list{gap:3px}
+#edit-stage .edit-card{
+  border-color:#1a472c;
+  border-radius:18px;
+  background:linear-gradient(150deg,#081a11,#051109);
+  box-shadow:0 9px 22px rgba(0,0,0,.12);
+}
+#edit-stage .edit-card.active{
+  border-color:#30bd67;
+  background:linear-gradient(150deg,#0a2a1a,#06170f);
+  box-shadow:0 0 0 1px rgba(55,232,121,.06),0 12px 28px rgba(0,0,0,.18);
+}
+#edit-stage .edit-trigger{
+  min-height:66px;
+  padding:12px;
+  grid-template-columns:42px minmax(0,1fr) 29px;
+}
+#edit-stage .edit-icon{
+  width:42px;
+  height:42px;
+  border-color:#247247;
+  border-radius:13px;
+  background:linear-gradient(145deg,#0c361f,#082317);
+}
+#edit-stage .check-box{
+  width:29px;
+  height:29px;
+  border-radius:9px;
+}
+#edit-stage .edit-card.active .check-box{
+  box-shadow:0 0 14px rgba(55,232,121,.18);
+}
+#edit-stage .reason-card{
+  margin-top:11px;
+  padding:13px;
+  border-color:#1b5934;
+  border-radius:18px;
+  background:linear-gradient(150deg,#071a10,#041009);
+}
+#edit-stage .security-note{
+  margin:12px 4px 0;
+}
+#edit-stage .action-inner{
+  border-color:#247046;
+  border-radius:17px;
+  background:linear-gradient(150deg,#092116,#05130c);
+}
+@media(min-width:560px){
+  #edit-stage .info-list{
+    grid-template-columns:1fr 1fr;
+  }
+}
+@media(max-width:430px){
+  .edit-workspace-head{padding:15px;border-radius:19px}
+  .edit-workspace-head h1{font-size:1.2rem}
+  .edit-choice-head{grid-template-columns:34px minmax(0,1fr);gap:9px}
+  .edit-choice-number{width:32px;height:32px;border-radius:10px}
+  #edit-stage .edit-trigger{grid-template-columns:40px minmax(0,1fr) 28px;padding:11px}
+  #edit-stage .edit-icon{width:40px;height:40px}
+  #edit-stage .edit-body{padding-left:11px}
+}
+
 </style>
 </head>
 <body>
@@ -1071,10 +1879,10 @@ svg{display:block}
     <button class="help-btn" type="button" id="help-button" aria-label="About this update request">?</button>
   </header>
 
-  <section id="auth-stage" class="card auth-card">
-    <span class="eyebrow">SECURE CUSTOMER ACCESS</span>
-    <h2>Verify this QwerNFC record</h2>
-    <p>Changing the QR ID in the address does not grant access. Use the email registered to this record and the one-time code sent to that email.</p>
+  <section id="auth-stage" class="card auth-card hidden" aria-label="Verify to edit">
+    <span class="eyebrow">VERIFY TO EDIT</span>
+    <h2>Verify before editing this QwerNFC record</h2>
+    <p class="auth-intro">Viewing and restoring this record does not require email verification. Verification is required only when you choose to edit protected information.</p>
 
     <div id="auth-email-step">
       <label>Registered email
@@ -1085,12 +1893,45 @@ svg{display:block}
       </div>
     </div>
 
+    <div class="auth-divider">
+      <span>OR</span>
+    </div>
+
+    <div id="auth-pin-step" class="hidden">
+      <label>Enter the 6-digit verification PIN provided by the QwerNFC administrator.
+        <input id="auth-pin" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="one-time-code" placeholder="000000" />
+      </label>
+      <div class="auth-actions">
+        <button id="auth-verify-pin" class="full-primary" type="button">Verify PIN and continue</button>
+        <button id="auth-back-to-email" class="secondary" type="button">Back to email</button>
+      </div>
+    </div>
+
+    <div class="auth-divider">
+      <span>Need a PIN?</span>
+    </div>
+
+    <div id="auth-pin-fallback">
+      <button id="auth-request-pin" class="full-secondary" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"/></svg>
+        <span>Use PIN from Admin</span>
+      </button>
+      <p class="pin-fallback-note">Contact the QwerNFC administrator to get a verification PIN for this QR.</p>
+    </div>
+
     <div id="auth-code-step" class="hidden">
       <label>6-digit verification code
         <input id="auth-code" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="one-time-code" placeholder="000000" />
       </label>
+      <div id="auth-code-meta" class="auth-code-meta">
+        <span>Code valid for <strong id="auth-code-remaining">10:00</strong></span>
+        <span>One-time use</span>
+      </div>
       <div class="auth-actions">
         <button id="auth-verify-code" class="full-primary" type="button">Verify and continue</button>
+      </div>
+      <div class="auth-actions auth-code-secondary-actions">
+        <button id="auth-resend-code" class="secondary" type="button" disabled>Resend code in 60s</button>
         <button id="auth-change-email" class="secondary" type="button">Use another email</button>
       </div>
     </div>
@@ -1098,18 +1939,19 @@ svg{display:block}
     <div id="auth-status" class="status hidden"></div>
     <div class="auth-note">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-      <span>No store name, location, phone, email, or managed destination is loaded until verification succeeds.</span>
+      <span>Your registered email and private editing controls remain protected until verification succeeds.</span>
     </div>
   </section>
 
-  <div id="protected-content" class="hidden">
-  <div class="stepper" aria-label="Update request progress">
+  <div id="protected-content">
+  <div id="edit-stepper" class="stepper hidden" aria-label="Update request progress">
     <div class="step active" data-step="edit"><div class="step-dot"><span class="step-number">1</span></div><span>Edit Info</span></div>
     <div class="step" data-step="review"><div class="step-dot"><span class="step-number">2</span></div><span>Review</span></div>
     <div class="step" data-step="submit"><div class="step-dot"><span class="step-number">3</span></div><span>Submit</span></div>
   </div>
 
-  <section class="card profile-card">
+  <div id="public-view">
+  <section class="card profile-card public-profile-card">
     <div class="profile-hero">
       <div class="profile-storefront" id="profile-storefront">
         <img id="profile-storefront-image" class="hidden" alt="Current storefront" />
@@ -1117,41 +1959,103 @@ svg{display:block}
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="m21 15-5-5L5 20"/></svg>
           <strong>No storefront image yet</strong>
         </div>
-        <button class="profile-image-edit" id="profile-edit-image" type="button">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"/></svg><span>Edit image</span>
-        </button>
       </div>
+
+      <span class="active-pill public-profile-active">Active</span>
       <div class="profile-side">
-        <div class="profile-main">
+        <div class="public-identity-row">
           <div class="profile-logo">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12c4-7 11-8 16-8-1 7-5 14-12 16"/><path d="M5 20c2-5 6-9 12-12"/></svg>
           </div>
-          <div class="profile-copy"><h1 id="business-name">Loading…</h1><p id="profile-location">Loading business profile</p><span class="active-pill">Active</span></div>
-          <span class="id-chip" id="profile-id">QR</span>
+          <div class="profile-copy">
+            <div class="public-store-title-row"><h1 id="business-name">Loading…</h1></div>
+          </div>
         </div>
-        <div class="link-panel">
-          <div class="link-head"><span>Current managed link</span><button class="copy-btn" id="copy-current-link" type="button" aria-label="Copy current managed link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg></button></div>
-          <strong class="link-value" id="current-link">Loading…</strong>
+        <div class="public-contact-row">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.4 19.4 0 0 1-6-6A19.8 19.8 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.9.33 1.78.62 2.62a2 2 0 0 1-.45 2.11L8 9.73a16 16 0 0 0 6 6l1.28-1.28a2 2 0 0 1 2.11-.45c.84.29 1.72.5 2.62.62A2 2 0 0 1 22 16.92Z"/></svg>
+          <span id="profile-phone">Loading…</span>
         </div>
+        <div class="public-contact-row">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="m4 7 8 6 8-6"/></svg>
+          <span id="profile-email">Loading email</span>
+        </div>
+        <span class="id-chip hidden" id="profile-id">QR</span>
+      </div>
+    </div>
+
+    <div class="public-map" id="public-map" aria-label="Store location map">
+      <iframe id="public-map-frame" class="public-map-frame" title="Store location map" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      <div class="public-map-shade"></div>
+      <button class="public-map-open" id="public-map-open" type="button" aria-label="Open location in maps">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M16 21h5v-5"/></svg>
+      </button>
+    </div>
+
+    <div class="link-panel public-link-panel">
+      <div class="link-head"><span>Managed link</span></div>
+      <div class="public-link-row">
+        <strong class="link-value" id="current-link">https://************</strong>
+        <button class="copy-btn public-copy-btn" id="copy-current-link" type="button" aria-label="Copy current managed link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg><span>Copy</span>
+        </button>
       </div>
     </div>
   </section>
 
-  <section id="edit-stage">
-    <div class="section-head">
-      <span class="eyebrow">CURRENT INFO</span>
-      <h2>Current Information</h2>
-      <p>This is the information currently displayed for this QR.</p>
-    </div>
+  <div class="public-entry-actions" aria-label="QwerNFC public entry actions">
+    <button id="open-public-qr" class="public-entry-card" type="button">
+      <span class="public-entry-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3h6v6H3zM15 3h6v6h-6zM3 15h6v6H3z"/><path d="M14 14h3v3h-3zM19 14h2v2h-2zM14 19h2v2h-2zM18 18h3v3h-3z"/></svg></span>
+      <span class="public-entry-copy"><strong>Scan QR Code</strong><small>Open your public page</small></span>
+      <span class="public-entry-arrow">›</span>
+    </button>
+    <button id="open-public-nfc" class="public-entry-card" type="button">
+      <span class="public-entry-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"><path d="M7 4a11 11 0 0 1 0 16"/><path d="M11 6a8 8 0 0 1 0 12"/><path d="M15 8a5 5 0 0 1 0 8"/></svg></span>
+      <span class="public-entry-copy"><strong>Tap NFC Tag</strong><small>Open your public page</small></span>
+      <span class="public-entry-arrow">›</span>
+    </button>
+  </div>
 
-    <section class="card info-card">
+  <section id="edit-gate" class="card edit-verification-gate public-edit-gate">
+    <div class="edit-verification-copy">
+      <span class="eyebrow">CUSTOMER ACCESS</span>
+      <h2>Update Store Information</h2>
+      <p>Your current public QwerNFC information is shown above. To make changes, tap Edit Info. Verification is required only when you edit your information.</p>
+    </div>
+    <button id="open-edit-verification" class="full-primary public-edit-button" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"/></svg>
+      <span>Edit Info</span>
+    </button>
+  </section>
+  </div>
+
+  <section id="edit-stage" class="hidden">
+    <section class="edit-workspace-head">
+      <div class="edit-workspace-topline">
+        <span class="edit-workspace-badge"><span class="edit-workspace-dot"></span> Verified session</span>
+        <span class="edit-workspace-qr" id="edit-workspace-qr">QR</span>
+      </div>
+      <h1>Edit information</h1>
+      <p>Update only the details that changed. Your permanent QR stays the same and every request still needs admin approval.</p>
+    </section>
+
+    <section class="card edit-current-card">
+      <div class="edit-current-head">
+        <div>
+          <span class="eyebrow">CURRENT INFO</span>
+          <h2>Saved information</h2>
+        </div>
+        <span class="edit-current-chip">Read only</span>
+      </div>
       <div class="info-list" id="current-list"></div>
     </section>
 
-    <div class="section-head">
-      <span class="eyebrow">WHAT DO YOU WANT TO EDIT?</span>
-      <h2>Select what you want to change</h2>
-      <p>Only selected fields will be included in your request.</p>
+    <div class="edit-choice-head">
+      <div class="edit-choice-number">1</div>
+      <div>
+        <span class="eyebrow">CHOOSE CHANGES</span>
+        <h2>What do you want to update?</h2>
+        <p>Tap a field to select it. Only selected changes are sent for approval.</p>
+      </div>
     </div>
 
     <form id="edit-form">
@@ -1245,7 +2149,7 @@ svg{display:block}
 
       <div class="security-note">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-        <span>Current customer values are shown only after registered-email OTP verification. The private backup and permanent QR database remain protected.</span>
+        <span>Protected customer values and editing actions are unlocked only after registered-email OTP verification. The private backup and permanent QR database remain protected.</span>
       </div>
 
       <div class="action-bar" id="edit-action">
@@ -1326,15 +2230,24 @@ svg{display:block}
     submitting:false,
     apiBase:"",
     accessToken:"",
+    verified:false,
     challengeId:"",
     authEmail:"",
+    otpExpiresAt:0,
+    resendAvailableAt:0,
+    otpTimer:0,
+    otpRequestBusy:false,
     requestPollTimer:0,
     currentStoreImageDataUrl:"",
+    publicMaskedEmail:"",
     storeImageDraft:null
   };
 
   const businessName = document.getElementById("business-name");
-  const profileLocation = document.getElementById("profile-location");
+  const profilePhone = document.getElementById("profile-phone");
+  const profileEmail = document.getElementById("profile-email");
+  const publicMap = document.getElementById("public-map");
+  const publicMapFrame = document.getElementById("public-map-frame");
   const profileId = document.getElementById("profile-id");
   const currentLink = document.getElementById("current-link");
   const currentList = document.getElementById("current-list");
@@ -1354,7 +2267,13 @@ svg{display:block}
   const authEmail = document.getElementById("auth-email");
   const authCode = document.getElementById("auth-code");
   const authStatus = document.getElementById("auth-status");
+  const authCodeRemaining = document.getElementById("auth-code-remaining");
+  const authResendCode = document.getElementById("auth-resend-code");
   const protectedContent = document.getElementById("protected-content");
+  const publicView = document.getElementById("public-view");
+  const editGate = document.getElementById("edit-gate");
+  const editStepper = document.getElementById("edit-stepper");
+  const editWorkspaceQr = document.getElementById("edit-workspace-qr");
   const profileStorefrontImage = document.getElementById("profile-storefront-image");
   const profileStorefrontPlaceholder = document.getElementById("profile-storefront-placeholder");
   const currentStoreImage = document.getElementById("current-store-image");
@@ -1365,6 +2284,23 @@ svg{display:block}
 
   const esc = (value) => String(value == null ? "" : value).replace(/[&<>"']/g,(char)=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[char]));
   const fresh = (src) => src + (src.includes("?") ? "&" : "?") + "v=" + Date.now();
+
+  const publicLocationLabel = (value) => {
+    const text=String(value||"").trim();
+    if(!text) return "Location not provided";
+    if(/^Pinned location\s*\(/i.test(text)) return "Store location";
+    return text;
+  };
+  const maskedManagedLink = (value) => {
+    const text=String(value||"").trim();
+    if(!text) return "Not configured";
+    try{
+      const url=new URL(text);
+      return url.protocol+"//************";
+    }catch{
+      return "https://************";
+    }
+  };
 
   const loadApiBase = async () => {
     if(state.apiBase) return state.apiBase;
@@ -1397,6 +2333,7 @@ svg{display:block}
     if(!response.ok) {
       const error=new Error(data?.error || "Secure QwerNFC request failed.");
       error.status=response.status;
+      error.code=String(data?.code || "");
       throw error;
     }
     return data;
@@ -1458,9 +2395,29 @@ svg{display:block}
     updateSelectedSummary();
   };
   const loadCurrentStoreImage = async () => {
-    state.currentStoreImageDataUrl=""; if(!state.record?.storeImagePath){renderStoreImageUi();return}
-    try{const image=await apiJson("/v1/customer/qrs/"+encodeURIComponent(id)+"/image",{headers:{authorization:"Bearer "+state.accessToken}});const base64=String(image?.base64||"").replace(/\s/g,"");if(base64)state.currentStoreImageDataUrl="data:"+String(image?.mimeType||"image/webp")+";base64,"+base64}
-    catch(error){if(error?.status!==404)storeImageStatus.textContent="Current image could not be loaded, but you can still submit a replacement."}
+    if(!state.record?.storeImagePath){state.currentStoreImageDataUrl="";renderStoreImageUi();return}
+    if(!state.verified && state.currentStoreImageDataUrl){
+      storeImageStatus.textContent="Current storefront photo · verification is required only to replace or remove it.";
+      renderStoreImageUi();
+      return;
+    }
+    state.currentStoreImageDataUrl="";
+    try{
+      const image=state.verified && state.accessToken
+        ? await apiJson("/v1/customer/qrs/"+encodeURIComponent(id)+"/image",{headers:{authorization:"Bearer "+state.accessToken}})
+        : await apiJson("/v1/public/qrs/"+encodeURIComponent(id)+"/image");
+      const base64=String(image?.base64||"").replace(/\s/g,"");
+      if(base64){
+        state.currentStoreImageDataUrl="data:"+String(image?.mimeType||"image/webp")+";base64,"+base64;
+        if(!state.verified){
+          storeImageStatus.textContent="Current storefront photo · verification is required only to replace or remove it.";
+        }
+      }
+    }catch(error){
+      storeImageStatus.textContent=error?.status===404
+        ?"Current storefront photo is not available yet. You can still verify and submit a replacement."
+        :"Current image could not be loaded. You can still verify and submit a replacement.";
+    }
     renderStoreImageUi();
   };
   const currentValue = (field) => field==="managedLink"
@@ -1540,6 +2497,14 @@ svg{display:block}
 
     const output = document.querySelector("[data-location-value]");
     if(output) output.textContent = value;
+  };
+
+  const paintPublicLocationMap = (_map,latitude,longitude,zoom=16) => {
+    const lat=Number(latitude);
+    const lng=Number(longitude);
+    if(!Number.isFinite(lat)||!Number.isFinite(lng)) return;
+    const query=lat.toFixed(7)+","+lng.toFixed(7);
+    publicMapFrame.src="https://www.google.com/maps?q="+encodeURIComponent(query)+"&z="+encodeURIComponent(String(zoom))+"&output=embed";
   };
 
   const paintCustomerLocationMap = (map,latitude,longitude,zoom=19) => {
@@ -1755,18 +2720,30 @@ svg{display:block}
   };
 
   const renderCurrent = () => {
-    businessName.textContent = state.record.store || id;
-    profileLocation.textContent = state.record.location || "Business location";
+    businessName.textContent = state.record.store || "Store";
+    profilePhone.textContent = state.record.phone || "Phone not provided";
+    profileEmail.textContent = state.publicMaskedEmail || (state.verified ? (state.record.email || "Email not provided") : "Email protected");
     profileId.textContent = id;
-    currentLink.textContent = state.route.destination || "Not configured";
+    currentLink.textContent = maskedManagedLink(state.route.destination);
+    const publicPin = recordLocationPin(state.record);
+    if(publicPin){
+      requestAnimationFrame(()=>paintPublicLocationMap(publicMap,publicPin.latitude,publicPin.longitude,16));
+      publicMap.dataset.latitude=String(publicPin.latitude);
+      publicMap.dataset.longitude=String(publicPin.longitude);
+    }else{
+      publicMapFrame.removeAttribute("src");
+      publicMap.dataset.latitude="";
+      publicMap.dataset.longitude="";
+    }
 
+    const verified = state.verified === true && Boolean(state.accessToken);
     const rows = [
       ["storeImage","Storefront image",state.record.storeImagePath ? "Photo saved" : "No photo",false],
       ["store","Store name",state.record.store || "Not provided",false],
       ["location","Location",state.record.location || "Not provided",false],
       ["managedLink","Managed link",state.route.destination || "Not configured",false],
       ["phone","Phone",state.record.phone || "Not provided",false],
-      ["email","Email",state.record.email || state.authEmail || "Not provided",false]
+      ["email","Email",verified ? (state.record.email || state.authEmail || "Not provided") : "Protected until edit verification",!verified]
     ];
 
     currentList.innerHTML = rows.map(([key,label,value,isPrivate]) =>
@@ -1789,7 +2766,7 @@ svg{display:block}
     }
     form.elements.managedLink.value = state.route.destination || "";
     form.elements.email.value = state.record.email || state.authEmail || "";
-    form.elements.email.disabled = false;
+    form.elements.email.disabled = !verified;
     void loadCurrentStoreImage();
   };
 
@@ -1807,11 +2784,28 @@ svg{display:block}
       setStep("edit");
       return;
     }
+    if(!authStage.classList.contains("hidden") && !state.verified){
+      authStage.classList.add("hidden");
+      protectedContent.classList.remove("hidden");
+      publicView.classList.remove("hidden");
+      editGate.classList.remove("hidden");
+      authStatus.className="status hidden";
+      window.scrollTo({top:0,behavior:"auto"});
+      return;
+    }
+    if(state.verified && !editStage.classList.contains("hidden")){
+      editStage.classList.add("hidden");
+      editStepper.classList.add("hidden");
+      publicView.classList.remove("hidden");
+      editGate.classList.remove("hidden");
+      window.scrollTo({top:0,behavior:"smooth"});
+      return;
+    }
     history.back();
   });
 
   document.getElementById("help-button").addEventListener("click",()=>{
-    alert("Select only the information you want to change. Your request does not change anything until the QwerNFC admin approves it.");
+    alert("You can view and restore this QwerNFC record without email verification. Verification is required only when you tap Edit info. Requested changes still require QwerNFC admin approval.");
   });
 
   if(!/^QR-\d+$/.test(id)){
@@ -1819,6 +2813,108 @@ svg{display:block}
     document.getElementById("auth-send-code").disabled=true;
     return;
   }
+
+  const PUBLIC_DB = "https://qwernfc-f8bf4-default-rtdb.asia-southeast1.firebasedatabase.app";
+  const fetchPublicJson = async (path) => {
+    const response = await fetch(PUBLIC_DB + path + (path.includes("?") ? "&" : "?") + "v=" + Date.now(), {
+      cache:"no-store",
+      mode:"cors"
+    });
+    if(!response.ok) throw new Error("This QwerNFC record could not be loaded.");
+    return response.json();
+  };
+
+  const withTimeout = (promise, ms, message) => Promise.race([
+    promise,
+    new Promise((_, reject) => setTimeout(() => reject(new Error(message)), ms))
+  ]);
+
+  const loadPublicRecord = async () => {
+    const [profileResult, routeResult] = await Promise.allSettled([
+      withTimeout(
+        apiJson("/v1/public/qrs/" + encodeURIComponent(id) + "/profile"),
+        7000,
+        "Public profile request timed out."
+      ),
+      withTimeout(
+        fetchPublicJson("/public/routes/" + encodeURIComponent(id) + ".json"),
+        7000,
+        "Public route request timed out."
+      )
+    ]);
+
+    const profile = profileResult.status === "fulfilled" ? profileResult.value : null;
+    const route = routeResult.status === "fulfilled" ? routeResult.value : null;
+    const profileReady = Boolean(profile && profile.ok === true);
+    const routeReady = Boolean(route && route.enabled === true && route.deleted !== true);
+
+    if(!profileReady && !routeReady) {
+      const reason = profileResult.status === "rejected"
+        ? profileResult.reason?.message
+        : routeResult.status === "rejected"
+          ? routeResult.reason?.message
+          : "";
+      throw new Error(reason || "This QwerNFC record is unavailable.");
+    }
+
+    if(route && (route.enabled !== true || route.deleted === true)) {
+      throw new Error("This QwerNFC record is unavailable.");
+    }
+
+    const publicImageBase64=String(profile?.storeImage?.base64||"").replace(/\s/g,"");
+    state.currentStoreImageDataUrl=publicImageBase64
+      ?"data:"+String(profile?.storeImage?.mimeType||"image/webp")+";base64,"+publicImageBase64
+      :"";
+    state.publicMaskedEmail=String(profile?.maskedEmail || "");
+
+    state.record = {
+      id,
+      store:String(profile?.store || ""),
+      phone:String(profile?.phone || ""),
+      email:"",
+      location:String(profile?.location || ""),
+      storeImagePath:profile?.hasStoreImage ? "private" : "",
+      storeImageUpdatedAt:String(profile?.updatedAt || ""),
+      enabled:true,
+      deleted:false,
+      linkMode:String(route?.linkMode || "both")
+    };
+
+    state.route = {
+      id,
+      enabled:true,
+      deleted:false,
+      destination:String(route?.qrDestination || route?.destination || "")
+    };
+
+    state.verified=false;
+    renderCurrent();
+    editWorkspaceQr.textContent=id;
+    protectedContent.classList.remove("hidden");
+    publicView.classList.remove("hidden");
+    editGate.classList.remove("hidden");
+    editStage.classList.add("hidden");
+    editStepper.classList.add("hidden");
+
+    if(!profileReady || !routeReady) {
+      showAuthStatus(
+        "Some public information is still loading, but Edit Info verification remains available.",
+        ""
+      );
+    }
+  };
+
+  const openEditVerification = async () => {
+    protectedContent.classList.add("hidden");
+    editGate.classList.add("hidden");
+    authStage.classList.remove("hidden");
+    authEmailStep.classList.remove("hidden");
+    authCodeStep.classList.add("hidden");
+    authStatus.className="status hidden";
+    window.scrollTo({top:0,behavior:"auto"});
+    await refreshCustomerAccessState();
+    setTimeout(()=>authEmail.focus(),250);
+  };
 
   const authSendCode = document.getElementById("auth-send-code");
   const refreshCustomerAccessState = async () => {
@@ -1839,7 +2935,12 @@ svg{display:block}
       return false;
     }
   };
-  void refreshCustomerAccessState();
+  void loadPublicRecord().catch((error)=>{
+    authStage.classList.remove("hidden");
+    editGate.classList.add("hidden");
+    showAuthStatus(error?.message || "This QwerNFC record could not be loaded.","error");
+    authSendCode.disabled=true;
+  });
 
   const openVerifiedRecord = async () => {
     const record = await apiJson("/v1/customer/qrs/" + encodeURIComponent(id),{
@@ -1851,35 +2952,122 @@ svg{display:block}
       : String(record.destination || "");
     state.record=record;
     state.route={id,enabled:true,deleted:false,destination:managed};
+    state.publicMaskedEmail=String(record.email || state.publicMaskedEmail || "");
+    state.verified=true;
+    stopOtpTimer();
     renderCurrent();
     authStage.classList.add("hidden");
+    publicView.classList.add("hidden");
+    editGate.classList.add("hidden");
     protectedContent.classList.remove("hidden");
+    editStepper.classList.remove("hidden");
+    editStage.classList.remove("hidden");
+    editAction.classList.remove("hidden");
+    setStep("edit");
     window.scrollTo({top:0,behavior:"smooth"});
   };
 
-  authSendCode.addEventListener("click",async()=>{
-    if(!(await refreshCustomerAccessState())) return;
-    const email=String(authEmail.value||"").trim().toLowerCase();
-    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showAuthStatus("Enter a valid registered email.","error");
+  const stopOtpTimer = () => {
+    if(state.otpTimer){
+      clearInterval(state.otpTimer);
+      state.otpTimer=0;
+    }
+  };
+
+  const otpClock = (milliseconds) => {
+    const seconds=Math.max(0,Math.ceil(Number(milliseconds||0)/1000));
+    const minutes=Math.floor(seconds/60);
+    return String(minutes)+":"+String(seconds%60).padStart(2,"0");
+  };
+
+  const renderOtpTiming = () => {
+    const now=Date.now();
+    const remaining=state.otpExpiresAt-now;
+    if(authCodeRemaining) authCodeRemaining.textContent=otpClock(remaining);
+    if(!authResendCode) return;
+    const resendSeconds=Math.max(0,Math.ceil((state.resendAvailableAt-now)/1000));
+    if(remaining<=0){
+      authResendCode.disabled=state.otpRequestBusy;
+      authResendCode.textContent="Resend code";
+      return;
+    }
+    authResendCode.disabled=state.otpRequestBusy || resendSeconds>0;
+    authResendCode.textContent=resendSeconds>0 ? "Resend code in "+resendSeconds+"s" : "Resend code";
+  };
+
+  const startOtpTimer = (expiresInSeconds=600) => {
+    stopOtpTimer();
+    const ttl=Math.max(60,Number(expiresInSeconds)||600);
+    state.otpExpiresAt=Date.now()+ttl*1000;
+    state.resendAvailableAt=Date.now()+60*1000;
+    renderOtpTiming();
+    state.otpTimer=setInterval(renderOtpTiming,1000);
+  };
+
+  const sleep = (milliseconds) => new Promise((resolve)=>setTimeout(resolve,milliseconds));
+
+  const requestOtp = async (email,{resend=false}={}) => {
+    if(state.otpRequestBusy) return;
+    state.otpRequestBusy=true;
+    authSendCode.disabled=true;
+    if(authResendCode) authResendCode.disabled=true;
     try{
-      const result=await apiJson("/v1/auth/otp/start",{
-        method:"POST",
-        body:{qrId:id,email}
-      });
-      state.challengeId=String(result.challengeId||"");
+      let result=null;
+      let lastError=null;
+      for(let attempt=0;attempt<2;attempt+=1){
+        try{
+          result=await apiJson("/v1/auth/otp/start",{
+            method:"POST",
+            body:{qrId:id,email}
+          });
+          lastError=null;
+          break;
+        }catch(error){
+          lastError=error;
+          if(error?.code!=="otp_ownership_unavailable" || attempt===1) break;
+          showAuthStatus("Syncing the latest protected QwerNFC record…");
+          await sleep(450);
+        }
+      }
+      if(lastError) throw lastError;
+      if(!result?.challengeId) throw new Error("Verification code could not be created.");
+
+      state.challengeId=String(result.challengeId);
       state.authEmail=email;
+      authCode.value="";
       authEmailStep.classList.add("hidden");
       authCodeStep.classList.remove("hidden");
-      showAuthStatus("If this email is registered to this QR, a 6-digit code has been sent.");
+      startOtpTimer(Number(result.expiresInSeconds||600));
+      showAuthStatus(
+        resend
+          ? "A new code was sent. The previous code is no longer valid."
+          : "Verification code sent. It remains valid for 10 minutes.",
+        "ok"
+      );
       authCode.focus();
     }catch(error){
-      showAuthStatus(error?.message || "Could not start verification.","error");
+      if(error?.code==="otp_delivery_failed"){
+        showAuthStatus("Email verification could not be delivered. You can use a verification PIN from the QwerNFC administrator.","error");
+        authPinFallback.classList.remove("hidden");
+      }else if(error?.code==="otp_ownership_unavailable"){
+        showAuthStatus("Secure record sync is taking longer than expected. Try verification again now or use the admin PIN.","error");
+        authPinFallback.classList.remove("hidden");
+      }else{
+        showAuthStatus(error?.message || "Could not start verification.","error");
+      }
+    }finally{
+      state.otpRequestBusy=false;
+      authSendCode.disabled=false;
+      renderOtpTiming();
     }
-  });
+  };
 
   document.getElementById("auth-change-email").addEventListener("click",()=>{
+    stopOtpTimer();
     state.challengeId="";
     state.authEmail="";
+    state.otpExpiresAt=0;
+    state.resendAvailableAt=0;
     authCode.value="";
     authCodeStep.classList.add("hidden");
     authEmailStep.classList.remove("hidden");
@@ -1908,6 +3096,47 @@ svg{display:block}
     }
   });
 
+  // PIN verification fallback
+  const authPinStep = document.getElementById("auth-pin-step");
+  const authPinFallback = document.getElementById("auth-pin-fallback");
+  const authPin = document.getElementById("auth-pin");
+  const authVerifyPin = document.getElementById("auth-verify-pin");
+  const authBackToEmail = document.getElementById("auth-back-to-email");
+  const authRequestPin = document.getElementById("auth-request-pin");
+
+  authSendCode.addEventListener("click",async()=>{
+    if(!(await refreshCustomerAccessState())) return;
+    const email=String(authEmail.value||"").trim().toLowerCase();
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showAuthStatus("Enter a valid registered email.","error");
+    await requestOtp(email);
+  });
+
+  authResendCode?.addEventListener("click",async()=>{
+    if(state.otpRequestBusy || Date.now()<state.resendAvailableAt) return;
+    if(!state.authEmail) return showAuthStatus("Enter the registered email again.","error");
+    await requestOtp(state.authEmail,{resend:true});
+  });
+
+  window.addEventListener("beforeunload",stopOtpTimer);
+
+  document.getElementById("public-map-open").addEventListener("click",()=>{
+    const latitude=Number(publicMap.dataset.latitude);
+    const longitude=Number(publicMap.dataset.longitude);
+    const query=Number.isFinite(latitude)&&Number.isFinite(longitude)
+      ? latitude.toFixed(7)+","+longitude.toFixed(7)
+      : String(state.record?.location||state.record?.store||"").trim();
+    if(!query) return;
+    window.open("https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(query),"_blank","noopener");
+  });
+
+  document.getElementById("open-public-qr").addEventListener("click",()=>{
+    window.open("https://keishirogane1.github.io/permanent-qr-manager/go/"+encodeURIComponent(id)+"/","_blank","noopener");
+  });
+
+  document.getElementById("open-public-nfc").addEventListener("click",()=>{
+    window.open("https://keishirogane1.github.io/permanent-qr-manager/nfc/"+encodeURIComponent(id)+"/","_blank","noopener");
+  });
+
   document.getElementById("copy-current-link").addEventListener("click",async()=>{
     const value = String(state.route?.destination || "");
     if(!value) return;
@@ -1926,10 +3155,48 @@ svg{display:block}
   document.getElementById("store-image-camera").addEventListener("change",(event)=>void handleStoreImageFile(event.currentTarget));
   document.getElementById("remove-store-image").addEventListener("click",()=>{state.storeImageDraft={action:"remove"};renderStoreImageUi()});
   document.getElementById("reset-store-image").addEventListener("click",()=>{state.storeImageDraft=null;renderStoreImageUi()});
-  document.getElementById("profile-edit-image").addEventListener("click",()=>document.querySelector('[data-edit-card="storeImage"]')?.scrollIntoView({behavior:"smooth",block:"center"}));
 
+  // PIN verification fallback handlers
+  authRequestPin.addEventListener("click",()=>{
+    authEmailStep.classList.add("hidden");
+    authCodeStep.classList.add("hidden");
+    authPinStep.classList.remove("hidden");
+    authPinFallback.classList.add("hidden");
+    authPin.focus();
+  });
+
+  authVerifyPin.addEventListener("click",async()=>{
+    const pin=String(authPin.value||"").trim();
+    if(!/^\d{6}$/.test(pin)) return showAuthStatus("Enter the 6-digit verification PIN provided by the QwerNFC administrator.","error");
+    try{
+      const verified=await apiJson("/v1/auth/admin-pin/verify",{
+        method:"POST",
+        body:{
+          qrId:id,
+          pin,
+          sessionMode:"browser",
+          deviceName:"QwerNFC Update Info web"
+        }
+      });
+      state.accessToken=String(verified.accessToken||"");
+      if(!state.accessToken) throw new Error("Secure customer session was not created.");
+      await openVerifiedRecord();
+    }catch(error){
+      showAuthStatus(error?.message || "Verification failed.","error");
+    }
+  });
+
+  authBackToEmail.addEventListener("click",()=>{
+    authPinStep.classList.add("hidden");
+    authEmailStep.classList.remove("hidden");
+    authStatus.classList.add("hidden");
+    authEmail.focus();
+  });
+
+  document.getElementById("open-edit-verification").addEventListener("click",()=>void openEditVerification());
   document.querySelectorAll("[data-edit-toggle]").forEach((button)=>{
     button.addEventListener("click",()=>{
+      if(!state.verified) return void openEditVerification();
       clearStatus();
       const field = button.dataset.editToggle;
       const card = document.querySelector('[data-edit-card="'+field+'"]');
@@ -1965,6 +3232,7 @@ svg{display:block}
 
   form.addEventListener("submit",(event)=>{
     event.preventDefault();
+    if(!state.verified || !state.accessToken) return void openEditVerification();
     clearStatus();
 
     const changes = {};
