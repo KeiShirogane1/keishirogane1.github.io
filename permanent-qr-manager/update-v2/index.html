@@ -197,6 +197,27 @@ svg{display:block}
 .auth-actions .secondary{
   flex:1;
 }
+.auth-code-meta{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  margin-top:8px;
+  color:var(--muted);
+  font-size:.66rem;
+  line-height:1.4;
+}
+.auth-code-meta strong{
+  color:var(--text);
+  font-variant-numeric:tabular-nums;
+}
+.auth-code-secondary-actions{
+  margin-top:8px;
+}
+.auth-code-secondary-actions .secondary:disabled{
+  opacity:.58;
+  cursor:not-allowed;
+}
 .auth-pin-step .auth-actions{
   flex-direction:column;
   gap:10px;
@@ -1902,8 +1923,15 @@ svg{display:block}
       <label>6-digit verification code
         <input id="auth-code" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="one-time-code" placeholder="000000" />
       </label>
+      <div id="auth-code-meta" class="auth-code-meta">
+        <span>Code valid for <strong id="auth-code-remaining">10:00</strong></span>
+        <span>One-time use</span>
+      </div>
       <div class="auth-actions">
         <button id="auth-verify-code" class="full-primary" type="button">Verify and continue</button>
+      </div>
+      <div class="auth-actions auth-code-secondary-actions">
+        <button id="auth-resend-code" class="secondary" type="button" disabled>Resend code in 60s</button>
         <button id="auth-change-email" class="secondary" type="button">Use another email</button>
       </div>
     </div>
@@ -2205,6 +2233,10 @@ svg{display:block}
     verified:false,
     challengeId:"",
     authEmail:"",
+    otpExpiresAt:0,
+    resendAvailableAt:0,
+    otpTimer:0,
+    otpRequestBusy:false,
     requestPollTimer:0,
     currentStoreImageDataUrl:"",
     publicMaskedEmail:"",
@@ -2235,6 +2267,8 @@ svg{display:block}
   const authEmail = document.getElementById("auth-email");
   const authCode = document.getElementById("auth-code");
   const authStatus = document.getElementById("auth-status");
+  const authCodeRemaining = document.getElementById("auth-code-remaining");
+  const authResendCode = document.getElementById("auth-resend-code");
   const protectedContent = document.getElementById("protected-content");
   const publicView = document.getElementById("public-view");
   const editGate = document.getElementById("edit-gate");
@@ -2920,6 +2954,7 @@ svg{display:block}
     state.route={id,enabled:true,deleted:false,destination:managed};
     state.publicMaskedEmail=String(record.email || state.publicMaskedEmail || "");
     state.verified=true;
+    stopOtpTimer();
     renderCurrent();
     authStage.classList.add("hidden");
     publicView.classList.add("hidden");
@@ -2932,9 +2967,107 @@ svg{display:block}
     window.scrollTo({top:0,behavior:"smooth"});
   };
 
+  const stopOtpTimer = () => {
+    if(state.otpTimer){
+      clearInterval(state.otpTimer);
+      state.otpTimer=0;
+    }
+  };
+
+  const otpClock = (milliseconds) => {
+    const seconds=Math.max(0,Math.ceil(Number(milliseconds||0)/1000));
+    const minutes=Math.floor(seconds/60);
+    return String(minutes)+":"+String(seconds%60).padStart(2,"0");
+  };
+
+  const renderOtpTiming = () => {
+    const now=Date.now();
+    const remaining=state.otpExpiresAt-now;
+    if(authCodeRemaining) authCodeRemaining.textContent=otpClock(remaining);
+    if(!authResendCode) return;
+    const resendSeconds=Math.max(0,Math.ceil((state.resendAvailableAt-now)/1000));
+    if(remaining<=0){
+      authResendCode.disabled=state.otpRequestBusy;
+      authResendCode.textContent="Resend code";
+      return;
+    }
+    authResendCode.disabled=state.otpRequestBusy || resendSeconds>0;
+    authResendCode.textContent=resendSeconds>0 ? "Resend code in "+resendSeconds+"s" : "Resend code";
+  };
+
+  const startOtpTimer = (expiresInSeconds=600) => {
+    stopOtpTimer();
+    const ttl=Math.max(60,Number(expiresInSeconds)||600);
+    state.otpExpiresAt=Date.now()+ttl*1000;
+    state.resendAvailableAt=Date.now()+60*1000;
+    renderOtpTiming();
+    state.otpTimer=setInterval(renderOtpTiming,1000);
+  };
+
+  const sleep = (milliseconds) => new Promise((resolve)=>setTimeout(resolve,milliseconds));
+
+  const requestOtp = async (email,{resend=false}={}) => {
+    if(state.otpRequestBusy) return;
+    state.otpRequestBusy=true;
+    authSendCode.disabled=true;
+    if(authResendCode) authResendCode.disabled=true;
+    try{
+      let result=null;
+      let lastError=null;
+      for(let attempt=0;attempt<2;attempt+=1){
+        try{
+          result=await apiJson("/v1/auth/otp/start",{
+            method:"POST",
+            body:{qrId:id,email}
+          });
+          lastError=null;
+          break;
+        }catch(error){
+          lastError=error;
+          if(error?.code!=="otp_ownership_unavailable" || attempt===1) break;
+          showAuthStatus("Syncing the latest protected QwerNFC record…");
+          await sleep(450);
+        }
+      }
+      if(lastError) throw lastError;
+      if(!result?.challengeId) throw new Error("Verification code could not be created.");
+
+      state.challengeId=String(result.challengeId);
+      state.authEmail=email;
+      authCode.value="";
+      authEmailStep.classList.add("hidden");
+      authCodeStep.classList.remove("hidden");
+      startOtpTimer(Number(result.expiresInSeconds||600));
+      showAuthStatus(
+        resend
+          ? "A new code was sent. The previous code is no longer valid."
+          : "Verification code sent. It remains valid for 10 minutes.",
+        "ok"
+      );
+      authCode.focus();
+    }catch(error){
+      if(error?.code==="otp_delivery_failed"){
+        showAuthStatus("Email verification could not be delivered. You can use a verification PIN from the QwerNFC administrator.","error");
+        authPinFallback.classList.remove("hidden");
+      }else if(error?.code==="otp_ownership_unavailable"){
+        showAuthStatus("Secure record sync is taking longer than expected. Try verification again now or use the admin PIN.","error");
+        authPinFallback.classList.remove("hidden");
+      }else{
+        showAuthStatus(error?.message || "Could not start verification.","error");
+      }
+    }finally{
+      state.otpRequestBusy=false;
+      authSendCode.disabled=false;
+      renderOtpTiming();
+    }
+  };
+
   document.getElementById("auth-change-email").addEventListener("click",()=>{
+    stopOtpTimer();
     state.challengeId="";
     state.authEmail="";
+    state.otpExpiresAt=0;
+    state.resendAvailableAt=0;
     authCode.value="";
     authCodeStep.classList.add("hidden");
     authEmailStep.classList.remove("hidden");
@@ -2975,29 +3108,16 @@ svg{display:block}
     if(!(await refreshCustomerAccessState())) return;
     const email=String(authEmail.value||"").trim().toLowerCase();
     if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showAuthStatus("Enter a valid registered email.","error");
-    try{
-      const result=await apiJson("/v1/auth/otp/start",{
-        method:"POST",
-        body:{qrId:id,email}
-      });
-      state.challengeId=String(result.challengeId||"");
-      state.authEmail=email;
-      authEmailStep.classList.add("hidden");
-      authCodeStep.classList.remove("hidden");
-      showAuthStatus("A 6-digit code has been sent to your registered email.");
-      authCode.focus();
-    }catch(error){
-      if(error.code === "otp_delivery_failed"){
-        showAuthStatus("Email verification could not be delivered. You can use a verification PIN from the QwerNFC administrator.","error");
-        document.getElementById("auth-pin-fallback").classList.remove("hidden");
-      }else if(error.code === "otp_ownership_unavailable"){
-        showAuthStatus("This QwerNFC record is still synchronizing. Please try again shortly or contact the administrator.","error");
-        document.getElementById("auth-pin-fallback").classList.remove("hidden");
-      }else{
-        showAuthStatus(error?.message || "Could not start verification.","error");
-      }
-    }
+    await requestOtp(email);
   });
+
+  authResendCode?.addEventListener("click",async()=>{
+    if(state.otpRequestBusy || Date.now()<state.resendAvailableAt) return;
+    if(!state.authEmail) return showAuthStatus("Enter the registered email again.","error");
+    await requestOtp(state.authEmail,{resend:true});
+  });
+
+  window.addEventListener("beforeunload",stopOtpTimer);
 
   document.getElementById("public-map-open").addEventListener("click",()=>{
     const latitude=Number(publicMap.dataset.latitude);
