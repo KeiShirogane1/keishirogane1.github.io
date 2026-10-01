@@ -1647,6 +1647,205 @@ svg{display:block}
   }
 }
 
+/* Verified Edit Info workspace — compact, no duplicated public storefront */
+#edit-stage{
+  width:min(100%,560px);
+  margin:0 auto;
+  padding-bottom:88px;
+}
+.edit-workspace-head{
+  position:relative;
+  overflow:hidden;
+  margin:2px 0 12px;
+  padding:18px;
+  border:1px solid #1ca357;
+  border-radius:22px;
+  background:
+    radial-gradient(circle at 92% 8%,rgba(55,232,121,.18),transparent 34%),
+    linear-gradient(145deg,#082819 0%,#04160d 58%,#031009 100%);
+  box-shadow:0 14px 34px rgba(0,0,0,.26),inset 0 0 36px rgba(55,232,121,.035);
+}
+.edit-workspace-topline{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+.edit-workspace-badge,
+.edit-workspace-qr,
+.edit-current-chip{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  min-height:27px;
+  padding:0 9px;
+  border-radius:999px;
+  font-size:.59rem;
+  font-weight:900;
+  letter-spacing:.035em;
+}
+.edit-workspace-badge{
+  border:1px solid #239959;
+  background:#07391f;
+  color:#78efa0;
+}
+.edit-workspace-dot{
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:#45f486;
+  box-shadow:0 0 10px rgba(69,244,134,.7);
+}
+.edit-workspace-qr{
+  border:1px solid #23543a;
+  background:#07170f;
+  color:#b8cbbf;
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+.edit-workspace-head h1{
+  margin:15px 0 6px;
+  font-size:1.34rem;
+  line-height:1.08;
+  letter-spacing:-.025em;
+}
+.edit-workspace-head p{
+  max-width:470px;
+  margin:0;
+  color:#9eb2a5;
+  font-size:.72rem;
+  line-height:1.55;
+}
+.edit-current-card{
+  padding:13px;
+  border-color:#1a673c;
+  border-radius:19px;
+  background:linear-gradient(160deg,#061a10,#041009);
+}
+.edit-current-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+  margin:1px 1px 10px;
+}
+.edit-current-head .eyebrow{margin-bottom:3px}
+.edit-current-head h2{
+  margin:0;
+  font-size:.98rem;
+  letter-spacing:-.015em;
+}
+.edit-current-chip{
+  flex:0 0 auto;
+  border:1px solid #244937;
+  background:#08160f;
+  color:#71877a;
+}
+#edit-stage .info-list{
+  gap:6px;
+}
+#edit-stage .info-row{
+  min-height:52px;
+  border-color:#153a24;
+  background:linear-gradient(145deg,#07170e,#051109);
+}
+#edit-stage .info-copy strong{
+  white-space:normal;
+  overflow-wrap:anywhere;
+}
+.edit-choice-head{
+  display:grid;
+  grid-template-columns:38px minmax(0,1fr);
+  gap:11px;
+  align-items:start;
+  margin:18px 2px 10px;
+}
+.edit-choice-number{
+  width:36px;
+  height:36px;
+  border:1px solid #2fc267;
+  border-radius:12px;
+  background:linear-gradient(145deg,#123b24,#092417);
+  color:#62ed91;
+  display:grid;
+  place-items:center;
+  font-size:.78rem;
+  font-weight:950;
+  box-shadow:0 0 0 4px rgba(55,232,121,.04);
+}
+.edit-choice-head .eyebrow{margin:1px 0 3px}
+.edit-choice-head h2{
+  margin:0;
+  font-size:1.03rem;
+  letter-spacing:-.015em;
+}
+.edit-choice-head p{
+  margin:4px 0 0;
+  color:#83988b;
+  font-size:.68rem;
+  line-height:1.45;
+}
+#edit-stage .edit-list{gap:9px}
+#edit-stage .edit-card{
+  border-color:#1a472c;
+  border-radius:18px;
+  background:linear-gradient(150deg,#081a11,#051109);
+  box-shadow:0 9px 22px rgba(0,0,0,.12);
+}
+#edit-stage .edit-card.active{
+  border-color:#30bd67;
+  background:linear-gradient(150deg,#0a2a1a,#06170f);
+  box-shadow:0 0 0 1px rgba(55,232,121,.06),0 12px 28px rgba(0,0,0,.18);
+}
+#edit-stage .edit-trigger{
+  min-height:66px;
+  padding:12px;
+  grid-template-columns:42px minmax(0,1fr) 29px;
+}
+#edit-stage .edit-icon{
+  width:42px;
+  height:42px;
+  border-color:#247247;
+  border-radius:13px;
+  background:linear-gradient(145deg,#0c361f,#082317);
+}
+#edit-stage .check-box{
+  width:29px;
+  height:29px;
+  border-radius:9px;
+}
+#edit-stage .edit-card.active .check-box{
+  box-shadow:0 0 14px rgba(55,232,121,.18);
+}
+#edit-stage .reason-card{
+  margin-top:11px;
+  padding:13px;
+  border-color:#1b5934;
+  border-radius:18px;
+  background:linear-gradient(150deg,#071a10,#041009);
+}
+#edit-stage .security-note{
+  margin:12px 4px 0;
+}
+#edit-stage .action-inner{
+  border-color:#247046;
+  border-radius:17px;
+  background:linear-gradient(150deg,#092116,#05130c);
+}
+@media(min-width:560px){
+  #edit-stage .info-list{
+    grid-template-columns:1fr 1fr;
+  }
+}
+@media(max-width:430px){
+  .edit-workspace-head{padding:15px;border-radius:19px}
+  .edit-workspace-head h1{font-size:1.2rem}
+  .edit-choice-head{grid-template-columns:34px minmax(0,1fr);gap:9px}
+  .edit-choice-number{width:32px;height:32px;border-radius:10px}
+  #edit-stage .edit-trigger{grid-template-columns:40px minmax(0,1fr) 28px;padding:11px}
+  #edit-stage .edit-icon{width:40px;height:40px}
+  #edit-stage .edit-body{padding-left:11px}
+}
+
 </style>
 </head>
 <body>
@@ -1723,6 +1922,7 @@ svg{display:block}
     <div class="step" data-step="submit"><div class="step-dot"><span class="step-number">3</span></div><span>Submit</span></div>
   </div>
 
+  <div id="public-view">
   <section class="card profile-card public-profile-card">
     <div class="profile-hero">
       <div class="profile-storefront" id="profile-storefront">
@@ -1798,22 +1998,36 @@ svg{display:block}
       <span>Edit Info</span>
     </button>
   </section>
+  </div>
 
   <section id="edit-stage" class="hidden">
-    <div class="section-head">
-      <span class="eyebrow">CURRENT INFO</span>
-      <h2>Current Information</h2>
-      <p>This is the information currently displayed for this QR.</p>
-    </div>
+    <section class="edit-workspace-head">
+      <div class="edit-workspace-topline">
+        <span class="edit-workspace-badge"><span class="edit-workspace-dot"></span> Verified session</span>
+        <span class="edit-workspace-qr" id="edit-workspace-qr">QR</span>
+      </div>
+      <h1>Edit information</h1>
+      <p>Update only the details that changed. Your permanent QR stays the same and every request still needs admin approval.</p>
+    </section>
 
-    <section class="card info-card">
+    <section class="card edit-current-card">
+      <div class="edit-current-head">
+        <div>
+          <span class="eyebrow">CURRENT INFO</span>
+          <h2>Saved information</h2>
+        </div>
+        <span class="edit-current-chip">Read only</span>
+      </div>
       <div class="info-list" id="current-list"></div>
     </section>
 
-    <div class="section-head">
-      <span class="eyebrow">WHAT DO YOU WANT TO EDIT?</span>
-      <h2>Select what you want to change</h2>
-      <p>Only selected fields will be included in your request.</p>
+    <div class="edit-choice-head">
+      <div class="edit-choice-number">1</div>
+      <div>
+        <span class="eyebrow">CHOOSE CHANGES</span>
+        <h2>What do you want to update?</h2>
+        <p>Tap a field to select it. Only selected changes are sent for approval.</p>
+      </div>
     </div>
 
     <form id="edit-form">
@@ -2022,8 +2236,10 @@ svg{display:block}
   const authCode = document.getElementById("auth-code");
   const authStatus = document.getElementById("auth-status");
   const protectedContent = document.getElementById("protected-content");
+  const publicView = document.getElementById("public-view");
   const editGate = document.getElementById("edit-gate");
   const editStepper = document.getElementById("edit-stepper");
+  const editWorkspaceQr = document.getElementById("edit-workspace-qr");
   const profileStorefrontImage = document.getElementById("profile-storefront-image");
   const profileStorefrontPlaceholder = document.getElementById("profile-storefront-placeholder");
   const currentStoreImage = document.getElementById("current-store-image");
@@ -2537,9 +2753,18 @@ svg{display:block}
     if(!authStage.classList.contains("hidden") && !state.verified){
       authStage.classList.add("hidden");
       protectedContent.classList.remove("hidden");
+      publicView.classList.remove("hidden");
       editGate.classList.remove("hidden");
       authStatus.className="status hidden";
       window.scrollTo({top:0,behavior:"auto"});
+      return;
+    }
+    if(state.verified && !editStage.classList.contains("hidden")){
+      editStage.classList.add("hidden");
+      editStepper.classList.add("hidden");
+      publicView.classList.remove("hidden");
+      editGate.classList.remove("hidden");
+      window.scrollTo({top:0,behavior:"smooth"});
       return;
     }
     history.back();
@@ -2630,7 +2855,9 @@ svg{display:block}
 
     state.verified=false;
     renderCurrent();
+    editWorkspaceQr.textContent=id;
     protectedContent.classList.remove("hidden");
+    publicView.classList.remove("hidden");
     editGate.classList.remove("hidden");
     editStage.classList.add("hidden");
     editStepper.classList.add("hidden");
@@ -2695,6 +2922,7 @@ svg{display:block}
     state.verified=true;
     renderCurrent();
     authStage.classList.add("hidden");
+    publicView.classList.add("hidden");
     editGate.classList.add("hidden");
     protectedContent.classList.remove("hidden");
     editStepper.classList.remove("hidden");
