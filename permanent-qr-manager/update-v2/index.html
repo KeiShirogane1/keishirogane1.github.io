@@ -154,12 +154,439 @@ svg{display:block}
 }
 .step.complete .step-number{display:none}
 
-.card{
-  border:1px solid var(--line);
-  border-radius:18px;
-  background:linear-gradient(180deg,rgba(8,25,16,.98),rgba(4,14,9,.99));
-  box-shadow:var(--shadow);
+.step.complete .step-dot::before{
+  content:"✓";
+  font-size:.83rem;
 }
+.step.complete .step-number{display:none}
+
+/* PIN verification fallback styles */
+.auth-card{padding:14px}
+.auth-intro{
+  margin-bottom:16px;
+  color:var(--muted);
+  font-size:.78rem;
+  line-height:1.55;
+}
+.auth-divider{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin:16px 0;
+  color:var(--muted2);
+  font-size:.66rem;
+  font-weight:800;
+  text-transform:uppercase;
+}
+.auth-divider::before,
+.auth-divider::after{
+  content:"";
+  flex:1;
+  height:1px;
+  background:var(--line);
+}
+.auth-divider span{
+  white-space:nowrap;
+}
+.auth-actions{
+  display:flex;
+  gap:10px;
+  margin-top:12px;
+}
+.auth-actions .full-primary,
+.auth-actions .secondary{
+  flex:1;
+}
+.auth-pin-step .auth-actions{
+  flex-direction:column;
+  gap:10px;
+}
+.auth-pin-step label{
+  margin-bottom:10px;
+}
+.auth-pin-step input{
+  width:100%;
+  min-height:48px;
+  padding:0 14px;
+  border:1px solid #28583a;
+  border-radius:10px;
+  background:#04110a;
+  color:#f3fbf5;
+  font-size:1.1rem;
+  letter-spacing:.3em;
+  text-align:center;
+}
+.auth-pin-step input:focus{
+  border-color:#35b963;
+  box-shadow:0 0 0 3px rgba(50,190,97,.09);
+}
+.pin-display{
+  display:flex;
+  gap:6px;
+  margin:16px 0;
+  justify-content:center;
+}
+.pin-digit{
+  width:40px;
+  height:56px;
+  border:1px solid #2ca95c;
+  border-radius:12px;
+  background:linear-gradient(180deg,#0a2a17,#06150c);
+  color:#37e879;
+  font-size:1.4rem;
+  font-weight:900;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  animation:pinReveal .4s ease-out both;
+}
+@keyframes pinReveal{
+  from{opacity:0;transform:translateY(10px) scale(.9)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+.pin-meta{
+  display:flex;
+  justify-content:space-between;
+  margin-top:12px;
+  font-size:.66rem;
+  color:var(--muted2);
+}
+.pin-qr-id{
+  font-weight:700;
+  color:var(--text);
+}
+.pin-expires{
+  color:var(--muted);
+}
+.pin-actions{
+  display:flex;
+  gap:10px;
+  margin-top:16px;
+}
+.pin-actions .pin-copy,
+.pin-actions .pin-regenerate{
+  flex:1;
+  min-height:44px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+}
+.pin-copy svg,
+.pin-regenerate svg{
+  width:18px;
+  height:18px;
+}
+.pin-note{
+  margin-top:16px;
+  font-size:.62rem;
+  color:var(--muted3);
+  text-align:center;
+}
+.pin-error{
+  margin-top:12px;
+  padding:10px 12px;
+  background:#2a0a0a;
+  border:1px solid #5a1a1a;
+  border-radius:8px;
+  color:#ff8b80;
+  font-size:.7rem;
+  text-align:center;
+}
+.pin-fallback-note{
+  margin-top:12px;
+  font-size:.7rem;
+  color:var(--muted2);
+  text-align:center;
+}
+.auth-divider{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin:16px 0;
+  color:var(--muted2);
+  font-size:.66rem;
+  font-weight:800;
+  text-transform:uppercase;
+}
+.auth-divider::before,
+.auth-divider::after{
+  content:"";
+  flex:1;
+  height:1px;
+  background:var(--line);
+}
+.auth-divider span{
+  white-space:nowrap;
+}
+.auth-pin-step input{
+  width:100%;
+  min-height:48px;
+  padding:0 14px;
+  border:1px solid #28583a;
+  border-radius:10px;
+  background:#04110a;
+  color:#f3fbf5;
+  font-size:1.1rem;
+  letter-spacing:.3em;
+  text-align:center;
+}
+.auth-pin-step input:focus{
+  border-color:#35b963;
+  box-shadow:0 0 0 3px rgba(50,190,97,.09);
+}
+.pin-fallback-note{
+  margin-top:12px;
+  font-size:.7rem;
+  color:var(--muted2);
+  text-align:center;
+}
+.full-secondary{
+  width:100%;
+  min-height:48px;
+  padding:0 16px;
+  border:1px solid #28583a;
+  border-radius:12px;
+  background:linear-gradient(180deg,#0a2c19,#071b10);
+  color:#69e290;
+  font-weight:900;
+  font-size:.82rem;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+}
+.full-secondary svg{
+  width:20px;
+  height:20px;
+}
+.full-secondary:hover{
+  background:linear-gradient(180deg,#0c3a21,#082414);
+}
+.full-secondary:disabled{
+  opacity:.55;
+  cursor:not-allowed;
+}
+.pin-fallback-note{
+  margin-top:12px;
+  font-size:.7rem;
+  color:var(--muted2);
+  text-align:center;
+}
+.auth-card{padding:14px}
+.auth-intro{
+  margin-bottom:16px;
+  color:var(--muted);
+  font-size:.78rem;
+  line-height:1.55;
+}
+.auth-divider{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin:16px 0;
+  color:var(--muted2);
+  font-size:.66rem;
+  font-weight:800;
+  text-transform:uppercase;
+}
+.auth-divider::before,
+.auth-divider::after{
+  content:"";
+  flex:1;
+  height:1px;
+  background:var(--line);
+}
+.auth-divider span{
+  white-space:nowrap;
+}
+.auth-actions{
+  display:flex;
+  gap:10px;
+  margin-top:12px;
+}
+.auth-actions .full-primary,
+.auth-actions .secondary{
+  flex:1;
+}
+.auth-pin-step .auth-actions{
+  flex-direction:column;
+  gap:10px;
+}
+.auth-pin-step label{
+  margin-bottom:10px;
+}
+.auth-pin-step input{
+  width:100%;
+  min-height:48px;
+  padding:0 14px;
+  border:1px solid #28583a;
+  border-radius:10px;
+  background:#04110a;
+  color:#f3fbf5;
+  font-size:1.1rem;
+  letter-spacing:.3em;
+  text-align:center;
+}
+.auth-pin-step input:focus{
+  border-color:#35b963;
+  box-shadow:0 0 0 3px rgba(50,190,97,.09);
+}
+.pin-display{
+  display:flex;
+  gap:6px;
+  margin:16px 0;
+  justify-content:center;
+}
+.pin-digit{
+  width:40px;
+  height:56px;
+  border:1px solid #2ca95c;
+  border-radius:12px;
+  background:linear-gradient(180deg,#0a2a17,#06150c);
+  color:#37e879;
+  font-size:1.4rem;
+  font-weight:900;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  animation:pinReveal .4s ease-out both;
+}
+@keyframes pinReveal{
+  from{opacity:0;transform:translateY(10px) scale(.9)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+.pin-meta{
+  display:flex;
+  justify-content:space-between;
+  margin-top:12px;
+  font-size:.66rem;
+  color:var(--muted2);
+}
+.pin-qr-id{
+  font-weight:700;
+  color:var(--text);
+}
+.pin-expires{
+  color:var(--muted);
+}
+.pin-actions{
+  display:flex;
+  gap:10px;
+  margin-top:16px;
+}
+.pin-actions .pin-copy,
+.pin-actions .pin-regenerate{
+  flex:1;
+  min-height:44px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px
+}
+.pin-copy svg,
+.pin-regenerate svg{
+  width:18px;
+  height:18px
+}
+.pin-note{
+  margin-top:16px;
+  font-size:.62rem;
+  color:var(--muted3);
+  text-align:center
+}
+.pin-error{
+  margin-top:12px;
+  padding:10px 12px;
+  background:#2a0a0a;
+  border:1px solid #5a1a1a;
+  border-radius:8px;
+  color:#ff8b80;
+  font-size:.7rem;
+  text-align:center
+}
+.pin-fallback-note{
+  margin-top:12px;
+  font-size:.7rem;
+  color:var(--muted2);
+  text-align:center
+}
+.auth-divider{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin:16px 0;
+  color:var(--muted2);
+  font-size:.66rem;
+  font-weight:800;
+  text-transform:uppercase
+}
+.auth-divider::before,
+.auth-divider::after{
+  content:"";
+  flex:1;
+  height:1px;
+  background:var(--line)
+}
+.auth-divider span{
+  white-space:nowrap
+}
+.auth-pin-step input{
+  width:100%;
+  min-height:48px;
+  padding:0 14px;
+  border:1px solid #28583a;
+  border-radius:10px;
+  background:#04110a;
+  color:#f3fbf5;
+  font-size:1.1rem;
+  letter-spacing:.3em;
+  text-align:center
+}
+.auth-pin-step input:focus{
+  border-color:#35b963;
+  box-shadow:0 0 0 3px rgba(50,190,97,.09)
+}
+.pin-fallback-note{
+  margin-top:12px;
+  font-size:.7rem;
+  color:var(--muted2);
+  text-align:center
+}
+.full-secondary{
+  width:100%;
+  min-height:48px;
+  padding:0 16px;
+  border:1px solid #28583a;
+  border-radius:12px;
+  background:linear-gradient(180deg,#0a2c19,#071b10);
+  color:#69e290;
+  font-weight:900;
+  font-size:.82rem;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px
+}
+.full-secondary svg{
+  width:20px;
+  height:20px
+}
+.full-secondary:hover{
+  background:linear-gradient(180deg,#0c3a21,#082414)
+}
+.full-secondary:disabled{
+  opacity:.55;
+  cursor:not-allowed
+}
+.pin-fallback-note{
+  margin-top:12px;
+  font-size:.7rem;
+  color:var(--muted2);
+  text-align:center
+}
+
+.card{
 
 .profile-card{padding:14px}
 .profile-main{
@@ -1241,6 +1668,32 @@ svg{display:block}
       </div>
     </div>
 
+    <div class="auth-divider">
+      <span>OR</span>
+    </div>
+
+    <div id="auth-pin-step" class="hidden">
+      <label>6-digit verification PIN
+        <input id="auth-pin" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="one-time-code" placeholder="000000" />
+      </label>
+      <div class="auth-actions">
+        <button id="auth-verify-pin" class="full-primary" type="button">Verify PIN and continue</button>
+        <button id="auth-back-to-email" class="secondary" type="button">Back to email</button>
+      </div>
+    </div>
+
+    <div class="auth-divider">
+      <span>Need a PIN?</span>
+    </div>
+
+    <div id="auth-pin-fallback">
+      <button id="auth-request-pin" class="full-secondary" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"/></svg>
+        <span>Use PIN from Admin</span>
+      </button>
+      <p class="pin-fallback-note">Contact the QwerNFC administrator to get a temporary 6-digit PIN for this QR.</p>
+    </div>
+
     <div id="auth-code-step" class="hidden">
       <label>6-digit verification code
         <input id="auth-code" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="one-time-code" placeholder="000000" />
@@ -2258,6 +2711,45 @@ svg{display:block}
     }
   });
 
+  // PIN verification fallback
+  const authPinStep = document.getElementById("auth-pin-step");
+  const authPinFallback = document.getElementById("auth-pin-fallback");
+  const authPin = document.getElementById("auth-pin");
+  const authVerifyPin = document.getElementById("auth-verify-pin");
+  const authBackToEmail = document.getElementById("auth-back-to-email");
+  const authRequestPin = document.getElementById("auth-request-pin");
+  const authBackToEmailBtn = document.getElementById("auth-back-to-email");
+
+  authSendCode.addEventListener("click",async()=>{
+    if(!(await refreshCustomerAccessState())) return;
+    const email=String(authEmail.value||"").trim().toLowerCase();
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showAuthStatus("Enter a valid registered email.","error");
+    try{
+      const result=await apiJson("/v1/auth/otp/start",{
+        method:"POST",
+        body:{qrId:id,email}
+      });
+      state.challengeId=String(result.challengeId||"");
+      state.authEmail=email;
+      authEmailStep.classList.add("hidden");
+      authCodeStep.classList.remove("hidden");
+      showAuthStatus("A 6-digit code has been sent to your registered email.");
+      authCode.focus();
+    }catch(error){
+      if(error.code === "otp_delivery_failed"){
+        showAuthStatus("Email verification could not be delivered. You can request a temporary PIN from the QwerNFC administrator.","error");
+        document.getElementById("auth-pin-fallback").classList.remove("hidden");
+      }else if(error.code === "otp_ownership_unavailable"){
+        showAuthStatus("This QwerNFC record is still synchronizing. Please try again shortly or contact the administrator.","error");
+        document.getElementById("auth-pin-fallback").classList.remove("hidden");
+      }else{
+        showAuthStatus(error?.message || "Could not start verification.","error");
+      }
+    }catch(error){
+      showAuthStatus(error?.message || "Could not start verification.","error");
+    }
+  });
+
   document.getElementById("public-map-open").addEventListener("click",()=>{
     const latitude=Number(publicMap.dataset.latitude);
     const longitude=Number(publicMap.dataset.longitude);
@@ -2294,6 +2786,52 @@ svg{display:block}
   document.getElementById("store-image-camera").addEventListener("change",(event)=>void handleStoreImageFile(event.currentTarget));
   document.getElementById("remove-store-image").addEventListener("click",()=>{state.storeImageDraft={action:"remove"};renderStoreImageUi()});
   document.getElementById("reset-store-image").addEventListener("click",()=>{state.storeImageDraft=null;renderStoreImageUi()});
+  document.getElementById("open-edit-verification").addEventListener("click",()=>void openEditVerification());
+
+  // PIN verification fallback handlers
+  authRequestPin.addEventListener("click",()=>{
+    authEmailStep.classList.add("hidden");
+    authCodeStep.classList.add("hidden");
+    authPinStep.classList.remove("hidden");
+    authPinFallback.classList.add("hidden");
+    authPin.focus();
+  });
+
+  authBackToEmailBtn.addEventListener("click",()=>{
+    authPinStep.classList.add("hidden");
+    authEmailStep.classList.remove("hidden");
+    authStatus.classList.add("hidden");
+    authEmail.focus();
+  });
+
+  authVerifyPin.addEventListener("click",async()=>{
+    const pin=String(authPin.value||"").trim();
+    if(!/^\d{6}$/.test(pin)) return showAuthStatus("Enter the 6-digit verification PIN.","error");
+    try{
+      const verified=await apiJson("/v1/auth/admin-pin/verify",{
+        method:"POST",
+        body:{
+          qrId:id,
+          pin,
+          sessionMode:"browser",
+          deviceName:"QwerNFC Update Info web"
+        }
+      });
+      state.accessToken=String(verified.accessToken||"");
+      if(!state.accessToken) throw new Error("Secure customer session was not created.");
+      await openVerifiedRecord();
+    }catch(error){
+      showAuthStatus(error?.message || "Verification failed.","error");
+    }
+  });
+
+  authBackToEmail.addEventListener("click",()=>{
+    authPinStep.classList.add("hidden");
+    authEmailStep.classList.remove("hidden");
+    authStatus.classList.add("hidden");
+    authEmail.focus();
+  });
+
   document.getElementById("open-edit-verification").addEventListener("click",()=>void openEditVerification());
   document.querySelectorAll("[data-edit-toggle]").forEach((button)=>{
     button.addEventListener("click",()=>{
