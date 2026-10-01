@@ -2660,26 +2660,6 @@ svg{display:block}
     window.scrollTo({top:0,behavior:"smooth"});
   };
 
-  authSendCode.addEventListener("click",async()=>{
-    if(!(await refreshCustomerAccessState())) return;
-    const email=String(authEmail.value||"").trim().toLowerCase();
-    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showAuthStatus("Enter a valid registered email.","error");
-    try{
-      const result=await apiJson("/v1/auth/otp/start",{
-        method:"POST",
-        body:{qrId:id,email}
-      });
-      state.challengeId=String(result.challengeId||"");
-      state.authEmail=email;
-      authEmailStep.classList.add("hidden");
-      authCodeStep.classList.remove("hidden");
-      showAuthStatus("A 6-digit code has been sent to your registered email.");
-      authCode.focus();
-    }catch(error){
-      showAuthStatus(error?.message || "Could not start verification.","error");
-    }
-  });
-
   document.getElementById("auth-change-email").addEventListener("click",()=>{
     state.challengeId="";
     state.authEmail="";
@@ -2718,7 +2698,6 @@ svg{display:block}
   const authVerifyPin = document.getElementById("auth-verify-pin");
   const authBackToEmail = document.getElementById("auth-back-to-email");
   const authRequestPin = document.getElementById("auth-request-pin");
-  const authBackToEmailBtn = document.getElementById("auth-back-to-email");
 
   authSendCode.addEventListener("click",async()=>{
     if(!(await refreshCustomerAccessState())) return;
@@ -2745,8 +2724,6 @@ svg{display:block}
       }else{
         showAuthStatus(error?.message || "Could not start verification.","error");
       }
-    }catch(error){
-      showAuthStatus(error?.message || "Could not start verification.","error");
     }
   });
 
@@ -2786,7 +2763,6 @@ svg{display:block}
   document.getElementById("store-image-camera").addEventListener("change",(event)=>void handleStoreImageFile(event.currentTarget));
   document.getElementById("remove-store-image").addEventListener("click",()=>{state.storeImageDraft={action:"remove"};renderStoreImageUi()});
   document.getElementById("reset-store-image").addEventListener("click",()=>{state.storeImageDraft=null;renderStoreImageUi()});
-  document.getElementById("open-edit-verification").addEventListener("click",()=>void openEditVerification());
 
   // PIN verification fallback handlers
   authRequestPin.addEventListener("click",()=>{
@@ -2795,13 +2771,6 @@ svg{display:block}
     authPinStep.classList.remove("hidden");
     authPinFallback.classList.add("hidden");
     authPin.focus();
-  });
-
-  authBackToEmailBtn.addEventListener("click",()=>{
-    authPinStep.classList.add("hidden");
-    authEmailStep.classList.remove("hidden");
-    authStatus.classList.add("hidden");
-    authEmail.focus();
   });
 
   authVerifyPin.addEventListener("click",async()=>{
