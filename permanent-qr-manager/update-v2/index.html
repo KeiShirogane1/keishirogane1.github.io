@@ -1673,7 +1673,7 @@ svg{display:block}
     </div>
 
     <div id="auth-pin-step" class="hidden">
-      <label>6-digit verification PIN
+      <label>Enter the 6-digit verification PIN provided by the QwerNFC administrator.
         <input id="auth-pin" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="one-time-code" placeholder="000000" />
       </label>
       <div class="auth-actions">
@@ -1691,7 +1691,7 @@ svg{display:block}
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"/></svg>
         <span>Use PIN from Admin</span>
       </button>
-      <p class="pin-fallback-note">Contact the QwerNFC administrator to get a temporary 6-digit PIN for this QR.</p>
+      <p class="pin-fallback-note">Contact the QwerNFC administrator to get a verification PIN for this QR.</p>
     </div>
 
     <div id="auth-code-step" class="hidden">
@@ -2737,7 +2737,7 @@ svg{display:block}
       authCode.focus();
     }catch(error){
       if(error.code === "otp_delivery_failed"){
-        showAuthStatus("Email verification could not be delivered. You can request a temporary PIN from the QwerNFC administrator.","error");
+        showAuthStatus("Email verification could not be delivered. You can use a verification PIN from the QwerNFC administrator.","error");
         document.getElementById("auth-pin-fallback").classList.remove("hidden");
       }else if(error.code === "otp_ownership_unavailable"){
         showAuthStatus("This QwerNFC record is still synchronizing. Please try again shortly or contact the administrator.","error");
@@ -2806,7 +2806,7 @@ svg{display:block}
 
   authVerifyPin.addEventListener("click",async()=>{
     const pin=String(authPin.value||"").trim();
-    if(!/^\d{6}$/.test(pin)) return showAuthStatus("Enter the 6-digit verification PIN.","error");
+    if(!/^\d{6}$/.test(pin)) return showAuthStatus("Enter the 6-digit verification PIN provided by the QwerNFC administrator.","error");
     try{
       const verified=await apiJson("/v1/auth/admin-pin/verify",{
         method:"POST",
