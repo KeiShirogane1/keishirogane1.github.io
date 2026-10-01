@@ -2249,7 +2249,7 @@ svg{display:block}
     if(output) output.textContent = value;
   };
 
-  const paintPublicLocationMap = (_map,latitude,longitude,zoom=15) => {
+  const paintPublicLocationMap = (_map,latitude,longitude,zoom=16) => {
     const lat=Number(latitude);
     const lng=Number(longitude);
     if(!Number.isFinite(lat)||!Number.isFinite(lng)) return;
@@ -2477,7 +2477,7 @@ svg{display:block}
     currentLink.textContent = maskedManagedLink(state.route.destination);
     const publicPin = recordLocationPin(state.record);
     if(publicPin){
-      requestAnimationFrame(()=>paintPublicLocationMap(publicMap,publicPin.latitude,publicPin.longitude,15));
+      requestAnimationFrame(()=>paintPublicLocationMap(publicMap,publicPin.latitude,publicPin.longitude,16));
       publicMap.dataset.latitude=String(publicPin.latitude);
       publicMap.dataset.longitude=String(publicPin.longitude);
     }else{
