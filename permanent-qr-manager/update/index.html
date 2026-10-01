@@ -2830,16 +2830,11 @@ svg{display:block}
   ]);
 
   const loadPublicRecord = async () => {
-    const [profileResult, firebaseProfileResult, routeResult] = await Promise.allSettled([
+    const [profileResult, routeResult] = await Promise.allSettled([
       withTimeout(
         apiJson("/v1/public/qrs/" + encodeURIComponent(id) + "/profile"),
         7000,
         "Public profile request timed out."
-      ),
-      withTimeout(
-        fetchPublicJson("/public/profiles/" + encodeURIComponent(id) + ".json"),
-        7000,
-        "Firebase public profile request timed out."
       ),
       withTimeout(
         fetchPublicJson("/public/routes/" + encodeURIComponent(id) + ".json"),
@@ -2848,40 +2843,17 @@ svg{display:block}
       )
     ]);
 
-    const apiProfile = profileResult.status === "fulfilled" ? profileResult.value : null;
-    const firebaseProfile = firebaseProfileResult.status === "fulfilled" ? firebaseProfileResult.value : null;
+    const profile = profileResult.status === "fulfilled" ? profileResult.value : null;
     const route = routeResult.status === "fulfilled" ? routeResult.value : null;
-    const profileReady = Boolean((apiProfile && apiProfile.ok === true) || firebaseProfile);
+    const profileReady = Boolean(profile && profile.ok === true);
     const routeReady = Boolean(route && route.enabled === true && route.deleted !== true);
-
-    const firebaseLatitude = firebaseProfile?.latitude;
-    const firebaseLongitude = firebaseProfile?.longitude;
-    const firebaseHasPin =
-      firebaseLatitude !== null && firebaseLatitude !== undefined &&
-      firebaseLongitude !== null && firebaseLongitude !== undefined &&
-      Number.isFinite(Number(firebaseLatitude)) && Number.isFinite(Number(firebaseLongitude));
-
-    const profile = {
-      ...(firebaseProfile || {}),
-      ...(apiProfile && apiProfile.ok === true ? apiProfile : {}),
-      location: firebaseHasPin
-        ? String(firebaseProfile?.location || apiProfile?.location || "")
-        : String(apiProfile?.location || firebaseProfile?.location || ""),
-      latitude: firebaseHasPin ? Number(firebaseLatitude) : (apiProfile?.latitude ?? firebaseProfile?.latitude ?? null),
-      longitude: firebaseHasPin ? Number(firebaseLongitude) : (apiProfile?.longitude ?? firebaseProfile?.longitude ?? null),
-      googleMapsUrl: firebaseHasPin
-        ? String(firebaseProfile?.googleMapsUrl || "")
-        : String(apiProfile?.googleMapsUrl || firebaseProfile?.googleMapsUrl || "")
-    };
 
     if(!profileReady && !routeReady) {
       const reason = profileResult.status === "rejected"
         ? profileResult.reason?.message
-        : firebaseProfileResult.status === "rejected"
-          ? firebaseProfileResult.reason?.message
-          : routeResult.status === "rejected"
-            ? routeResult.reason?.message
-            : "";
+        : routeResult.status === "rejected"
+          ? routeResult.reason?.message
+          : "";
       throw new Error(reason || "This QwerNFC record is unavailable.");
     }
 
