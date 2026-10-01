@@ -2560,43 +2560,82 @@ svg{display:block}
     return response.json();
   };
 
+  const withTimeout = (promise, ms, message) => Promise.race([
+    promise,
+    new Promise((_, reject) => setTimeout(() => reject(new Error(message)), ms))
+  ]);
+
   const loadPublicRecord = async () => {
-    const [profile, route] = await Promise.all([
-      apiJson("/v1/public/qrs/" + encodeURIComponent(id) + "/profile"),
-      fetchPublicJson("/public/routes/" + encodeURIComponent(id) + ".json")
+    const [profileResult, routeResult] = await Promise.allSettled([
+      withTimeout(
+        apiJson("/v1/public/qrs/" + encodeURIComponent(id) + "/profile"),
+        7000,
+        "Public profile request timed out."
+      ),
+      withTimeout(
+        fetchPublicJson("/public/routes/" + encodeURIComponent(id) + ".json"),
+        7000,
+        "Public route request timed out."
+      )
     ]);
-    if(!profile || profile.ok!==true || !route || route.enabled!==true || route.deleted===true) {
+
+    const profile = profileResult.status === "fulfilled" ? profileResult.value : null;
+    const route = routeResult.status === "fulfilled" ? routeResult.value : null;
+    const profileReady = Boolean(profile && profile.ok === true);
+    const routeReady = Boolean(route && route.enabled === true && route.deleted !== true);
+
+    if(!profileReady && !routeReady) {
+      const reason = profileResult.status === "rejected"
+        ? profileResult.reason?.message
+        : routeResult.status === "rejected"
+          ? routeResult.reason?.message
+          : "";
+      throw new Error(reason || "This QwerNFC record is unavailable.");
+    }
+
+    if(route && (route.enabled !== true || route.deleted === true)) {
       throw new Error("This QwerNFC record is unavailable.");
     }
+
     const publicImageBase64=String(profile?.storeImage?.base64||"").replace(/\s/g,"");
     state.currentStoreImageDataUrl=publicImageBase64
       ?"data:"+String(profile?.storeImage?.mimeType||"image/webp")+";base64,"+publicImageBase64
       :"";
-    state.publicMaskedEmail=String(profile.maskedEmail || "");
+    state.publicMaskedEmail=String(profile?.maskedEmail || "");
+
     state.record = {
       id,
-      store:String(profile.store || ""),
-      phone:String(profile.phone || ""),
+      store:String(profile?.store || ""),
+      phone:String(profile?.phone || ""),
       email:"",
-      location:String(profile.location || ""),
-      storeImagePath:profile.hasStoreImage ? "private" : "",
-      storeImageUpdatedAt:String(profile.updatedAt || ""),
+      location:String(profile?.location || ""),
+      storeImagePath:profile?.hasStoreImage ? "private" : "",
+      storeImageUpdatedAt:String(profile?.updatedAt || ""),
       enabled:true,
       deleted:false,
-      linkMode:String(route.linkMode || "both")
+      linkMode:String(route?.linkMode || "both")
     };
+
     state.route = {
       id,
       enabled:true,
       deleted:false,
-      destination:String(route.qrDestination || "")
+      destination:String(route?.qrDestination || route?.destination || "")
     };
+
     state.verified=false;
     renderCurrent();
     protectedContent.classList.remove("hidden");
     editGate.classList.remove("hidden");
     editStage.classList.add("hidden");
     editStepper.classList.add("hidden");
+
+    if(!profileReady || !routeReady) {
+      showAuthStatus(
+        "Some public information is still loading, but Edit Info verification remains available.",
+        ""
+      );
+    }
   };
 
   const openEditVerification = async () => {
