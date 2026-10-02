@@ -3028,7 +3028,7 @@ svg{display:block}
         }catch(error){
           lastError=error;
           if(error?.code!=="otp_ownership_unavailable" || attempt===1) break;
-          showAuthStatus("Syncing the latest protected QwerNFC record…");
+          showAuthStatus("Verification is temporarily unavailable. Try again.");
           await sleep(450);
         }
       }
@@ -3043,8 +3043,8 @@ svg{display:block}
       startOtpTimer(Number(result.expiresInSeconds||600));
       showAuthStatus(
         resend
-          ? "A new code was sent. The previous code is no longer valid."
-          : "A 6-digit code has been sent to your registered email. It remains valid for 10 minutes.",
+          ? "Verification code sent."
+          : "Verification code sent.",
         "ok"
       );
       authCode.focus();
@@ -3053,7 +3053,7 @@ svg{display:block}
         showAuthStatus("Email verification could not be delivered. You can use a verification PIN from the QwerNFC administrator.","error");
         authPinFallback.classList.remove("hidden");
       }else if(error?.code==="otp_ownership_unavailable"){
-        showAuthStatus("Secure record sync is taking longer than expected. Try verification again now or use the admin PIN.","error");
+        showAuthStatus("Verification is temporarily unavailable. Try again.","error");
         authPinFallback.classList.remove("hidden");
       }else{
         showAuthStatus(error?.message || "Could not start verification.","error");
