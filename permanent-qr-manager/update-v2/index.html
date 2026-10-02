@@ -2350,17 +2350,6 @@ svg{display:block}
     }
   };
 
-  const publicProfileSignal = (profile) => {
-    if(!profile || typeof profile!=="object") return 0;
-    let score=0;
-    if(String(profile.store||"").trim()) score+=3;
-    if(String(profile.phone||"").trim()) score+=1;
-    if(String(profile.location||"").trim()) score+=2;
-    if(Number.isFinite(Number(profile.latitude)) && Number.isFinite(Number(profile.longitude))) score+=2;
-    if(profile.hasStoreImage===true || String(profile.storeImagePath||"").trim()) score+=1;
-    return score;
-  };
-
   const loadApiBase = async () => {
     if(state.apiBase) return state.apiBase;
     const response = await fetch(fresh("../runtime.json"),{cache:"no-store",mode:"cors"});
@@ -2889,48 +2878,30 @@ svg{display:block}
   ]);
 
   const loadPublicRecord = async () => {
-    // Public display data is read from Firebase first because it is the live,
-    // per-QR public projection. The customer API remains a fallback and is
-    // still used for protected verification/edit actions and image delivery.
-    // This prevents a slow image/profile backend path from rendering an empty
-    // Restore page while the route itself is already available.
-    const [firebaseProfileResult, routeResult, apiProfileResult] = await Promise.allSettled([
-      withTimeout(
-        fetchPublicJson("/public/profiles/" + encodeURIComponent(id) + ".json"),
-        5000,
-        "Public profile projection timed out."
-      ),
-      withTimeout(
-        fetchPublicJson("/public/routes/" + encodeURIComponent(id) + ".json"),
-        5000,
-        "Public route request timed out."
-      ),
+    const [profileResult, routeResult] = await Promise.allSettled([
       withTimeout(
         apiJson("/v1/public/qrs/" + encodeURIComponent(id) + "/profile"),
         7000,
-        "Public profile service timed out."
+        "Public profile request timed out."
+      ),
+      withTimeout(
+        fetchPublicJson("/public/routes/" + encodeURIComponent(id) + ".json"),
+        7000,
+        "Public route request timed out."
       )
     ]);
 
-    const firebaseProfile = firebaseProfileResult.status === "fulfilled" ? firebaseProfileResult.value : null;
-    const apiProfile = apiProfileResult.status === "fulfilled" ? apiProfileResult.value : null;
+    const profile = profileResult.status === "fulfilled" ? profileResult.value : null;
     const route = routeResult.status === "fulfilled" ? routeResult.value : null;
-    const firebaseProfileReady = Boolean(
-      firebaseProfile &&
-      String(firebaseProfile.id || id).toUpperCase() === id &&
-      publicProfileSignal(firebaseProfile) > 0
-    );
-    const apiProfileReady = Boolean(apiProfile && apiProfile.ok === true && publicProfileSignal(apiProfile) > 0);
+    const profileReady = Boolean(profile && profile.ok === true);
     const routeReady = Boolean(route && route.enabled === true && route.deleted !== true);
 
-    if(!firebaseProfileReady && !apiProfileReady && !routeReady) {
-      const reason = firebaseProfileResult.status === "rejected"
-        ? firebaseProfileResult.reason?.message
-        : apiProfileResult.status === "rejected"
-          ? apiProfileResult.reason?.message
-          : routeResult.status === "rejected"
-            ? routeResult.reason?.message
-            : "";
+    if(!profileReady && !routeReady) {
+      const reason = profileResult.status === "rejected"
+        ? profileResult.reason?.message
+        : routeResult.status === "rejected"
+          ? routeResult.reason?.message
+          : "";
       throw new Error(reason || "This QwerNFC record is unavailable.");
     }
 
@@ -2938,33 +2909,11 @@ svg{display:block}
       throw new Error("This QwerNFC record is unavailable.");
     }
 
-    const firebaseSafeProfile = firebaseProfileReady ? {
-      ok:true,
-      id,
-      store:String(firebaseProfile?.store || ""),
-      phone:String(firebaseProfile?.phone || ""),
-      location:String(firebaseProfile?.location || ""),
-      latitude:firebaseProfile?.latitude ?? null,
-      longitude:firebaseProfile?.longitude ?? null,
-      googleMapsUrl:String(firebaseProfile?.googleMapsUrl || ""),
-      hasStoreImage:Boolean(String(firebaseProfile?.storeImagePath || "").trim()),
-      storeImage:null,
-      updatedAt:String(firebaseProfile?.updatedAt || "")
-    } : null;
-    const profile =
-      firebaseProfileReady && (!apiProfileReady || publicProfileSignal(firebaseSafeProfile) >= publicProfileSignal(apiProfile))
-        ? firebaseSafeProfile
-        : apiProfile;
-
-    if(routeReady && publicProfileSignal(profile) === 0) {
-      throw new Error("This QwerNFC profile is still syncing. Refresh after the manager finishes live sync.");
-    }
-
-    const publicImageBase64=String(apiProfile?.storeImage?.base64||"").replace(/\s/g,"");
+    const publicImageBase64=String(profile?.storeImage?.base64||"").replace(/\s/g,"");
     state.currentStoreImageDataUrl=publicImageBase64
-      ?"data:"+String(apiProfile?.storeImage?.mimeType||"image/webp")+";base64,"+publicImageBase64
+      ?"data:"+String(profile?.storeImage?.mimeType||"image/webp")+";base64,"+publicImageBase64
       :"";
-    state.publicMaskedEmail=String(apiProfile?.maskedEmail || "");
+    state.publicMaskedEmail=String(profile?.maskedEmail || "");
 
     state.record = {
       id,
@@ -2975,7 +2924,7 @@ svg{display:block}
       latitude:profile?.latitude ?? null,
       longitude:profile?.longitude ?? null,
       googleMapsUrl:String(profile?.googleMapsUrl || ""),
-      storeImagePath:(profile?.hasStoreImage || String(firebaseProfile?.storeImagePath || "").trim()) ? "private" : "",
+      storeImagePath:profile?.hasStoreImage ? "private" : "",
       storeImageUpdatedAt:String(profile?.updatedAt || ""),
       enabled:true,
       deleted:false,
@@ -2986,6 +2935,7 @@ svg{display:block}
       id,
       enabled:true,
       deleted:false,
+      linkMode:String(route?.linkMode || "both"),
       destination:String(route?.qrDestination || route?.destination || "")
     };
 
@@ -2998,7 +2948,7 @@ svg{display:block}
     editStage.classList.add("hidden");
     editStepper.classList.add("hidden");
 
-    if(!firebaseProfileReady && !apiProfileReady || !routeReady) {
+    if(!profileReady || !routeReady) {
       showAuthStatus(
         "Some public information is still loading, but Edit Info verification remains available.",
         ""
