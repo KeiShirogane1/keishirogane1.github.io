@@ -2909,55 +2909,28 @@ svg{display:block}
     throw lastError || new Error("The latest QwerNFC profile is temporarily unavailable.");
   };
 
-  const fetchPublishedRouteJson = async () => {
-    const response = await fetch(
-      fresh("../go/" + encodeURIComponent(id) + "/route.json"),
-      {cache:"no-store",mode:"cors"}
-    );
-    if(!response.ok) throw new Error("Published route request failed.");
-    return response.json();
-  };
-
   const loadRequiredPublicRoute = async () => {
-    const retryDelays = [0, 300, 900, 1800];
+    const retryDelays = [0, 300, 900, 1800, 3200];
     let lastError = null;
 
     for(const delay of retryDelays){
       if(delay) await waitFor(delay);
-
-      const [firebaseResult, publishedResult] = await Promise.allSettled([
-        withTimeout(
+      try{
+        const route = await withTimeout(
           fetchPublicJson("/public/routes/" + encodeURIComponent(id) + ".json"),
           4500,
           "Public route request timed out."
-        ),
-        withTimeout(
-          fetchPublishedRouteJson(),
-          4500,
-          "Published route request timed out."
-        )
-      ]);
-
-      const firebaseRoute = firebaseResult.status === "fulfilled" ? firebaseResult.value : null;
-      const publishedRoute = publishedResult.status === "fulfilled" ? publishedResult.value : null;
-      const route = firebaseRoute && String(firebaseRoute.id || "").toUpperCase() === id
-        ? firebaseRoute
-        : publishedRoute && String(publishedRoute.id || "").toUpperCase() === id
-          ? publishedRoute
-          : null;
-
-      if(route){
+        );
+        if(!route || String(route.id || "").toUpperCase() !== id){
+          throw new Error("The latest QwerNFC route could not be verified.");
+        }
         if(route.enabled !== true || route.deleted === true){
           throw new Error("This QwerNFC record is unavailable.");
         }
         return route;
+      }catch(error){
+        lastError = error;
       }
-
-      lastError = firebaseResult.status === "rejected"
-        ? firebaseResult.reason
-        : publishedResult.status === "rejected"
-          ? publishedResult.reason
-          : new Error("The latest QwerNFC route could not be verified.");
     }
 
     throw lastError || new Error("The latest QwerNFC route is temporarily unavailable.");
@@ -2976,9 +2949,9 @@ svg{display:block}
       loadRequiredPublicRoute()
     ]);
 
-    const publicImageBase64=String(profile.storeImage?.base64||"").replace(/\s/g,"");
+    const publicImageBase64=String(profile?.storeImage?.base64||"").replace(/\s/g,"");
     state.currentStoreImageDataUrl=publicImageBase64
-      ?"data:"+String(profile.storeImage?.mimeType||"image/webp")+";base64,"+publicImageBase64
+      ?"data:"+String(profile?.storeImage?.mimeType||"image/webp")+";base64,"+publicImageBase64
       :"";
     state.publicMaskedEmail=String(profile.maskedEmail || "");
 
