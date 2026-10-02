@@ -2350,6 +2350,17 @@ svg{display:block}
     }
   };
 
+  const publicProfileSignal = (profile) => {
+    if(!profile || typeof profile!=="object") return 0;
+    let score=0;
+    if(String(profile.store||"").trim()) score+=3;
+    if(String(profile.phone||"").trim()) score+=1;
+    if(String(profile.location||"").trim()) score+=2;
+    if(Number.isFinite(Number(profile.latitude)) && Number.isFinite(Number(profile.longitude))) score+=2;
+    if(profile.hasStoreImage===true || String(profile.storeImagePath||"").trim()) score+=1;
+    return score;
+  };
+
   const loadApiBase = async () => {
     if(state.apiBase) return state.apiBase;
     const response = await fetch(fresh("../runtime.json"),{cache:"no-store",mode:"cors"});
@@ -2904,8 +2915,12 @@ svg{display:block}
     const firebaseProfile = firebaseProfileResult.status === "fulfilled" ? firebaseProfileResult.value : null;
     const apiProfile = apiProfileResult.status === "fulfilled" ? apiProfileResult.value : null;
     const route = routeResult.status === "fulfilled" ? routeResult.value : null;
-    const firebaseProfileReady = Boolean(firebaseProfile && String(firebaseProfile.id || id).toUpperCase() === id);
-    const apiProfileReady = Boolean(apiProfile && apiProfile.ok === true);
+    const firebaseProfileReady = Boolean(
+      firebaseProfile &&
+      String(firebaseProfile.id || id).toUpperCase() === id &&
+      publicProfileSignal(firebaseProfile) > 0
+    );
+    const apiProfileReady = Boolean(apiProfile && apiProfile.ok === true && publicProfileSignal(apiProfile) > 0);
     const routeReady = Boolean(route && route.enabled === true && route.deleted !== true);
 
     if(!firebaseProfileReady && !apiProfileReady && !routeReady) {
@@ -2923,7 +2938,7 @@ svg{display:block}
       throw new Error("This QwerNFC record is unavailable.");
     }
 
-    const profile = firebaseProfileReady ? {
+    const firebaseSafeProfile = firebaseProfileReady ? {
       ok:true,
       id,
       store:String(firebaseProfile?.store || ""),
@@ -2935,7 +2950,15 @@ svg{display:block}
       hasStoreImage:Boolean(String(firebaseProfile?.storeImagePath || "").trim()),
       storeImage:null,
       updatedAt:String(firebaseProfile?.updatedAt || "")
-    } : apiProfile;
+    } : null;
+    const profile =
+      firebaseProfileReady && (!apiProfileReady || publicProfileSignal(firebaseSafeProfile) >= publicProfileSignal(apiProfile))
+        ? firebaseSafeProfile
+        : apiProfile;
+
+    if(routeReady && publicProfileSignal(profile) === 0) {
+      throw new Error("This QwerNFC profile is still syncing. Refresh after the manager finishes live sync.");
+    }
 
     const publicImageBase64=String(apiProfile?.storeImage?.base64||"").replace(/\s/g,"");
     state.currentStoreImageDataUrl=publicImageBase64
