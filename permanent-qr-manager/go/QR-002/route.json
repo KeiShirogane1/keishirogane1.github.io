@@ -3,9 +3,9 @@
   "kind": "QR",
   "enabled": true,
   "deleted": false,
-  "destination": "https://nexora-production-eb7b.up.railway.app/login",
+  "destination": "https://chatgpt.com/g/g-p-6a91ebe4a9ec8191bbd9bfc49cab41fb-nexora-coding/c/6ab32f4c-986c-83ec-97ca-e83ef5486b9b",
   "fallbackDestination": "https://www.canva.com/design/DAHTL_2Pk4w/x14-RG-rslcN3bIH-E1sYg/edit",
-  "linkVersion": 11,
-  "linkChangedAt": "2026-10-01T23:25:22.092Z",
-  "updatedAt": "2026-10-01T23:25:22.092Z"
+  "linkVersion": 12,
+  "linkChangedAt": "2026-10-02T02:32:23.937Z",
+  "updatedAt": "2026-10-02T02:32:23.937Z"
 }
