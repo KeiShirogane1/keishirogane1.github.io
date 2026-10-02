@@ -2005,12 +2005,12 @@ svg{display:block}
   <div class="public-entry-actions" aria-label="QwerNFC public entry actions">
     <button id="open-public-qr" class="public-entry-card" type="button">
       <span class="public-entry-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3h6v6H3zM15 3h6v6h-6zM3 15h6v6H3z"/><path d="M14 14h3v3h-3zM19 14h2v2h-2zM14 19h2v2h-2zM18 18h3v3h-3z"/></svg></span>
-      <span class="public-entry-copy"><strong>Scan QR Code</strong><small>Open your public page</small></span>
+      <span class="public-entry-copy"><strong>Restore QR</strong><small>Open QwerNFC Restore and scan the label</small></span>
       <span class="public-entry-arrow">›</span>
     </button>
     <button id="open-public-nfc" class="public-entry-card" type="button">
       <span class="public-entry-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"><path d="M7 4a11 11 0 0 1 0 16"/><path d="M11 6a8 8 0 0 1 0 12"/><path d="M15 8a5 5 0 0 1 0 8"/></svg></span>
-      <span class="public-entry-copy"><strong>Tap NFC Tag</strong><small>Open your public page</small></span>
+      <span class="public-entry-copy"><strong>Restore NFC</strong><small>Open QwerNFC Restore and tap the tag</small></span>
       <span class="public-entry-arrow">›</span>
     </button>
   </div>
@@ -3132,12 +3132,33 @@ svg{display:block}
     window.open("https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(query),"_blank","noopener");
   });
 
+  const openRestoreApp = (action,buttonId) => {
+    const normalizedAction = action==="nfc" ? "nfc" : "qr";
+    const suffix = id.toLowerCase().replace(/[^a-z0-9]/g,"");
+    const scheme = "qwernfc-restore-" + suffix;
+    const packageName = "com.keishirogane.qwernfcrestore." + suffix;
+    const button = document.getElementById(buttonId);
+
+    if(!/Android/i.test(String(navigator.userAgent||""))){
+      const copy=button?.querySelector("small");
+      if(copy) copy.textContent="Use this Restore action on the Android phone with QwerNFC Restore installed";
+      return;
+    }
+
+    const intent = "intent://restore/" + normalizedAction +
+      "?id=" + encodeURIComponent(id) +
+      "#Intent;scheme=" + scheme +
+      ";package=" + packageName +
+      ";end";
+    window.location.href=intent;
+  };
+
   document.getElementById("open-public-qr").addEventListener("click",()=>{
-    window.open("https://keishirogane1.github.io/permanent-qr-manager/go/"+encodeURIComponent(id)+"/","_blank","noopener");
+    openRestoreApp("qr","open-public-qr");
   });
 
   document.getElementById("open-public-nfc").addEventListener("click",()=>{
-    window.open("https://keishirogane1.github.io/permanent-qr-manager/nfc/"+encodeURIComponent(id)+"/","_blank","noopener");
+    openRestoreApp("nfc","open-public-nfc");
   });
 
   document.getElementById("copy-current-link").addEventListener("click",async()=>{
