@@ -1,0 +1,11 @@
+{
+  "id": "QR-007",
+  "kind": "QR",
+  "enabled": true,
+  "deleted": false,
+  "destination": "https://chatgpt.com/g/g-p-6a91ebe4a9ec8191bbd9bfc49cab41fb-nexora-coding/c/6ab32f4c-986c-83ec-97ca-e83ef5486b9b",
+  "fallbackDestination": "https://chatgpt.com/g/g-p-6a91ebe4a9ec8191bbd9bfc49cab41fb-nexora-coding/c/6ab32f4c-986c-83ec-97ca-e83ef5486b9b",
+  "linkVersion": 1,
+  "linkChangedAt": "2026-10-02T02:20:43.753Z",
+  "updatedAt": "2026-10-02T02:20:43.753Z"
+}
