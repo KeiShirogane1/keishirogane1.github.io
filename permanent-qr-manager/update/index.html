@@ -2877,66 +2877,133 @@ svg{display:block}
     new Promise((_, reject) => setTimeout(() => reject(new Error(message)), ms))
   ]);
 
+  const waitFor = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds));
+
+  const loadRequiredPublicProfile = async () => {
+    const retryDelays = [0, 250, 700, 1500, 2500, 4000];
+    let lastError = null;
+
+    for(const delay of retryDelays){
+      if(delay) await waitFor(delay);
+      try{
+        const profile = await withTimeout(
+          apiJson(
+            "/v1/public/qrs/" + encodeURIComponent(id) + "/profile?fresh=" + Date.now()
+          ),
+          5000,
+          "Public profile request timed out."
+        );
+        if(
+          !profile ||
+          profile.ok !== true ||
+          String(profile.id || "").toUpperCase() !== id
+        ){
+          throw new Error("The latest QwerNFC profile could not be verified.");
+        }
+        return profile;
+      }catch(error){
+        lastError = error;
+      }
+    }
+
+    throw lastError || new Error("The latest QwerNFC profile is temporarily unavailable.");
+  };
+
+  const fetchPublishedRouteJson = async () => {
+    const response = await fetch(
+      fresh("../go/" + encodeURIComponent(id) + "/route.json"),
+      {cache:"no-store",mode:"cors"}
+    );
+    if(!response.ok) throw new Error("Published route request failed.");
+    return response.json();
+  };
+
+  const loadRequiredPublicRoute = async () => {
+    const retryDelays = [0, 300, 900, 1800];
+    let lastError = null;
+
+    for(const delay of retryDelays){
+      if(delay) await waitFor(delay);
+
+      const [firebaseResult, publishedResult] = await Promise.allSettled([
+        withTimeout(
+          fetchPublicJson("/public/routes/" + encodeURIComponent(id) + ".json"),
+          4500,
+          "Public route request timed out."
+        ),
+        withTimeout(
+          fetchPublishedRouteJson(),
+          4500,
+          "Published route request timed out."
+        )
+      ]);
+
+      const firebaseRoute = firebaseResult.status === "fulfilled" ? firebaseResult.value : null;
+      const publishedRoute = publishedResult.status === "fulfilled" ? publishedResult.value : null;
+      const route = firebaseRoute && String(firebaseRoute.id || "").toUpperCase() === id
+        ? firebaseRoute
+        : publishedRoute && String(publishedRoute.id || "").toUpperCase() === id
+          ? publishedRoute
+          : null;
+
+      if(route){
+        if(route.enabled !== true || route.deleted === true){
+          throw new Error("This QwerNFC record is unavailable.");
+        }
+        return route;
+      }
+
+      lastError = firebaseResult.status === "rejected"
+        ? firebaseResult.reason
+        : publishedResult.status === "rejected"
+          ? publishedResult.reason
+          : new Error("The latest QwerNFC route could not be verified.");
+    }
+
+    throw lastError || new Error("The latest QwerNFC route is temporarily unavailable.");
+  };
+
   const loadPublicRecord = async () => {
-    const [profileResult, routeResult] = await Promise.allSettled([
-      withTimeout(
-        apiJson("/v1/public/qrs/" + encodeURIComponent(id) + "/profile"),
-        7000,
-        "Public profile request timed out."
-      ),
-      withTimeout(
-        fetchPublicJson("/public/routes/" + encodeURIComponent(id) + ".json"),
-        7000,
-        "Public route request timed out."
-      )
+    // Never reveal the profile card from route-only data. The customer-facing
+    // business profile is required before rendering so a transient API timeout
+    // cannot turn a configured QR into a fake empty Store/Phone/Map screen.
+    protectedContent.classList.add("hidden");
+    publicView.classList.add("hidden");
+    editGate.classList.add("hidden");
+
+    const [profile, route] = await Promise.all([
+      loadRequiredPublicProfile(),
+      loadRequiredPublicRoute()
     ]);
 
-    const profile = profileResult.status === "fulfilled" ? profileResult.value : null;
-    const route = routeResult.status === "fulfilled" ? routeResult.value : null;
-    const profileReady = Boolean(profile && profile.ok === true);
-    const routeReady = Boolean(route && route.enabled === true && route.deleted !== true);
-
-    if(!profileReady && !routeReady) {
-      const reason = profileResult.status === "rejected"
-        ? profileResult.reason?.message
-        : routeResult.status === "rejected"
-          ? routeResult.reason?.message
-          : "";
-      throw new Error(reason || "This QwerNFC record is unavailable.");
-    }
-
-    if(route && (route.enabled !== true || route.deleted === true)) {
-      throw new Error("This QwerNFC record is unavailable.");
-    }
-
-    const publicImageBase64=String(profile?.storeImage?.base64||"").replace(/\s/g,"");
+    const publicImageBase64=String(profile.storeImage?.base64||"").replace(/\s/g,"");
     state.currentStoreImageDataUrl=publicImageBase64
-      ?"data:"+String(profile?.storeImage?.mimeType||"image/webp")+";base64,"+publicImageBase64
+      ?"data:"+String(profile.storeImage?.mimeType||"image/webp")+";base64,"+publicImageBase64
       :"";
-    state.publicMaskedEmail=String(profile?.maskedEmail || "");
+    state.publicMaskedEmail=String(profile.maskedEmail || "");
 
     state.record = {
       id,
-      store:String(profile?.store || ""),
-      phone:String(profile?.phone || ""),
+      store:String(profile.store || ""),
+      phone:String(profile.phone || ""),
       email:"",
-      location:String(profile?.location || ""),
-      latitude:profile?.latitude ?? null,
-      longitude:profile?.longitude ?? null,
-      googleMapsUrl:String(profile?.googleMapsUrl || ""),
-      storeImagePath:profile?.hasStoreImage ? "private" : "",
-      storeImageUpdatedAt:String(profile?.updatedAt || ""),
+      location:String(profile.location || ""),
+      latitude:profile.latitude ?? null,
+      longitude:profile.longitude ?? null,
+      googleMapsUrl:String(profile.googleMapsUrl || ""),
+      storeImagePath:profile.hasStoreImage ? "private" : "",
+      storeImageUpdatedAt:String(profile.updatedAt || ""),
       enabled:true,
       deleted:false,
-      linkMode:String(route?.linkMode || "both")
+      linkMode:String(route.linkMode || "both")
     };
 
     state.route = {
       id,
       enabled:true,
       deleted:false,
-      linkMode:String(route?.linkMode || "both"),
-      destination:String(route?.qrDestination || route?.destination || "")
+      linkMode:String(route.linkMode || "both"),
+      destination:String(route.qrDestination || route.destination || "")
     };
 
     state.verified=false;
@@ -2947,13 +3014,6 @@ svg{display:block}
     editGate.classList.remove("hidden");
     editStage.classList.add("hidden");
     editStepper.classList.add("hidden");
-
-    if(!profileReady || !routeReady) {
-      showAuthStatus(
-        "Some public information is still loading, but Edit Info verification remains available.",
-        ""
-      );
-    }
   };
 
   const openEditVerification = async () => {
@@ -2988,9 +3048,14 @@ svg{display:block}
     }
   };
   void loadPublicRecord().catch((error)=>{
-    authStage.classList.remove("hidden");
+    protectedContent.classList.add("hidden");
+    publicView.classList.add("hidden");
     editGate.classList.add("hidden");
-    showAuthStatus(error?.message || "This QwerNFC record could not be loaded.","error");
+    authStage.classList.remove("hidden");
+    showAuthStatus(
+      error?.message || "This QwerNFC profile is temporarily unavailable. Please try again.",
+      "error"
+    );
     authSendCode.disabled=true;
   });
 
