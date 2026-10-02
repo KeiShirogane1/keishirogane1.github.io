@@ -8,16 +8,18 @@
 <meta http-equiv="cache-control" content="no-store,no-cache,must-revalidate,max-age=0">
 <meta http-equiv="pragma" content="no-cache">
 <meta http-equiv="expires" content="0">
-<meta http-equiv="refresh" content="0;url=../../update-v2/?id=QR-002">
 <title>Opening QwerNFC · QR-002</title>
 <script>
 (() => {
-  const target = "../../update-v2/?id=" + encodeURIComponent("QR-002");
-  window.location.replace(target + "&v=" + Date.now());
+  const target = new URL("../../update-v2/", window.location.href);
+  target.searchParams.set("id", "QR-002");
+  target.searchParams.set("v", String(Date.now()));
+  window.location.replace(target.href);
 })();
 </script>
 </head>
 <body>
+<p>Opening QwerNFC… <a href="../../update-v2/?id=QR-002">Continue</a></p>
 <noscript><meta http-equiv="refresh" content="0;url=../../update-v2/?id=QR-002"></noscript>
 </body>
 </html>
