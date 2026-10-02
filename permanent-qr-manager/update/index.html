@@ -3007,32 +3007,16 @@ svg{display:block}
     state.otpTimer=setInterval(renderOtpTiming,1000);
   };
 
-  const sleep = (milliseconds) => new Promise((resolve)=>setTimeout(resolve,milliseconds));
-
   const requestOtp = async (email,{resend=false}={}) => {
     if(state.otpRequestBusy) return;
     state.otpRequestBusy=true;
     authSendCode.disabled=true;
     if(authResendCode) authResendCode.disabled=true;
     try{
-      let result=null;
-      let lastError=null;
-      for(let attempt=0;attempt<2;attempt+=1){
-        try{
-          result=await apiJson("/v1/auth/otp/start",{
-            method:"POST",
-            body:{qrId:id,email}
-          });
-          lastError=null;
-          break;
-        }catch(error){
-          lastError=error;
-          if(error?.code!=="otp_ownership_unavailable" || attempt===1) break;
-          showAuthStatus("Verification is temporarily unavailable. Try again.");
-          await sleep(450);
-        }
-      }
-      if(lastError) throw lastError;
+      const result=await apiJson("/v1/auth/otp/start",{
+        method:"POST",
+        body:{qrId:id,email}
+      });
       if(!result?.challengeId) throw new Error("Verification code could not be created.");
 
       state.challengeId=String(result.challengeId);
