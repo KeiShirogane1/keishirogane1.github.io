@@ -2944,8 +2944,8 @@ svg{display:block}
       if(delay) await waitFor(delay);
       try{
         const profile = await apiJson(
-          "/v1/public/qrs/" + encodeURIComponent(id) + "/profile",
-          {timeoutMs:2500}
+          "/v1/public/qrs/" + encodeURIComponent(id) + "/profile?includeImage=0",
+          {timeoutMs:3000}
         );
         if(
           !profile ||
