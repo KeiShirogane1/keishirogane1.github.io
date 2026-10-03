@@ -3404,7 +3404,7 @@ svg{display:block}
     restoreActionKicker.textContent=qr?"QR ACTIONS":"NFC ACTIONS";
     restoreActionTitle.textContent=qr?"Choose QR action":"Choose NFC action";
     restoreActionCopy.textContent=qr
-      ?"Read opens your phone camera and checks the existing QR. Write / Restore confirms the QR with the camera, then downloads the same permanent QwerNFC QR for replacement."
+      ?"Read opens your phone camera and checks the existing QR. Write / Restore confirms the QR with the camera, then downloads a replacement containing the Managed Link shown on this page."
       :"Read opens Web NFC and reads the tag. Write / Restore waits for a writable NFC tag and restores its permanent QwerNFC identity.";
     restoreActionRead.querySelector("strong").textContent=qr?"Read QR":"Read NFC";
     restoreActionRead.querySelector("small").textContent=qr
@@ -3489,22 +3489,23 @@ svg{display:block}
     return {ok:false,scanned,expected};
   };
 
-  const downloadPermanentQr=async()=>{
-    const svgUrl=new URL("recover/"+encodeURIComponent(id)+"/permanent-qr.svg",permanentPublicBase());
-    svgUrl.searchParams.set("v",String(Date.now()));
-    const response=await fetch(svgUrl.href,{cache:"no-store"});
-    if(!response.ok) {
-      throw new Error("The permanent QR replacement image is not published yet for "+id+". Sync this QR from QwerNFC Manager and try again.");
-    }
-    const blob=await response.blob();
+  let restoreQrModule=null;
+  const getRestoreQrModule=()=>restoreQrModule || (restoreQrModule=import(
+    new URL("../restore-qr.js?v=managed-link-1",location.href).href
+  ).catch((error)=>{restoreQrModule=null;throw error}));
+
+  const downloadManagedLinkQr=async()=>{
+    const {createManagedLinkQrSvg}=await getRestoreQrModule();
+    const svg=await createManagedLinkQrSvg(state.route);
+    const blob=new Blob([svg],{type:"image/svg+xml"});
     const objectUrl=URL.createObjectURL(blob);
     const anchor=document.createElement("a");
     anchor.href=objectUrl;
-    anchor.download=id+"-Permanent-QR-Restore.svg";
+    anchor.download=id+"-Managed-Link-QR.svg";
     document.body.append(anchor);
     anchor.click();
     anchor.remove();
-    setTimeout(()=>URL.revokeObjectURL(objectUrl),1000);
+    setTimeout(()=>URL.revokeObjectURL(objectUrl),60000);
   };
 
   const readQrFromWeb=async()=>{
@@ -3514,18 +3515,20 @@ svg{display:block}
     if(!checked.ok) throw new Error("That QR does not belong to "+id+".");
     restoreActionStatus.textContent=checked.kind==="permanent"
       ? "QR read successfully. Its permanent QwerNFC identity is correct and resolves to the Managed Link."
-      : "This QR contains the Managed Link directly. Use Write / Restore QR to replace it with the permanent QwerNFC QR.";
+      : "QR read successfully. It contains the Managed Link shown on this page directly.";
   };
 
   const writeQrFromWeb=async()=>{
+    const {managedLinkForQr}=await getRestoreQrModule();
+    managedLinkForQr(state.route);
     if(!normalizedHttpUrl(state.route?.destination)) throw new Error("Managed Link is not configured yet.");
     restoreActionStatus.textContent="Open camera and scan the QR you want to restore…";
     const value=await scanQrInBrowser();
     const checked=validateScannedQr(value,{allowManagedDestination:true});
     if(!checked.ok) throw new Error("That QR does not belong to "+id+".");
-    restoreActionStatus.textContent="QR confirmed. Preparing the permanent replacement…";
-    await downloadPermanentQr();
-    restoreActionStatus.textContent="Replacement QR downloaded. It keeps the same permanent QwerNFC identity and resolves to the current Managed Link.";
+    restoreActionStatus.textContent="QR confirmed. Preparing the Managed Link replacement…";
+    await downloadManagedLinkQr();
+    restoreActionStatus.textContent="Replacement QR downloaded. It contains the Managed Link shown on this page directly. Print it to replace the physical QR; a future link change requires a new replacement.";
   };
 
   const urlFromNdefRecord=(record)=>{
