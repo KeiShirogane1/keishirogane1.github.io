@@ -3181,19 +3181,22 @@ svg{display:block}
   const refreshCustomerAccessState = async () => {
     try{
       const status = await apiJson("/v1/customer/status");
-      const enabled = status?.customerAccessEnabled !== false && status?.maintenanceMode !== true;
+      const enabled = status?.maintenanceCategory !== "security_incident" && status?.maintenanceReason !== "security_incident";
       authSendCode.disabled = !enabled;
       if(enabled){
         authStatus.textContent="";
         authStatus.className="status hidden";
       }else{
-        showAuthStatus("Customer access is temporarily disabled while QwerNFC is in maintenance mode.","error");
+        showAuthStatus("Customer verification is paused for an active security incident.","error");
       }
       return enabled;
     }catch(error){
-      authSendCode.disabled=true;
-      showAuthStatus(error?.message || "Secure QwerNFC customer service is temporarily unavailable.","error");
-      return false;
+      // A failed status preflight must not prevent customers trying verification.
+      // The verification endpoint still enforces ownership and incident checks.
+      authSendCode.disabled=false;
+      authStatus.textContent="";
+      authStatus.className="status hidden";
+      return true;
     }
   };
   retryPublicLoad.addEventListener("click",()=>void loadPublicRecord());
