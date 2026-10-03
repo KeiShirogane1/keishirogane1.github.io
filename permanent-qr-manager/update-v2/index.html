@@ -3255,9 +3255,9 @@ svg{display:block}
     authResendCode.textContent=resendSeconds>0 ? "Resend code in "+resendSeconds+"s" : "Resend code";
   };
 
-  const startOtpTimer = (expiresInSeconds=600) => {
+  const startOtpTimer = (expiresInSeconds=1800) => {
     stopOtpTimer();
-    const ttl=Math.max(60,Number(expiresInSeconds)||600);
+    const ttl=Math.max(60,Number(expiresInSeconds)||1800);
     state.otpExpiresAt=Date.now()+ttl*1000;
     state.resendAvailableAt=Date.now()+60*1000;
     renderOtpTiming();
@@ -3281,11 +3281,11 @@ svg{display:block}
       authCode.value="";
       authEmailStep.classList.add("hidden");
       authCodeStep.classList.remove("hidden");
-      startOtpTimer(Number(result.expiresInSeconds||600));
+      startOtpTimer(Number(result.expiresInSeconds||1800));
       showAuthStatus(
         resend
-          ? "Verification code sent."
-          : "Verification code sent.",
+          ? "New verification code sent. The previous code is no longer valid. This code is valid for 30 minutes."
+          : "Verification code sent. This code is valid for 30 minutes.",
         "ok"
       );
       authCode.focus();
