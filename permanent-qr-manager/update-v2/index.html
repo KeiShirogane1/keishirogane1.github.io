@@ -2491,29 +2491,52 @@ svg{display:block}
     updateSelectedSummary();
   };
   const loadCurrentStoreImage = async () => {
-    if(!state.record?.storeImagePath){state.currentStoreImageDataUrl="";renderStoreImageUi();return}
+    if(!state.record?.storeImagePath){
+      state.currentStoreImageDataUrl="";
+      renderStoreImageUi();
+      return;
+    }
     if(!state.verified && state.currentStoreImageDataUrl){
       storeImageStatus.textContent="Current storefront photo · verification is required only to replace or remove it.";
       renderStoreImageUi();
       return;
     }
-    state.currentStoreImageDataUrl="";
-    try{
-      const image=state.verified && state.accessToken
-        ? await apiJson("/v1/customer/qrs/"+encodeURIComponent(id)+"/image",{headers:{authorization:"Bearer "+state.accessToken}})
-        : await apiJson("/v1/public/qrs/"+encodeURIComponent(id)+"/image");
-      const base64=String(image?.base64||"").replace(/\s/g,"");
-      if(base64){
+
+    const previousImageDataUrl=state.currentStoreImageDataUrl;
+    const retryDelays=[0,600,1800];
+    let lastError=null;
+
+    for(const delay of retryDelays){
+      if(delay) await waitFor(delay);
+      try{
+        const image=state.verified && state.accessToken
+          ? await apiJson(
+              "/v1/customer/qrs/"+encodeURIComponent(id)+"/image?v="+Date.now(),
+              {headers:{authorization:"Bearer "+state.accessToken},timeoutMs:7000}
+            )
+          : await apiJson(
+              "/v1/public/qrs/"+encodeURIComponent(id)+"/image?v="+Date.now(),
+              {timeoutMs:7000}
+            );
+        const base64=String(image?.base64||"").replace(/\s/g,"");
+        if(!base64) throw new Error("Storefront image payload is empty.");
         state.currentStoreImageDataUrl="data:"+String(image?.mimeType||"image/webp")+";base64,"+base64;
-        if(!state.verified){
-          storeImageStatus.textContent="Current storefront photo · verification is required only to replace or remove it.";
-        }
+        storeImageStatus.textContent=state.verified
+          ?"Current storefront photo loaded."
+          :"Current storefront photo · verification is required only to replace or remove it.";
+        renderStoreImageUi();
+        return;
+      }catch(error){
+        lastError=error;
       }
-    }catch(error){
-      storeImageStatus.textContent=error?.status===404
-        ?"Current storefront photo is not available yet. You can still verify and submit a replacement."
-        :"Current image could not be loaded. You can still verify and submit a replacement.";
     }
+
+    state.currentStoreImageDataUrl=previousImageDataUrl;
+    storeImageStatus.textContent=previousImageDataUrl
+      ?"Showing the last loaded storefront photo while QwerNFC reconnects."
+      :lastError?.status===404
+        ?"Current storefront photo is still syncing. It will retry when the page reloads."
+        :"Current image could not be loaded yet. Check your connection and reload.";
     renderStoreImageUi();
   };
   const currentValue = (field) => field==="managedLink"
