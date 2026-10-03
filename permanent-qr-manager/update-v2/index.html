@@ -3201,7 +3201,7 @@ svg{display:block}
       ? String(record.qrDestination || record.destination || "")
       : String(record.destination || "");
     state.record=record;
-    state.route={id,enabled:true,deleted:false,linkMode:String(record.linkMode || "both"),destination:managed,recoveryDestination:String(record.recoveryBackupDestination || "")};
+    state.route={id,enabled:true,deleted:false,linkMode:String(record.linkMode || "both"),destination:managed};
     state.publicMaskedEmail=String(record.email || state.publicMaskedEmail || "");
     state.verified=true;
     stopOtpTimer();
