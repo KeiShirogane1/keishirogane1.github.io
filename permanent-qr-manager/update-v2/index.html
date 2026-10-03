@@ -2936,7 +2936,45 @@ svg{display:block}
     retryPublicLoad.classList.toggle("hidden",!retry);
   };
 
+  const normalizeFirebasePublicProfile = (profile) => {
+    if(
+      !profile ||
+      typeof profile!=="object" ||
+      Array.isArray(profile) ||
+      String(profile.id || "").toUpperCase()!==id
+    ) return null;
+
+    const latitude=profile.latitude==null ? null : Number(profile.latitude);
+    const longitude=profile.longitude==null ? null : Number(profile.longitude);
+    return {
+      ok:true,
+      id,
+      store:String(profile.store || ""),
+      phone:String(profile.phone || ""),
+      location:String(profile.location || ""),
+      latitude:Number.isFinite(latitude) ? latitude : null,
+      longitude:Number.isFinite(longitude) ? longitude : null,
+      googleMapsUrl:String(profile.googleMapsUrl || ""),
+      maskedEmail:"",
+      hasStoreImage:profile.hasStoreImage===true || Boolean(String(profile.storeImagePath || "").trim()),
+      storeImage:null,
+      updatedAt:String(profile.updatedAt || "")
+    };
+  };
+
   const loadRequiredPublicProfile = async () => {
+    // Firebase public/profiles is deliberately a safe projection: no raw
+    // email, destination, customer ID, or permanent qrValue. Read it first so
+    // Restore startup is independent from backend replica warm-up.
+    try{
+      const firebaseProfile = normalizeFirebasePublicProfile(
+        await fetchPublicJson("/public/profiles/" + encodeURIComponent(id) + ".json")
+      );
+      if(firebaseProfile) return firebaseProfile;
+    }catch{
+      // Fall through to the customer API during rule propagation/outages.
+    }
+
     const retryDelays = [0, 450];
     let lastError = null;
 
