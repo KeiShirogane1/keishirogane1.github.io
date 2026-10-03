@@ -1,0 +1,11 @@
+{
+  "id": "QR-010",
+  "kind": "NFC",
+  "enabled": true,
+  "deleted": false,
+  "destination": "https://search.google.com/local/writereview?placeid=ChIJfaNqMkLHlzMR9Li0XlPsv6E",
+  "fallbackDestination": "https://search.google.com/local/writereview?placeid=ChIJfaNqMkLHlzMR9Li0XlPsv6E",
+  "linkVersion": 1,
+  "linkChangedAt": "2026-10-03T06:07:26.094Z",
+  "updatedAt": "2026-10-03T06:15:49.975Z"
+}
