@@ -3095,7 +3095,8 @@ svg{display:block}
         enabled:true,
         deleted:false,
         linkMode:String(route.linkMode || "both"),
-        destination:String(route.qrDestination || route.destination || "")
+        destination:String(route.qrDestination || route.destination || ""),
+      recoveryDestination:String(route.fallbackDestination || "")
       };
       state.record = fallbackPublicRecord(route);
       state.verified=false;
@@ -3200,7 +3201,7 @@ svg{display:block}
       ? String(record.qrDestination || record.destination || "")
       : String(record.destination || "");
     state.record=record;
-    state.route={id,enabled:true,deleted:false,linkMode:String(record.linkMode || "both"),destination:managed};
+    state.route={id,enabled:true,deleted:false,linkMode:String(record.linkMode || "both"),destination:managed,recoveryDestination:String(record.recoveryBackupDestination || "")};
     state.publicMaskedEmail=String(record.email || state.publicMaskedEmail || "");
     state.verified=true;
     stopOtpTimer();
@@ -3404,7 +3405,7 @@ svg{display:block}
     restoreActionKicker.textContent=qr?"QR ACTIONS":"NFC ACTIONS";
     restoreActionTitle.textContent=qr?"Choose QR action":"Choose NFC action";
     restoreActionCopy.textContent=qr
-      ?"Read opens your phone camera and checks the existing QR. Write / Restore scans your permanent QwerNFC QR and restores its saved management link for future scans."
+      ?"Read opens your phone camera and checks the existing QR. Write / Restore scans your permanent QwerNFC QR and restores the link saved in Management’s Recover QR tab for future scans."
       :"Read opens Web NFC and reads the tag. Write / Restore waits for a writable NFC tag and restores its permanent QwerNFC identity.";
     restoreActionRead.querySelector("strong").textContent=qr?"Read QR":"Read NFC";
     restoreActionRead.querySelector("small").textContent=qr
@@ -3501,18 +3502,20 @@ svg{display:block}
 
   const writeQrFromWeb=async()=>{
     if(state.route?.enabled!==true || state.route?.deleted===true) throw new Error("This QwerNFC record is unavailable.");
-    const expectedLink=String(state.route?.destination || "").trim();
-    if(!normalizedHttpUrl(expectedLink)) throw new Error("No valid Managed Link is configured. Ask the admin to add a link first.");
+    const latestRoute=await loadRequiredPublicRoute();
+    const expectedLink=String(latestRoute?.fallbackDestination || "").trim();
+    state.route.recoveryDestination=expectedLink;
+    if(!normalizedHttpUrl(expectedLink)) throw new Error("No valid Recover QR backup link is configured. Ask the admin to save it in Recover QR.");
     restoreActionStatus.textContent="Open camera and scan the permanent QR you want to restore…";
     const value=await scanQrInBrowser();
     const checked=validateScannedQr(value);
     if(!checked.ok) throw new Error("Scan the permanent QwerNFC QR belonging to "+id+".");
-    restoreActionStatus.textContent="QR confirmed. Restoring its saved management link…";
+    restoreActionStatus.textContent="QR confirmed. Restoring the link saved in Recover QR…";
     const result=await apiJson("/v1/public/qrs/"+encodeURIComponent(id)+"/restore-qr",{
       method:"POST",body:{scannedQr:normalizedHttpUrl(value),expectedLink}
     });
-    if(result?.restored!==true || result?.routingSynced!==true) throw new Error("The QR link has not finished restoring. Please try again.");
-    restoreActionStatus.textContent="QR link restored from Management. Scan the same printed QR to open the Managed Link.";
+    if(result?.restored!==true || result?.routingSynced!==true || result?.managementSynced!==true) throw new Error("The QR link has not finished restoring. Please try again.");
+    restoreActionStatus.textContent="QR link restored from Recover QR. Management and scan routing are updated; scan the same printed QR to open the recovery link.";
   };
 
   const urlFromNdefRecord=(record)=>{
@@ -3886,3 +3889,4 @@ svg{display:block}
 </script>
 </body>
 </html>
+
