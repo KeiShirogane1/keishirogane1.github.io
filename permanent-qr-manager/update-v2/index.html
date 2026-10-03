@@ -2838,12 +2838,14 @@ svg{display:block}
       : "No fields selected";
   };
 
+  const restoreManagedLinkValue = () => String(state.route?.recoveryDestination || "");
+
   const renderCurrent = () => {
     businessName.textContent = state.record.store || id;
     profilePhone.textContent = state.record.phone || "Phone not provided";
     profileEmail.textContent = state.publicMaskedEmail || (state.verified ? (state.record.email || "Email not provided") : "Email protected");
     profileId.textContent = id;
-    currentLink.textContent = maskedManagedLink(state.route.destination);
+    currentLink.textContent = maskedManagedLink(restoreManagedLinkValue());
     const publicPin = recordLocationPin(state.record);
     if(publicPin){
       publicMap.classList.remove("hidden");
@@ -3042,6 +3044,11 @@ svg{display:block}
     });
 
     const settled = await Promise.allSettled([firebaseRoute,pagesRoute]);
+    const primary = settled[0];
+    if(primary.status==="fulfilled" && primary.value && String(primary.value.id || "").toUpperCase()===id){
+      if(!validPublicRoute(primary.value)) throw new Error("This QwerNFC record is unavailable.");
+      return primary.value;
+    }
     const candidates = settled
       .filter((item)=>item.status==="fulfilled" && validPublicRoute(item.value))
       .map((item)=>item.value)
@@ -3201,7 +3208,7 @@ svg{display:block}
       ? String(record.qrDestination || record.destination || "")
       : String(record.destination || "");
     state.record=record;
-    state.route={id,enabled:true,deleted:false,linkMode:String(record.linkMode || "both"),destination:managed};
+    state.route={id,enabled:true,deleted:false,linkMode:String(record.linkMode || "both"),destination:managed,recoveryDestination:restoreManagedLinkValue()};
     state.publicMaskedEmail=String(record.email || state.publicMaskedEmail || "");
     state.verified=true;
     stopOtpTimer();
@@ -3261,7 +3268,7 @@ svg{display:block}
     if(authResendCode) authResendCode.disabled=true;
     try{
       const result=await apiJson("/v1/auth/otp/start",{
-        method:"POST",
+        method:"POST",timeoutMs:30000,
         body:{qrId:id,email}
       });
       if(!result?.challengeId) throw new Error("Verification code could not be created.");
@@ -3284,7 +3291,7 @@ svg{display:block}
         showAuthStatus("Email verification could not be delivered. You can use a verification PIN from the QwerNFC administrator.","error");
         authPinFallback.classList.remove("hidden");
       }else if(error?.code==="otp_ownership_unavailable"){
-        showAuthStatus("Verification is temporarily unavailable. Try again.","error");
+        showAuthStatus("The management record has not synced for customer verification. Ask the admin to reconnect live storage and reopen this QR.","error");
         authPinFallback.classList.remove("hidden");
       }else{
         showAuthStatus(error?.message || "Could not start verification.","error");
@@ -3505,6 +3512,7 @@ svg{display:block}
     const latestRoute=await loadRequiredPublicRoute();
     const expectedLink=String(latestRoute?.fallbackDestination || "").trim();
     state.route.recoveryDestination=expectedLink;
+    currentLink.textContent=maskedManagedLink(expectedLink);
     if(!normalizedHttpUrl(expectedLink)) throw new Error("No valid Recover QR backup link is configured. Ask the admin to save it in Recover QR.");
     restoreActionStatus.textContent="Open camera and scan the permanent QR you want to restore…";
     const value=await scanQrInBrowser();
@@ -3512,9 +3520,10 @@ svg{display:block}
     if(!checked.ok) throw new Error("Scan the permanent QwerNFC QR belonging to "+id+".");
     restoreActionStatus.textContent="QR confirmed. Restoring the link saved in Recover QR…";
     const result=await apiJson("/v1/public/qrs/"+encodeURIComponent(id)+"/restore-qr",{
-      method:"POST",body:{scannedQr:normalizedHttpUrl(value),expectedLink}
+      method:"POST",timeoutMs:30000,body:{scannedQr:normalizedHttpUrl(value),expectedLink}
     });
     if(result?.restored!==true || result?.routingSynced!==true || result?.managementSynced!==true) throw new Error("The QR link has not finished restoring. Please try again.");
+    await refreshRestoreManagedLink();
     restoreActionStatus.textContent="QR link restored from Recover QR. Management and scan routing are updated; scan the same printed QR to open the recovery link.";
   };
 
@@ -3570,15 +3579,29 @@ svg{display:block}
   };
 
   const writeNfcFromWeb=async()=>{
-    if(!normalizedHttpUrl(state.route?.destination)) throw new Error("Managed Link is not configured yet.");
+    if(state.route?.enabled!==true || state.route?.deleted===true) throw new Error("This QwerNFC record is unavailable.");
     if(typeof globalThis.NDEFReader!=="function") {
       throw new Error("Web NFC writing is not available. Open this HTTPS page in Chrome on an Android phone with NFC enabled.");
     }
+    const latestRoute=await loadRequiredPublicRoute();
+    const expectedLink=String(latestRoute?.fallbackDestination || "").trim();
+    state.route.recoveryDestination=expectedLink;
+    currentLink.textContent=maskedManagedLink(expectedLink);
+    if(!normalizedHttpUrl(expectedLink)) throw new Error("No valid Recover QR backup link is configured. Ask the admin to save it in Recover QR.");
     const value=permanentNfcValue();
     restoreActionStatus.textContent="Tap the writable NFC tag and hold the phone still…";
     const writer=new globalThis.NDEFReader();
     await writer.write({records:[{recordType:"url",data:value}]});
-    restoreActionStatus.textContent="NFC restored. The permanent QwerNFC identity was written and it resolves to the current Managed Link.";
+    try{
+      const result=await apiJson("/v1/public/qrs/"+encodeURIComponent(id)+"/restore-nfc",{
+        method:"POST",timeoutMs:30000,body:{scannedNfc:value,expectedLink}
+      });
+      if(result?.restored!==true || result?.routingSynced!==true || result?.managementSynced!==true) throw new Error("Management and scan routing have not confirmed Restore.");
+    }catch(error){
+      throw new Error("The NFC tag was written, but its link restoration is incomplete. "+(error?.message||"Try Restore again."));
+    }
+    await refreshRestoreManagedLink();
+    restoreActionStatus.textContent="NFC restored from Recover QR. Management and scan routing now use the saved recovery link.";
   };
 
   const runWebRestoreAction=async(mode)=>{
@@ -3611,10 +3634,29 @@ svg{display:block}
   restoreActionRead.addEventListener("click",()=>void runWebRestoreAction("read"));
   restoreActionWrite.addEventListener("click",()=>void runWebRestoreAction("write"));
 
+  let recoveryLinkRefreshBusy=false;
+  const refreshRestoreManagedLink=async()=>{
+    if(recoveryLinkRefreshBusy || !state.route) return;
+    recoveryLinkRefreshBusy=true;
+    try{
+      const latest=await loadRequiredPublicRoute();
+      state.route.recoveryDestination=String(latest.fallbackDestination || "");
+      currentLink.textContent=maskedManagedLink(restoreManagedLinkValue());
+    }finally{recoveryLinkRefreshBusy=false}
+  };
+  window.addEventListener("focus",()=>void refreshRestoreManagedLink().catch(()=>{}));
+  document.addEventListener("visibilitychange",()=>{
+    if(!document.hidden) void refreshRestoreManagedLink().catch(()=>{});
+  });
+  setInterval(()=>{
+    if(!document.hidden) void refreshRestoreManagedLink().catch(()=>{});
+  },15000);
   document.getElementById("copy-current-link").addEventListener("click",async()=>{
-    const value = String(state.route?.destination || "");
-    if(!value) return;
-    try{await navigator.clipboard.writeText(value);}catch{}
+    try{
+      await refreshRestoreManagedLink();
+      const value=restoreManagedLinkValue();
+      if(value) await navigator.clipboard.writeText(value);
+    }catch(error){showStatus(error?.message || "The latest Recover QR link could not be copied.")}
   });
 
   const handleStoreImageFile = async (input) => {
@@ -3644,7 +3686,7 @@ svg{display:block}
     if(!/^\d{6}$/.test(pin)) return showAuthStatus("Enter the 6-digit verification PIN provided by the QwerNFC administrator.","error");
     try{
       const verified=await apiJson("/v1/auth/admin-pin/verify",{
-        method:"POST",
+        method:"POST",timeoutMs:15000,
         body:{
           qrId:id,
           pin,
