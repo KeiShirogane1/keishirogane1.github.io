@@ -3525,9 +3525,11 @@ svg{display:block}
     const result=await apiJson("/v1/public/qrs/"+encodeURIComponent(id)+"/restore-qr",{
       method:"POST",timeoutMs:30000,body:{scannedQr:normalizedHttpUrl(value),expectedLink}
     });
-    if(result?.restored!==true || result?.routingSynced!==true || result?.managementSynced!==true) throw new Error("The QR link has not finished restoring. Please try again.");
+    if(result?.restored!==true || result?.routingSynced!==true) throw new Error("The QR link has not finished restoring. Please try again.");
     await refreshRestoreManagedLink();
-    restoreActionStatus.textContent="QR link restored from Recover QR. Management and scan routing are updated; scan the same printed QR to open the recovery link.";
+    restoreActionStatus.textContent=result?.managementSynced===true
+      ?"QR link restored from Recover QR. Management and scan routing are updated; scan the same printed QR to open the recovery link."
+      :"QR link restored through GitHub failback. Scan the same printed QR now; Management will reconcile when it reconnects.";
   };
 
   const urlFromNdefRecord=(record)=>{
@@ -3599,12 +3601,15 @@ svg{display:block}
       const result=await apiJson("/v1/public/qrs/"+encodeURIComponent(id)+"/restore-nfc",{
         method:"POST",timeoutMs:30000,body:{scannedNfc:value,expectedLink}
       });
-      if(result?.restored!==true || result?.routingSynced!==true || result?.managementSynced!==true) throw new Error("Management and scan routing have not confirmed Restore.");
+      if(result?.restored!==true || result?.routingSynced!==true) throw new Error("Scan routing has not confirmed Restore.");
+      state.lastRestoreManagementSynced=result?.managementSynced===true;
     }catch(error){
       throw new Error("The NFC tag was written, but its link restoration is incomplete. "+(error?.message||"Try Restore again."));
     }
     await refreshRestoreManagedLink();
-    restoreActionStatus.textContent="NFC restored from Recover QR. Management and scan routing now use the saved recovery link.";
+    restoreActionStatus.textContent=state.lastRestoreManagementSynced===true
+      ?"NFC restored from Recover QR. Management and scan routing now use the saved recovery link."
+      :"NFC restored through GitHub failback. The tag keeps its permanent identity and Management will reconcile when it reconnects.";
   };
 
   const runWebRestoreAction=async(mode)=>{
