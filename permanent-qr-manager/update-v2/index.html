@@ -3182,7 +3182,7 @@ svg{display:block}
     try{
       const status = await apiJson("/v1/customer/status");
       const enabled = status?.maintenanceCategory !== "security_incident" && status?.maintenanceReason !== "security_incident";
-      authSendCode.disabled = !enabled;
+      authSendCode.disabled = state.otpRequestBusy || !enabled;
       if(enabled){
         authStatus.textContent="";
         authStatus.className="status hidden";
@@ -3193,7 +3193,7 @@ svg{display:block}
     }catch(error){
       // A failed status preflight must not prevent customers trying verification.
       // The verification endpoint still enforces ownership and incident checks.
-      authSendCode.disabled=false;
+      authSendCode.disabled=state.otpRequestBusy;
       authStatus.textContent="";
       authStatus.className="status hidden";
       return true;
@@ -3264,9 +3264,9 @@ svg{display:block}
     state.otpTimer=setInterval(renderOtpTiming,1000);
   };
 
-  const requestOtp = async (email,{resend=false}={}) => {
-    if(state.otpRequestBusy) return;
-    state.otpRequestBusy=true;
+  const requestOtp = async (email,{resend=false,prelocked=false}={}) => {
+    if(state.otpRequestBusy && !prelocked) return;
+    if(!prelocked) state.otpRequestBusy=true;
     authSendCode.disabled=true;
     if(authResendCode) authResendCode.disabled=true;
     try{
@@ -3349,10 +3349,23 @@ svg{display:block}
   const authRequestPin = document.getElementById("auth-request-pin");
 
   authSendCode.addEventListener("click",async()=>{
-    if(!(await refreshCustomerAccessState())) return;
-    const email=String(authEmail.value||"").trim().toLowerCase();
-    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showAuthStatus("Enter a valid registered email.","error");
-    await requestOtp(email);
+    if(state.otpRequestBusy) return;
+    state.otpRequestBusy=true;
+    authSendCode.disabled=true;
+    try{
+      if(!(await refreshCustomerAccessState())) return;
+      const email=String(authEmail.value||"").trim().toLowerCase();
+      if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+        showAuthStatus("Enter a valid registered email.","error");
+        return;
+      }
+      await requestOtp(email,{prelocked:true});
+    }finally{
+      if(state.otpRequestBusy){
+        state.otpRequestBusy=false;
+        authSendCode.disabled=false;
+      }
+    }
   });
 
   authResendCode?.addEventListener("click",async()=>{
