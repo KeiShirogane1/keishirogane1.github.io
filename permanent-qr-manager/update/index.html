@@ -3229,7 +3229,33 @@ svg{display:block}
     editGate.classList.add("hidden");
     protectedContent.classList.remove("hidden");
     editStepper.classList.remove("hidden");
+
+    if(record.customerUpdatePending===true){
+      state.requestId=String(record.pendingCustomerUpdateRequestId||"");
+      editStage.classList.add("hidden");
+      reviewStage.classList.add("hidden");
+      editAction.classList.add("hidden");
+      submitStage.classList.remove("hidden");
+      setStep("submit");
+      const requestStatus=document.getElementById("request-status");
+      if(requestStatus){
+        requestStatus.textContent="Waiting for admin review… You can submit another edit only after this request is approved or rejected.";
+        requestStatus.className="status";
+      }
+      const doneButton=document.getElementById("done-button");
+      if(doneButton){
+        doneButton.textContent="✓ Done";
+        doneButton.dataset.action="done";
+      }
+      if(state.requestId) startRequestStatusPolling();
+      window.scrollTo({top:0,behavior:"smooth"});
+      return;
+    }
+
+    state.requestId="";
     editStage.classList.remove("hidden");
+    reviewStage.classList.add("hidden");
+    submitStage.classList.add("hidden");
     editAction.classList.remove("hidden");
     setStep("edit");
     window.scrollTo({top:0,behavior:"smooth"});
@@ -3874,15 +3900,27 @@ svg{display:block}
       const requestStatus=document.getElementById("request-status");
       if(result.status==="approved"){
         stopRequestStatusPolling();
+        state.requestId="";
         if(requestStatus){
-          requestStatus.textContent="Approved. Your QwerNFC information is updated. Refresh this web page to load the latest public information.";
+          requestStatus.textContent="Approved. Your QwerNFC information is updated. You can edit again now.";
           requestStatus.className="status ok";
+        }
+        const doneButton=document.getElementById("done-button");
+        if(doneButton){
+          doneButton.textContent="Edit again";
+          doneButton.dataset.action="edit-again";
         }
       }else if(result.status==="rejected"){
         stopRequestStatusPolling();
+        state.requestId="";
         if(requestStatus){
-          requestStatus.textContent="Rejected. None of the requested changes were applied.";
+          requestStatus.textContent="Rejected. None of the requested changes were applied. You can edit again now.";
           requestStatus.className="status error";
+        }
+        const doneButton=document.getElementById("done-button");
+        if(doneButton){
+          doneButton.textContent="Edit again";
+          doneButton.dataset.action="edit-again";
         }
       }else if(requestStatus){
         requestStatus.textContent="Waiting for admin review… QwerNFC Manager will show this request as a live notification.";
@@ -3945,6 +3983,12 @@ svg{display:block}
       startRequestStatusPolling();
       window.scrollTo({top:0,behavior:"smooth"});
     }catch(error){
+      if(error?.code==="request_pending"){
+        try{
+          await openVerifiedRecord();
+          return;
+        }catch{}
+      }
       reviewStatus.textContent=error?.message || "Could not send the update request.";
       reviewStatus.className="status error";
     }finally{
@@ -3953,8 +3997,23 @@ svg{display:block}
       button.textContent=originalText;
     }
   });
-  document.getElementById("done-button").addEventListener("click",async()=>{
+  document.getElementById("done-button").addEventListener("click",async(event)=>{
     stopRequestStatusPolling();
+    if(event.currentTarget?.dataset?.action==="edit-again" && state.accessToken){
+      event.currentTarget.dataset.action="done";
+      event.currentTarget.textContent="✓ Done";
+      try{
+        await openVerifiedRecord();
+        return;
+      }catch(error){
+        const requestStatus=document.getElementById("request-status");
+        if(requestStatus){
+          requestStatus.textContent=error?.message || "Could not reopen editing yet. Please refresh and try again.";
+          requestStatus.className="status error";
+        }
+        return;
+      }
+    }
     await logoutCustomerSession();
     history.back();
   });
