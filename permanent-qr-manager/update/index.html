@@ -2387,6 +2387,13 @@ svg{display:block}
     const timer = setTimeout(()=>controller.abort(),Math.max(750,Number(timeoutMs||3000)));
     try{
       return await fetch(src,{...options,signal:controller.signal});
+    }catch(error){
+      if(controller.signal.aborted || error?.name==="AbortError"){
+        const timeoutError=new Error("QwerNFC took too long to respond. Please try again.");
+        timeoutError.code="request_timeout";
+        throw timeoutError;
+      }
+      throw error;
     }finally{
       clearTimeout(timer);
     }
@@ -3204,7 +3211,8 @@ svg{display:block}
 
   const openVerifiedRecord = async () => {
     const record = await apiJson("/v1/customer/qrs/" + encodeURIComponent(id),{
-      headers:{authorization:"Bearer " + state.accessToken}
+      headers:{authorization:"Bearer " + state.accessToken},
+      timeoutMs:30000
     });
     if(!record || record.id!==id || record.enabled!==true) throw new Error("This QwerNFC record is unavailable.");
     const managed = record.linkMode==="individual"
@@ -3321,10 +3329,20 @@ svg{display:block}
 
   document.getElementById("auth-verify-code").addEventListener("click",async()=>{
     const code=String(authCode.value||"").trim();
+    if(state.accessToken){
+      try{
+        showAuthStatus("Verification succeeded. Loading your protected record…","ok");
+        await openVerifiedRecord();
+        return;
+      }catch(error){
+        showAuthStatus(error?.message || "Your record could not be loaded yet. Please try again.","error");
+        return;
+      }
+    }
     if(!/^\d{6}$/.test(code)) return showAuthStatus("Enter the 6-digit verification code.","error");
     try{
       const verified=await apiJson("/v1/auth/otp/verify",{
-        method:"POST",
+        method:"POST",timeoutMs:30000,
         body:{
           challengeId:state.challengeId,
           code,
@@ -3336,9 +3354,19 @@ svg{display:block}
       });
       state.accessToken=String(verified.accessToken||"");
       if(!state.accessToken) throw new Error("Secure customer session was not created.");
+      showAuthStatus("Verification succeeded. Loading your protected record…","ok");
       await openVerifiedRecord();
     }catch(error){
-      showAuthStatus(error?.message || "Verification failed.","error");
+      if(state.accessToken){
+        showAuthStatus(
+          error?.code==="request_timeout"
+            ? "Verification succeeded, but loading your record took too long. Tap Verify and continue again to retry loading without requesting another code."
+            : (error?.message || "Verification succeeded, but your record could not be loaded yet. Tap Verify and continue again."),
+          "error"
+        );
+      }else{
+        showAuthStatus(error?.message || "Verification failed.","error");
+      }
     }
   });
 
@@ -3691,7 +3719,7 @@ svg{display:block}
     if(!/^\d{6}$/.test(pin)) return showAuthStatus("Enter the 6-digit verification PIN provided by the QwerNFC administrator.","error");
     try{
       const verified=await apiJson("/v1/auth/admin-pin/verify",{
-        method:"POST",timeoutMs:15000,
+        method:"POST",timeoutMs:30000,
         body:{
           qrId:id,
           pin,
@@ -3899,7 +3927,8 @@ svg{display:block}
       const result = await apiJson("/v1/requests",{
         method:"POST",
         headers:{authorization:"Bearer " + state.accessToken},
-        body:payload
+        body:payload,
+        timeoutMs:30000
       });
 
       state.requestId=String(result.requestId || "");
