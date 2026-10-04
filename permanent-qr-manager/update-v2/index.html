@@ -3284,7 +3284,7 @@ svg{display:block}
       startOtpTimer(Number(result.expiresInSeconds||1800));
       showAuthStatus(
         resend
-          ? "New verification code sent. The previous code is no longer valid. This code is valid for 30 minutes."
+          ? "New verification code sent. Any unexpired code for this QR can be used until one succeeds. Valid for 30 minutes."
           : "Verification code sent. This code is valid for 30 minutes.",
         "ok"
       );
@@ -3328,6 +3328,8 @@ svg{display:block}
         body:{
           challengeId:state.challengeId,
           code,
+          qrId:id,
+          email:state.authEmail,
           sessionMode:"browser",
           deviceName:"QwerNFC Update Info web"
         }
