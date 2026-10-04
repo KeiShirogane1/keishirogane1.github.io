@@ -2316,7 +2316,8 @@ svg{display:block}
     publicMaskedEmail:"",
     storeImageDraft:null,
     publicProfileReady:false,
-    publicLoadBusy:false
+    publicLoadBusy:false,
+    resumeAfterVerification:""
   };
 
   const businessName = document.getElementById("business-name");
@@ -3172,13 +3173,23 @@ svg{display:block}
     }
   };
 
-  const openEditVerification = async () => {
+  const openEditVerification = async ({ resume = "" } = {}) => {
+    state.resumeAfterVerification=String(resume || "");
+    state.accessToken="";
+    state.verified=false;
     protectedContent.classList.add("hidden");
+    publicView.classList.add("hidden");
     editGate.classList.add("hidden");
+    editStage.classList.add("hidden");
+    reviewStage.classList.add("hidden");
+    submitStage.classList.add("hidden");
+    editAction.classList.add("hidden");
+    editStepper.classList.add("hidden");
     authStage.classList.remove("hidden");
     authEmailStep.classList.remove("hidden");
     authCodeStep.classList.add("hidden");
     authStatus.className="status hidden";
+    if(state.authEmail) authEmail.value=state.authEmail;
     window.scrollTo({top:0,behavior:"auto"});
     await refreshCustomerAccessState();
     setTimeout(()=>authEmail.focus(),250);
@@ -3253,6 +3264,17 @@ svg{display:block}
     }
 
     state.requestId="";
+    if(state.resumeAfterVerification==="review" && state.changes){
+      state.resumeAfterVerification="";
+      editStage.classList.add("hidden");
+      reviewStage.classList.remove("hidden");
+      submitStage.classList.add("hidden");
+      editAction.classList.add("hidden");
+      setStep("review");
+      window.scrollTo({top:0,behavior:"smooth"});
+      return;
+    }
+    state.resumeAfterVerification="";
     editStage.classList.remove("hidden");
     reviewStage.classList.add("hidden");
     submitStage.classList.add("hidden");
@@ -3979,7 +4001,11 @@ svg{display:block}
     };
 
     try{
-      if(!state.accessToken) throw new Error("Customer verification expired. Verify again before submitting.");
+      if(!state.accessToken){
+        await openEditVerification({resume:"review"});
+        showAuthStatus("Your edit session expired. Verify again to submit. Your reviewed changes are still kept on this page.","error");
+        return;
+      }
       const result = await apiJson("/v1/requests",{
         method:"POST",
         headers:{authorization:"Bearer " + state.accessToken},
@@ -4006,6 +4032,15 @@ svg{display:block}
           await openVerifiedRecord();
           return;
         }catch{}
+      }
+      if(
+        error?.status===401 ||
+        error?.code==="customer_session_invalid" ||
+        error?.code==="customer_device_revoked"
+      ){
+        await openEditVerification({resume:"review"});
+        showAuthStatus("Your edit session expired. Verify again to submit. Your reviewed changes are still kept on this page.","error");
+        return;
       }
       reviewStatus.textContent=error?.message || "Could not send the update request.";
       reviewStatus.className="status error";
