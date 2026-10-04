@@ -3205,7 +3205,7 @@ svg{display:block}
         authStatus.textContent="";
         authStatus.className="status hidden";
       }else{
-        showAuthStatus("Customer verification is paused for an active security incident.","error");
+        showAuthStatus("Email verification is paused for an active security incident. You can still use the active Admin PIN.","error");
       }
       return enabled;
     }catch(error){
@@ -3759,6 +3759,7 @@ svg{display:block}
     authCodeStep.classList.add("hidden");
     authPinStep.classList.remove("hidden");
     authPinFallback.classList.add("hidden");
+    showAuthStatus("Admin PIN verification is available. Enter the active 6-digit PIN shown in QwerNFC Manager.","ok");
     authPin.focus();
   });
 
