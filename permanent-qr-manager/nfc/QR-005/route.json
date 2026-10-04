@@ -1,0 +1,11 @@
+{
+  "id": "QR-005",
+  "kind": "NFC",
+  "enabled": true,
+  "deleted": false,
+  "destination": "",
+  "fallbackDestination": "",
+  "linkVersion": 0,
+  "linkChangedAt": "",
+  "updatedAt": "2026-09-29T00:31:08.400Z"
+}

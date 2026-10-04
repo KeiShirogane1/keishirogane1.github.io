@@ -3,9 +3,9 @@
   "kind": "QR",
   "enabled": true,
   "deleted": false,
-  "destination": "https://nexora-production-eb7b.up.railway.app/login",
+  "destination": "https://music.youtube.com/watch?v=XQl2rewiowE&si=J6SiE2h6czywX_x-",
   "fallbackDestination": "https://chatgpt.com/g/g-p-6a91ebe4a9ec8191bbd9bfc49cab41fb-nexora-coding/c/6ab32f4c-986c-83ec-97ca-e83ef5486b9b",
-  "linkVersion": 4,
-  "linkChangedAt": "2026-10-02T03:09:29.771Z",
-  "updatedAt": "2026-10-02T03:09:29.771Z"
+  "linkVersion": 5,
+  "linkChangedAt": "2026-10-03T01:47:57.880Z",
+  "updatedAt": "2026-10-03T05:03:42.686Z"
 }

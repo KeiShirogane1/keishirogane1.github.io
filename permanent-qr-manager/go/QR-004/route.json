@@ -4,6 +4,8 @@
   "enabled": true,
   "deleted": false,
   "destination": "",
-  "updatedAt": "2026-09-29T11:05:00.000Z",
-  "fallbackDestination": ""
+  "fallbackDestination": "",
+  "linkVersion": 0,
+  "linkChangedAt": "",
+  "updatedAt": "2026-09-28T14:45:01.357Z"
 }
