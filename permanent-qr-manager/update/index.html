@@ -3236,7 +3236,7 @@ svg{display:block}
     }
   };
 
-  const openEditVerification = async ({ resume = "" } = {}) => {
+  const openEditVerification = async ({ resume = "", reuseExisting = true } = {}) => {
     state.resumeAfterVerification=String(resume || "");
     state.verified=false;
     protectedContent.classList.add("hidden");
@@ -3257,7 +3257,7 @@ svg{display:block}
     if(state.authEmail) authEmail.value=state.authEmail;
     window.scrollTo({top:0,behavior:"auto"});
 
-    if(restoreStoredEditSession()){
+    if(reuseExisting && restoreStoredEditSession()){
       try{
         await openVerifiedRecord();
         return;
@@ -3947,7 +3947,15 @@ svg{display:block}
     authStatus.className="status hidden";
   });
 
-  document.getElementById("open-edit-verification").addEventListener("click",()=>void openEditVerification());
+  document.getElementById("open-edit-verification").addEventListener("click",async()=>{
+    // Every deliberate Edit Info action starts with fresh verification.
+    // A verified session remains valid only for the edit/review/submit flow
+    // already in progress; it must not silently skip the verification gate
+    // the next time the customer starts editing.
+    if(!state.accessToken) restoreStoredEditSession();
+    await logoutCustomerSession();
+    await openEditVerification({reuseExisting:false});
+  });
   document.querySelectorAll("[data-edit-toggle]").forEach((button)=>{
     button.addEventListener("click",()=>{
       if(!state.verified) return void openEditVerification();
@@ -4183,20 +4191,13 @@ svg{display:block}
   });
   document.getElementById("done-button").addEventListener("click",async(event)=>{
     stopRequestStatusPolling();
-    if(event.currentTarget?.dataset?.action==="edit-again" && state.accessToken){
+    if(event.currentTarget?.dataset?.action==="edit-again"){
       event.currentTarget.dataset.action="done";
       event.currentTarget.textContent="✓ Done";
-      try{
-        await openVerifiedRecord();
-        return;
-      }catch(error){
-        const requestStatus=document.getElementById("request-status");
-        if(requestStatus){
-          requestStatus.textContent=error?.message || "Could not reopen editing yet. Please refresh and try again.";
-          requestStatus.className="status error";
-        }
-        return;
-      }
+      if(!state.accessToken) restoreStoredEditSession();
+      await logoutCustomerSession();
+      await openEditVerification({reuseExisting:false});
+      return;
     }
     await logoutCustomerSession();
     history.back();
