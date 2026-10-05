@@ -2249,7 +2249,7 @@ svg{display:block}
             <span class="edit-copy"><strong>Phone number</strong><span>Change contact phone number</span></span>
             <span class="check-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m5 12 4 4L19 6"/></svg></span>
           </button>
-          <div class="edit-body"><label>New phone number<input name="phone" type="tel" maxlength="32" placeholder="Enter new phone number" disabled /></label></div>
+          <div class="edit-body"><label>New phone number<input name="phone" type="tel" inputmode="numeric" maxlength="11" pattern="09[0-9]{9}" placeholder="09XXXXXXXXX" autocomplete="tel" disabled /></label></div>
         </article>
 
         <article class="edit-card" data-edit-card="email">
@@ -3985,6 +3985,12 @@ svg{display:block}
     reasonCount.textContent = String(form.elements.reason.value || "").length;
   });
 
+  form.elements.phone?.addEventListener("input",()=>{
+    form.elements.phone.value = String(form.elements.phone.value || "")
+      .replace(/\D/g,"")
+      .slice(0,11);
+  });
+
   form.addEventListener("submit",(event)=>{
     event.preventDefault();
     if(!state.verified || !state.accessToken) return void openEditVerification();
@@ -4008,6 +4014,9 @@ svg{display:block}
         }
       }else if(field==="email"){
         if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return showStatus("Enter a valid email address.");
+        changes[field] = value;
+      }else if(field==="phone"){
+        if(!/^09\d{9}$/.test(value)) return showStatus("Phone number must be exactly 11 digits and start with 09.");
         changes[field] = value;
       }else{
         changes[field] = value;
