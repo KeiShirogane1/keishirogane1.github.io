@@ -3001,16 +3001,6 @@ svg{display:block}
     return;
   }
 
-  const PUBLIC_DB = "https://qwernfc-f8bf4-default-rtdb.asia-southeast1.firebasedatabase.app";
-  const fetchPublicJson = async (path) => {
-    const response = await fetchWithTimeout(PUBLIC_DB + path + (path.includes("?") ? "&" : "?") + "v=" + Date.now(), {
-      cache:"no-store",
-      mode:"cors"
-    },2500);
-    if(!response.ok) throw new Error("This QwerNFC record could not be loaded.");
-    return response.json();
-  };
-
   const withTimeout = (promise, ms, message) => Promise.race([
     promise,
     new Promise((_, reject) => setTimeout(() => reject(new Error(message)), ms))
@@ -3025,46 +3015,10 @@ svg{display:block}
     retryPublicLoad.classList.toggle("hidden",!retry);
   };
 
-  const normalizeFirebasePublicProfile = (profile) => {
-    if(
-      !profile ||
-      typeof profile!=="object" ||
-      Array.isArray(profile) ||
-      String(profile.id || "").toUpperCase()!==id
-    ) return null;
-
-    const latitude=profile.latitude==null ? null : Number(profile.latitude);
-    const longitude=profile.longitude==null ? null : Number(profile.longitude);
-    return {
-      ok:true,
-      id,
-      store:String(profile.store || ""),
-      phone:String(profile.phone || ""),
-      location:String(profile.location || ""),
-      latitude:Number.isFinite(latitude) ? latitude : null,
-      longitude:Number.isFinite(longitude) ? longitude : null,
-      googleMapsUrl:String(profile.googleMapsUrl || ""),
-      maskedEmail:"",
-      hasStoreImage:profile.hasStoreImage===true || Boolean(String(profile.storeImagePath || "").trim()),
-      storeImage:null,
-      updatedAt:String(profile.updatedAt || "")
-    };
-  };
-
   const loadRequiredPublicProfile = async () => {
-    // Firebase public/profiles is deliberately a safe projection: no raw
-    // email, destination, customer ID, or permanent qrValue. Read it first so
-    // Restore startup is independent from backend replica warm-up.
-    try{
-      const firebaseProfile = normalizeFirebasePublicProfile(
-        await fetchPublicJson("/public/profiles/" + encodeURIComponent(id) + ".json")
-      );
-      if(firebaseProfile) return firebaseProfile;
-    }catch{
-      // Fall through to the customer API during rule propagation/outages.
-    }
-
-    const retryDelays = [0, 450];
+    // Business display data comes from the QwerNFC API, whose runtime authority
+    // is operational cache -> private GitHub JSON. Firebase is backup-only.
+    const retryDelays = [0, 250];
     let lastError = null;
 
     for(const delay of retryDelays){
@@ -3072,7 +3026,7 @@ svg{display:block}
       try{
         const profile = await apiJson(
           "/v1/public/qrs/" + encodeURIComponent(id) + "/profile?includeImage=0",
-          {timeoutMs:3000}
+          {timeoutMs:3500}
         );
         if(
           !profile ||
@@ -3097,38 +3051,22 @@ svg{display:block}
     route.deleted!==true;
 
   const loadRequiredPublicRoute = async () => {
-    const firebaseRoute = fetchPublicJson("/public/routes/" + encodeURIComponent(id) + ".json");
-    const pagesRoute = fetchWithTimeout(
+    // Same-origin GitHub Pages route.json is the published projection of the
+    // canonical GitHub JSON record. It is the only public route data source.
+    const response = await fetchWithTimeout(
       fresh("../go/" + encodeURIComponent(id) + "/route.json"),
       {cache:"no-store",mode:"cors"},
-      2500
-    ).then(async(response)=>{
-      if(!response.ok) throw new Error("Pages route unavailable.");
-      return response.json();
-    });
-
-    const settled = await Promise.allSettled([firebaseRoute,pagesRoute]);
-    const primary = settled[0];
-    if(primary.status==="fulfilled" && primary.value && String(primary.value.id || "").toUpperCase()===id){
-      if(!validPublicRoute(primary.value)) throw new Error("This QwerNFC record is unavailable.");
-      return primary.value;
+      3000
+    );
+    if(!response.ok) throw new Error("The latest QwerNFC route is temporarily unavailable.");
+    const route = await response.json();
+    if(!route || String(route.id || "").toUpperCase()!==id){
+      throw new Error("The latest QwerNFC route could not be verified.");
     }
-    const candidates = settled
-      .filter((item)=>item.status==="fulfilled" && validPublicRoute(item.value))
-      .map((item)=>item.value)
-      .sort((a,b)=>
-        Number(b.linkVersion||0)-Number(a.linkVersion||0) ||
-        String(b.updatedAt||"").localeCompare(String(a.updatedAt||""))
-      );
-
-    if(candidates.length) return candidates[0];
-
-    const terminal = settled
-      .filter((item)=>item.status==="fulfilled")
-      .map((item)=>item.value)
-      .find((route)=>route && String(route.id||"").toUpperCase()===id && (route.deleted===true || route.enabled!==true));
-    if(terminal) throw new Error("This QwerNFC record is unavailable.");
-    throw new Error("The latest QwerNFC route is temporarily unavailable.");
+    if(route.deleted===true || route.enabled!==true){
+      throw new Error("This QwerNFC record is unavailable.");
+    }
+    return route;
   };
 
   const fallbackPublicRecord = (route) => ({
@@ -3152,75 +3090,72 @@ svg{display:block}
     state.publicLoadBusy=true;
 
     authStage.classList.add("hidden");
-    protectedContent.classList.remove("hidden");
-    publicView.classList.remove("hidden");
-    editGate.classList.remove("hidden");
+    protectedContent.classList.add("hidden");
+    publicView.classList.add("hidden");
+    editGate.classList.add("hidden");
     editStage.classList.add("hidden");
     editStepper.classList.add("hidden");
     setPublicLoadStatus("Loading the latest QwerNFC record…","",false);
 
     try{
-      const route = await loadRequiredPublicRoute();
+      // Load the GitHub Pages route and GitHub-backed API profile in parallel.
+      // Never render a route-only placeholder as if it were customer profile data.
+      const [route,profile] = await Promise.all([
+        loadRequiredPublicRoute(),
+        loadRequiredPublicProfile()
+      ]);
+
       state.route = {
         id,
         enabled:true,
         deleted:false,
         linkMode:String(route.linkMode || "both"),
         destination:String(route.qrDestination || route.destination || ""),
-      recoveryDestination:String(route.fallbackDestination || "")
+        recoveryDestination:String(route.fallbackDestination || "")
       };
-      state.record = fallbackPublicRecord(route);
+
+      const publicImageBase64=String(profile?.storeImage?.base64||"").replace(/\s/g,"");
+      state.currentStoreImageDataUrl=publicImageBase64
+        ?"data:"+String(profile?.storeImage?.mimeType||"image/webp")+";base64,"+publicImageBase64
+        :"";
+      state.publicMaskedEmail=String(profile?.maskedEmail || "");
+      state.record = {
+        id,
+        store:String(profile?.store || ""),
+        phone:String(profile?.phone || ""),
+        email:"",
+        location:String(profile?.location || ""),
+        latitude:profile?.latitude ?? null,
+        longitude:profile?.longitude ?? null,
+        googleMapsUrl:String(profile?.googleMapsUrl || ""),
+        storeImagePath:profile?.hasStoreImage ? "private" : "",
+        storeImageUpdatedAt:String(profile?.updatedAt || ""),
+        enabled:true,
+        deleted:false,
+        linkMode:String(route.linkMode || "both")
+      };
       state.verified=false;
-      state.publicProfileReady=false;
-      state.publicMaskedEmail="";
-      state.currentStoreImageDataUrl="";
+      state.publicProfileReady=true;
       editWorkspaceQr.textContent=id;
       renderCurrent();
 
-      setPublicLoadStatus("Loading business details…","",false);
-
-      try{
-        const profile = await loadRequiredPublicProfile();
-        const publicImageBase64=String(profile?.storeImage?.base64||"").replace(/\s/g,"");
-        state.currentStoreImageDataUrl=publicImageBase64
-          ?"data:"+String(profile?.storeImage?.mimeType||"image/webp")+";base64,"+publicImageBase64
-          :"";
-        state.publicMaskedEmail=String(profile?.maskedEmail || "");
-        state.record = {
-          id,
-          store:String(profile?.store || ""),
-          phone:String(profile?.phone || ""),
-          email:"",
-          location:String(profile?.location || ""),
-          latitude:profile?.latitude ?? null,
-          longitude:profile?.longitude ?? null,
-          googleMapsUrl:String(profile?.googleMapsUrl || ""),
-          storeImagePath:profile?.hasStoreImage ? "private" : "",
-          storeImageUpdatedAt:String(profile?.updatedAt || ""),
-          enabled:true,
-          deleted:false,
-          linkMode:String(route.linkMode || "both")
-        };
-        state.publicProfileReady=true;
-        renderCurrent();
-        setPublicLoadStatus();
-      }catch(error){
-        state.publicProfileReady=false;
-        renderCurrent();
-        setPublicLoadStatus(
-          "Business details are temporarily syncing. QR/NFC restore is still available. Tap Retry to refresh the profile.",
-          "error",
-          true
-        );
-      }
+      protectedContent.classList.remove("hidden");
+      publicView.classList.remove("hidden");
+      editGate.classList.remove("hidden");
+      setPublicLoadStatus();
     }catch(error){
       state.route={id,enabled:false,deleted:false,linkMode:"both",destination:""};
       state.record=fallbackPublicRecord(state.route);
       state.publicProfileReady=false;
       state.verified=false;
+      state.currentStoreImageDataUrl="";
+      state.publicMaskedEmail="";
       renderCurrent();
+      protectedContent.classList.add("hidden");
+      publicView.classList.add("hidden");
+      editGate.classList.add("hidden");
       setPublicLoadStatus(
-        error?.message || "This QwerNFC record could not be loaded. Tap Retry.",
+        error?.message || "The latest QwerNFC record is temporarily unavailable. Tap Retry.",
         "error",
         true
       );
@@ -3258,7 +3193,7 @@ svg{display:block}
     try{
       const status = await apiJson("/v1/customer/status");
       const enabled = status?.maintenanceCategory !== "security_incident" && status?.maintenanceReason !== "security_incident";
-      authSendCode.disabled = !enabled;
+      authSendCode.disabled = state.otpRequestBusy || !enabled;
       if(enabled){
         authStatus.textContent="";
         authStatus.className="status hidden";
@@ -3269,7 +3204,7 @@ svg{display:block}
     }catch(error){
       // A failed status preflight must not prevent customers trying verification.
       // The verification endpoint still enforces ownership and incident checks.
-      authSendCode.disabled=false;
+      authSendCode.disabled=state.otpRequestBusy;
       authStatus.textContent="";
       authStatus.className="status hidden";
       return true;
@@ -3369,18 +3304,18 @@ svg{display:block}
     authResendCode.textContent=resendSeconds>0 ? "Resend code in "+resendSeconds+"s" : "Resend code";
   };
 
-  const startOtpTimer = (expiresInSeconds=600) => {
+  const startOtpTimer = (expiresInSeconds=1800) => {
     stopOtpTimer();
-    const ttl=Math.max(60,Number(expiresInSeconds)||600);
+    const ttl=Math.max(60,Number(expiresInSeconds)||1800);
     state.otpExpiresAt=Date.now()+ttl*1000;
     state.resendAvailableAt=Date.now()+60*1000;
     renderOtpTiming();
     state.otpTimer=setInterval(renderOtpTiming,1000);
   };
 
-  const requestOtp = async (email,{resend=false}={}) => {
-    if(state.otpRequestBusy) return;
-    state.otpRequestBusy=true;
+  const requestOtp = async (email,{resend=false,prelocked=false}={}) => {
+    if(state.otpRequestBusy && !prelocked) return;
+    if(!prelocked) state.otpRequestBusy=true;
     authSendCode.disabled=true;
     if(authResendCode) authResendCode.disabled=true;
     try{
@@ -3395,11 +3330,11 @@ svg{display:block}
       authCode.value="";
       authEmailStep.classList.add("hidden");
       authCodeStep.classList.remove("hidden");
-      startOtpTimer(Number(result.expiresInSeconds||600));
+      startOtpTimer(Number(result.expiresInSeconds||1800));
       showAuthStatus(
         resend
-          ? "Verification code sent."
-          : "Verification code sent.",
+          ? "New verification code sent. Any unexpired code for this QR can be used until one succeeds. Valid for 30 minutes."
+          : "Verification code sent. This code is valid for 30 minutes.",
         "ok"
       );
       authCode.focus();
@@ -3500,10 +3435,23 @@ svg{display:block}
   authEmail.addEventListener("input",clearAuthErrorWhileTyping);
 
   authSendCode.addEventListener("click",async()=>{
-    if(!(await refreshCustomerAccessState())) return;
-    const email=String(authEmail.value||"").trim().toLowerCase();
-    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showAuthStatus("Enter a valid registered email.","error");
-    await requestOtp(email);
+    if(state.otpRequestBusy) return;
+    state.otpRequestBusy=true;
+    authSendCode.disabled=true;
+    try{
+      if(!(await refreshCustomerAccessState())) return;
+      const email=String(authEmail.value||"").trim().toLowerCase();
+      if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+        showAuthStatus("Enter a valid registered email.","error");
+        return;
+      }
+      await requestOtp(email,{prelocked:true});
+    }finally{
+      if(state.otpRequestBusy){
+        state.otpRequestBusy=false;
+        authSendCode.disabled=false;
+      }
+    }
   });
 
   authResendCode?.addEventListener("click",async()=>{
@@ -3676,9 +3624,11 @@ svg{display:block}
     const result=await apiJson("/v1/public/qrs/"+encodeURIComponent(id)+"/restore-qr",{
       method:"POST",timeoutMs:30000,body:{scannedQr:normalizedHttpUrl(value),expectedLink}
     });
-    if(result?.restored!==true || result?.routingSynced!==true || result?.managementSynced!==true) throw new Error("The QR link has not finished restoring. Please try again.");
+    if(result?.restored!==true || result?.routingSynced!==true) throw new Error("The QR link has not finished restoring. Please try again.");
     await refreshRestoreManagedLink();
-    restoreActionStatus.textContent="QR link restored from Recover QR. Management and scan routing are updated; scan the same printed QR to open the recovery link.";
+    restoreActionStatus.textContent=result?.managementSynced===true
+      ?"QR link restored from Recover QR. Management and scan routing are updated; scan the same printed QR to open the recovery link."
+      :"QR link restored through GitHub failback. Scan the same printed QR now; Management will reconcile when it reconnects.";
   };
 
   const urlFromNdefRecord=(record)=>{
@@ -3750,12 +3700,15 @@ svg{display:block}
       const result=await apiJson("/v1/public/qrs/"+encodeURIComponent(id)+"/restore-nfc",{
         method:"POST",timeoutMs:30000,body:{scannedNfc:value,expectedLink}
       });
-      if(result?.restored!==true || result?.routingSynced!==true || result?.managementSynced!==true) throw new Error("Management and scan routing have not confirmed Restore.");
+      if(result?.restored!==true || result?.routingSynced!==true) throw new Error("Scan routing has not confirmed Restore.");
+      state.lastRestoreManagementSynced=result?.managementSynced===true;
     }catch(error){
       throw new Error("The NFC tag was written, but its link restoration is incomplete. "+(error?.message||"Try Restore again."));
     }
     await refreshRestoreManagedLink();
-    restoreActionStatus.textContent="NFC restored from Recover QR. Management and scan routing now use the saved recovery link.";
+    restoreActionStatus.textContent=state.lastRestoreManagementSynced===true
+      ?"NFC restored from Recover QR. Management and scan routing now use the saved recovery link."
+      :"NFC restored through GitHub failback. The tag keeps its permanent identity and Management will reconcile when it reconnects.";
   };
 
   const runWebRestoreAction=async(mode)=>{

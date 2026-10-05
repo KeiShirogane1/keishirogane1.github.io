@@ -3001,16 +3001,6 @@ svg{display:block}
     return;
   }
 
-  const PUBLIC_DB = "https://qwernfc-f8bf4-default-rtdb.asia-southeast1.firebasedatabase.app";
-  const fetchPublicJson = async (path) => {
-    const response = await fetchWithTimeout(PUBLIC_DB + path + (path.includes("?") ? "&" : "?") + "v=" + Date.now(), {
-      cache:"no-store",
-      mode:"cors"
-    },2500);
-    if(!response.ok) throw new Error("This QwerNFC record could not be loaded.");
-    return response.json();
-  };
-
   const withTimeout = (promise, ms, message) => Promise.race([
     promise,
     new Promise((_, reject) => setTimeout(() => reject(new Error(message)), ms))
@@ -3025,46 +3015,10 @@ svg{display:block}
     retryPublicLoad.classList.toggle("hidden",!retry);
   };
 
-  const normalizeFirebasePublicProfile = (profile) => {
-    if(
-      !profile ||
-      typeof profile!=="object" ||
-      Array.isArray(profile) ||
-      String(profile.id || "").toUpperCase()!==id
-    ) return null;
-
-    const latitude=profile.latitude==null ? null : Number(profile.latitude);
-    const longitude=profile.longitude==null ? null : Number(profile.longitude);
-    return {
-      ok:true,
-      id,
-      store:String(profile.store || ""),
-      phone:String(profile.phone || ""),
-      location:String(profile.location || ""),
-      latitude:Number.isFinite(latitude) ? latitude : null,
-      longitude:Number.isFinite(longitude) ? longitude : null,
-      googleMapsUrl:String(profile.googleMapsUrl || ""),
-      maskedEmail:"",
-      hasStoreImage:profile.hasStoreImage===true || Boolean(String(profile.storeImagePath || "").trim()),
-      storeImage:null,
-      updatedAt:String(profile.updatedAt || "")
-    };
-  };
-
   const loadRequiredPublicProfile = async () => {
-    // Firebase public/profiles is deliberately a safe projection: no raw
-    // email, destination, customer ID, or permanent qrValue. Read it first so
-    // Restore startup is independent from backend replica warm-up.
-    try{
-      const firebaseProfile = normalizeFirebasePublicProfile(
-        await fetchPublicJson("/public/profiles/" + encodeURIComponent(id) + ".json")
-      );
-      if(firebaseProfile) return firebaseProfile;
-    }catch{
-      // Fall through to the customer API during rule propagation/outages.
-    }
-
-    const retryDelays = [0, 450];
+    // Business display data comes from the QwerNFC API, whose runtime authority
+    // is operational cache -> private GitHub JSON. Firebase is backup-only.
+    const retryDelays = [0, 250];
     let lastError = null;
 
     for(const delay of retryDelays){
@@ -3072,7 +3026,7 @@ svg{display:block}
       try{
         const profile = await apiJson(
           "/v1/public/qrs/" + encodeURIComponent(id) + "/profile?includeImage=0",
-          {timeoutMs:3000}
+          {timeoutMs:3500}
         );
         if(
           !profile ||
@@ -3097,38 +3051,22 @@ svg{display:block}
     route.deleted!==true;
 
   const loadRequiredPublicRoute = async () => {
-    const firebaseRoute = fetchPublicJson("/public/routes/" + encodeURIComponent(id) + ".json");
-    const pagesRoute = fetchWithTimeout(
+    // Same-origin GitHub Pages route.json is the published projection of the
+    // canonical GitHub JSON record. It is the only public route data source.
+    const response = await fetchWithTimeout(
       fresh("../go/" + encodeURIComponent(id) + "/route.json"),
       {cache:"no-store",mode:"cors"},
-      2500
-    ).then(async(response)=>{
-      if(!response.ok) throw new Error("Pages route unavailable.");
-      return response.json();
-    });
-
-    const settled = await Promise.allSettled([firebaseRoute,pagesRoute]);
-    const primary = settled[0];
-    if(primary.status==="fulfilled" && primary.value && String(primary.value.id || "").toUpperCase()===id){
-      if(!validPublicRoute(primary.value)) throw new Error("This QwerNFC record is unavailable.");
-      return primary.value;
+      3000
+    );
+    if(!response.ok) throw new Error("The latest QwerNFC route is temporarily unavailable.");
+    const route = await response.json();
+    if(!route || String(route.id || "").toUpperCase()!==id){
+      throw new Error("The latest QwerNFC route could not be verified.");
     }
-    const candidates = settled
-      .filter((item)=>item.status==="fulfilled" && validPublicRoute(item.value))
-      .map((item)=>item.value)
-      .sort((a,b)=>
-        Number(b.linkVersion||0)-Number(a.linkVersion||0) ||
-        String(b.updatedAt||"").localeCompare(String(a.updatedAt||""))
-      );
-
-    if(candidates.length) return candidates[0];
-
-    const terminal = settled
-      .filter((item)=>item.status==="fulfilled")
-      .map((item)=>item.value)
-      .find((route)=>route && String(route.id||"").toUpperCase()===id && (route.deleted===true || route.enabled!==true));
-    if(terminal) throw new Error("This QwerNFC record is unavailable.");
-    throw new Error("The latest QwerNFC route is temporarily unavailable.");
+    if(route.deleted===true || route.enabled!==true){
+      throw new Error("This QwerNFC record is unavailable.");
+    }
+    return route;
   };
 
   const fallbackPublicRecord = (route) => ({
@@ -3152,75 +3090,72 @@ svg{display:block}
     state.publicLoadBusy=true;
 
     authStage.classList.add("hidden");
-    protectedContent.classList.remove("hidden");
-    publicView.classList.remove("hidden");
-    editGate.classList.remove("hidden");
+    protectedContent.classList.add("hidden");
+    publicView.classList.add("hidden");
+    editGate.classList.add("hidden");
     editStage.classList.add("hidden");
     editStepper.classList.add("hidden");
     setPublicLoadStatus("Loading the latest QwerNFC record…","",false);
 
     try{
-      const route = await loadRequiredPublicRoute();
+      // Load the GitHub Pages route and GitHub-backed API profile in parallel.
+      // Never render a route-only placeholder as if it were customer profile data.
+      const [route,profile] = await Promise.all([
+        loadRequiredPublicRoute(),
+        loadRequiredPublicProfile()
+      ]);
+
       state.route = {
         id,
         enabled:true,
         deleted:false,
         linkMode:String(route.linkMode || "both"),
         destination:String(route.qrDestination || route.destination || ""),
-      recoveryDestination:String(route.fallbackDestination || "")
+        recoveryDestination:String(route.fallbackDestination || "")
       };
-      state.record = fallbackPublicRecord(route);
+
+      const publicImageBase64=String(profile?.storeImage?.base64||"").replace(/\s/g,"");
+      state.currentStoreImageDataUrl=publicImageBase64
+        ?"data:"+String(profile?.storeImage?.mimeType||"image/webp")+";base64,"+publicImageBase64
+        :"";
+      state.publicMaskedEmail=String(profile?.maskedEmail || "");
+      state.record = {
+        id,
+        store:String(profile?.store || ""),
+        phone:String(profile?.phone || ""),
+        email:"",
+        location:String(profile?.location || ""),
+        latitude:profile?.latitude ?? null,
+        longitude:profile?.longitude ?? null,
+        googleMapsUrl:String(profile?.googleMapsUrl || ""),
+        storeImagePath:profile?.hasStoreImage ? "private" : "",
+        storeImageUpdatedAt:String(profile?.updatedAt || ""),
+        enabled:true,
+        deleted:false,
+        linkMode:String(route.linkMode || "both")
+      };
       state.verified=false;
-      state.publicProfileReady=false;
-      state.publicMaskedEmail="";
-      state.currentStoreImageDataUrl="";
+      state.publicProfileReady=true;
       editWorkspaceQr.textContent=id;
       renderCurrent();
 
-      setPublicLoadStatus("Loading business details…","",false);
-
-      try{
-        const profile = await loadRequiredPublicProfile();
-        const publicImageBase64=String(profile?.storeImage?.base64||"").replace(/\s/g,"");
-        state.currentStoreImageDataUrl=publicImageBase64
-          ?"data:"+String(profile?.storeImage?.mimeType||"image/webp")+";base64,"+publicImageBase64
-          :"";
-        state.publicMaskedEmail=String(profile?.maskedEmail || "");
-        state.record = {
-          id,
-          store:String(profile?.store || ""),
-          phone:String(profile?.phone || ""),
-          email:"",
-          location:String(profile?.location || ""),
-          latitude:profile?.latitude ?? null,
-          longitude:profile?.longitude ?? null,
-          googleMapsUrl:String(profile?.googleMapsUrl || ""),
-          storeImagePath:profile?.hasStoreImage ? "private" : "",
-          storeImageUpdatedAt:String(profile?.updatedAt || ""),
-          enabled:true,
-          deleted:false,
-          linkMode:String(route.linkMode || "both")
-        };
-        state.publicProfileReady=true;
-        renderCurrent();
-        setPublicLoadStatus();
-      }catch(error){
-        state.publicProfileReady=false;
-        renderCurrent();
-        setPublicLoadStatus(
-          "Business details are temporarily syncing. QR/NFC restore is still available. Tap Retry to refresh the profile.",
-          "error",
-          true
-        );
-      }
+      protectedContent.classList.remove("hidden");
+      publicView.classList.remove("hidden");
+      editGate.classList.remove("hidden");
+      setPublicLoadStatus();
     }catch(error){
       state.route={id,enabled:false,deleted:false,linkMode:"both",destination:""};
       state.record=fallbackPublicRecord(state.route);
       state.publicProfileReady=false;
       state.verified=false;
+      state.currentStoreImageDataUrl="";
+      state.publicMaskedEmail="";
       renderCurrent();
+      protectedContent.classList.add("hidden");
+      publicView.classList.add("hidden");
+      editGate.classList.add("hidden");
       setPublicLoadStatus(
-        error?.message || "This QwerNFC record could not be loaded. Tap Retry.",
+        error?.message || "The latest QwerNFC record is temporarily unavailable. Tap Retry.",
         "error",
         true
       );
