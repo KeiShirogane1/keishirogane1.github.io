@@ -1867,6 +1867,62 @@ svg{display:block}
 #edit-stage .security-note{
   margin:12px 4px 0;
 }
+.auth-method-step{
+  display:grid;
+  gap:12px;
+  margin:18px 0 8px;
+}
+.auth-method-choice{
+  width:100%;
+  min-height:92px;
+  padding:16px;
+  display:grid;
+  grid-template-columns:48px minmax(0,1fr) 24px;
+  align-items:center;
+  gap:13px;
+  border:1px solid #226d43;
+  border-radius:18px;
+  background:linear-gradient(145deg,#0a2b1a,#06180f);
+  color:#eafff1;
+  text-align:left;
+  box-shadow:0 10px 24px rgba(0,0,0,.16);
+}
+.auth-method-choice.primary{
+  border-color:#32cf72;
+  background:linear-gradient(145deg,#0d3a22,#082619);
+}
+.auth-method-choice svg{
+  width:48px;
+  height:48px;
+  padding:11px;
+  border:1px solid #2f9f5c;
+  border-radius:14px;
+  color:#5df58d;
+  background:#082116;
+}
+.auth-method-choice strong{
+  display:block;
+  margin-bottom:4px;
+  font-size:1rem;
+  color:#fff;
+}
+.auth-method-choice small{
+  display:block;
+  color:#9bd7af;
+  font-size:.76rem;
+  line-height:1.4;
+}
+.auth-method-choice .arrow{
+  justify-self:end;
+  color:#62ef90;
+  font-size:1.35rem;
+  font-weight:900;
+}
+.auth-method-back{
+  width:100%;
+  margin-top:10px;
+  min-height:46px;
+}
 .public-sync-status{
   margin:0 0 10px;
   padding:10px 12px;
@@ -1926,40 +1982,40 @@ svg{display:block}
     <h2>Verify before editing this QwerNFC record</h2>
     <p class="auth-intro">Viewing and restoring this record does not require email verification. Verification is required only when you choose to edit protected information.</p>
 
-    <div id="auth-email-step">
+    <div id="auth-method-step" class="auth-method-step">
+      <button id="auth-request-pin" class="auth-method-choice primary" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"/></svg>
+        <span><strong>Admin PIN</strong><small>Use the active 6-digit PIN shown in QwerNFC Manager.</small></span>
+        <span class="arrow">›</span>
+      </button>
+      <button id="auth-method-email" class="auth-method-choice" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="m4 7 8 6 8-6"/></svg>
+        <span><strong>Email code</strong><small>Send a one-time verification code to the registered email.</small></span>
+        <span class="arrow">›</span>
+      </button>
+    </div>
+
+    <div id="auth-email-step" class="hidden">
       <label>Registered email
         <input id="auth-email" type="email" maxlength="160" autocomplete="email" placeholder="you@example.com" />
       </label>
       <div class="auth-actions">
         <button id="auth-send-code" class="full-primary" type="button">Send verification code</button>
+        <button id="auth-email-back" class="secondary auth-method-back" type="button">Back to verification choices</button>
       </div>
     </div>
 
-    <div class="auth-divider">
-      <span>OR</span>
-    </div>
-
     <div id="auth-pin-step" class="hidden">
-      <label>Enter the 6-digit verification PIN provided by the QwerNFC administrator.
+      <label>Enter the 6-digit Admin PIN shown for this QR in QwerNFC Manager.
         <input id="auth-pin" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="one-time-code" placeholder="000000" />
       </label>
       <div class="auth-actions">
         <button id="auth-verify-pin" class="full-primary" type="button">Verify PIN and continue</button>
-        <button id="auth-back-to-email" class="secondary" type="button">Back to email</button>
+        <button id="auth-back-to-email" class="secondary auth-method-back" type="button">Back to verification choices</button>
       </div>
     </div>
 
-    <div class="auth-divider">
-      <span>Need a PIN?</span>
-    </div>
-
-    <div id="auth-pin-fallback">
-      <button id="auth-request-pin" class="full-secondary" type="button">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"/></svg>
-        <span>Use PIN from Admin</span>
-      </button>
-      <p class="pin-fallback-note">Contact the QwerNFC administrator to get a verification PIN for this QR.</p>
-    </div>
+    <div id="auth-pin-fallback" class="hidden"></div>
 
     <div id="auth-code-step" class="hidden">
       <label>6-digit verification code
@@ -3186,13 +3242,15 @@ svg{display:block}
     editAction.classList.add("hidden");
     editStepper.classList.add("hidden");
     authStage.classList.remove("hidden");
-    authEmailStep.classList.remove("hidden");
+    authMethodStep.classList.remove("hidden");
+    authEmailStep.classList.add("hidden");
+    authPinStep.classList.add("hidden");
     authCodeStep.classList.add("hidden");
+    authPinFallback.classList.add("hidden");
     authStatus.className="status hidden";
     if(state.authEmail) authEmail.value=state.authEmail;
     window.scrollTo({top:0,behavior:"auto"});
     await refreshCustomerAccessState();
-    setTimeout(()=>authEmail.focus(),250);
   };
 
   const authSendCode = document.getElementById("auth-send-code");
@@ -3412,13 +3470,18 @@ svg{display:block}
             : (error?.message || "Verification succeeded, but your record could not be loaded yet. Tap Verify and continue again."),
           "error"
         );
+      }else if(error?.code==="otp_invalid"){
+        showAuthStatus("That email code does not match an active code. You can try the correct code again while the timer is still running, or request a new code.","error");
       }else{
-        showAuthStatus(error?.message || "Verification failed.","error");
+        showAuthStatus(error?.message || "Email verification could not be completed.","error");
       }
     }
   });
 
   // PIN verification fallback
+  const authMethodStep = document.getElementById("auth-method-step");
+  const authMethodEmail = document.getElementById("auth-method-email");
+  const authEmailBack = document.getElementById("auth-email-back");
   const authPinStep = document.getElementById("auth-pin-step");
   const authPinFallback = document.getElementById("auth-pin-fallback");
   const authPin = document.getElementById("auth-pin");
@@ -3773,12 +3836,33 @@ svg{display:block}
 
   // PIN verification fallback handlers
   authRequestPin.addEventListener("click",()=>{
+    authMethodStep.classList.add("hidden");
     authEmailStep.classList.add("hidden");
     authCodeStep.classList.add("hidden");
     authPinStep.classList.remove("hidden");
     authPinFallback.classList.add("hidden");
-    showAuthStatus("Admin PIN verification is available. Enter the active 6-digit PIN shown in QwerNFC Manager.","ok");
+    authStatus.className="status hidden";
+    authPin.value="";
     authPin.focus();
+  });
+
+  authMethodEmail.addEventListener("click",()=>{
+    authMethodStep.classList.add("hidden");
+    authPinStep.classList.add("hidden");
+    authCodeStep.classList.add("hidden");
+    authEmailStep.classList.remove("hidden");
+    authPinFallback.classList.add("hidden");
+    authStatus.className="status hidden";
+    if(state.authEmail) authEmail.value=state.authEmail;
+    authEmail.focus();
+  });
+
+  authEmailBack.addEventListener("click",()=>{
+    authEmailStep.classList.add("hidden");
+    authCodeStep.classList.add("hidden");
+    authPinStep.classList.add("hidden");
+    authMethodStep.classList.remove("hidden");
+    authStatus.className="status hidden";
   });
 
   authVerifyPin.addEventListener("click",async()=>{
@@ -3798,15 +3882,22 @@ svg{display:block}
       if(!state.accessToken) throw new Error("Secure customer session was not created.");
       await openVerifiedRecord();
     }catch(error){
-      showAuthStatus(error?.message || "Verification failed.","error");
+      if(error?.code==="admin_pin_invalid"){
+        showAuthStatus("That Admin PIN does not match the current active PIN. Reopen Recover QR in QwerNFC Manager and use the PIN marked PIN ACTIVE.","error");
+      }else if(error?.code==="admin_pin_rate_limited"){
+        showAuthStatus("Too many PIN attempts. Wait a few minutes, then use the current active Admin PIN.","error");
+      }else{
+        showAuthStatus(error?.message || "PIN verification could not be completed.","error");
+      }
     }
   });
 
   authBackToEmail.addEventListener("click",()=>{
     authPinStep.classList.add("hidden");
-    authEmailStep.classList.remove("hidden");
-    authStatus.classList.add("hidden");
-    authEmail.focus();
+    authEmailStep.classList.add("hidden");
+    authCodeStep.classList.add("hidden");
+    authMethodStep.classList.remove("hidden");
+    authStatus.className="status hidden";
   });
 
   document.getElementById("open-edit-verification").addEventListener("click",()=>void openEditVerification());
