@@ -2506,6 +2506,7 @@ svg{display:block}
     state.accessToken = "";
     state.accessExpiresAt = 0;
     try{ sessionStorage.removeItem(EDIT_SESSION_STORAGE_KEY); }catch{}
+    try{ localStorage.removeItem(EDIT_SESSION_STORAGE_KEY); }catch{}
   };
 
   const storeVerifiedEditSession = (verified) => {
@@ -2518,27 +2519,42 @@ svg{display:block}
       : Date.now() + ttlSeconds * 1000;
     state.accessToken = token;
     state.accessExpiresAt = expiresAt;
-    try{
-      sessionStorage.setItem(EDIT_SESSION_STORAGE_KEY, JSON.stringify({
-        accessToken: token,
-        accessExpiresAt: expiresAt
-      }));
-    }catch{}
+    const serialized = JSON.stringify({
+      accessToken: token,
+      accessExpiresAt: expiresAt
+    });
+    try{ sessionStorage.setItem(EDIT_SESSION_STORAGE_KEY, serialized); }catch{}
+    // Keep the same short-lived verified session available when QwerNFC opens
+    // Update Info in a new browser tab. The backend still enforces the real
+    // 24-hour expiry/revocation and this copy is removed on logout or 401.
+    try{ localStorage.setItem(EDIT_SESSION_STORAGE_KEY, serialized); }catch{}
     return token;
   };
 
   const restoreStoredEditSession = () => {
     if(state.accessToken && state.accessExpiresAt > Date.now()) return true;
-    try{
-      const saved = JSON.parse(String(sessionStorage.getItem(EDIT_SESSION_STORAGE_KEY) || "null"));
-      const token = String(saved?.accessToken || "");
-      const expiresAt = Number(saved?.accessExpiresAt || 0);
-      if(token && expiresAt > Date.now()){
-        state.accessToken = token;
-        state.accessExpiresAt = expiresAt;
-        return true;
-      }
-    }catch{}
+
+    const candidates = [];
+    try{ candidates.push(sessionStorage.getItem(EDIT_SESSION_STORAGE_KEY)); }catch{}
+    try{ candidates.push(localStorage.getItem(EDIT_SESSION_STORAGE_KEY)); }catch{}
+
+    for(const raw of candidates){
+      if(!raw) continue;
+      try{
+        const saved = JSON.parse(String(raw));
+        const token = String(saved?.accessToken || "");
+        const expiresAt = Number(saved?.accessExpiresAt || 0);
+        if(token && expiresAt > Date.now()){
+          state.accessToken = token;
+          state.accessExpiresAt = expiresAt;
+          const serialized = JSON.stringify({accessToken:token,accessExpiresAt:expiresAt});
+          try{ sessionStorage.setItem(EDIT_SESSION_STORAGE_KEY, serialized); }catch{}
+          try{ localStorage.setItem(EDIT_SESSION_STORAGE_KEY, serialized); }catch{}
+          return true;
+        }
+      }catch{}
+    }
+
     clearStoredEditSession();
     return false;
   };
@@ -4114,9 +4130,9 @@ svg{display:block}
     };
 
     try{
-      if(!state.accessToken){
+      if(!state.accessToken && !restoreStoredEditSession()){
         await openEditVerification({resume:"review"});
-        showAuthStatus("Your edit session expired. Verify again to submit. Your reviewed changes are still kept on this page.","error");
+        showAuthStatus("Your verified edit session is no longer available. Verify again to submit. Your reviewed changes are still kept on this page.","error");
         return;
       }
       const result = await apiJson("/v1/requests",{
