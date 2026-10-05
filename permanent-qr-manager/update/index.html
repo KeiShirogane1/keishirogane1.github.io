@@ -4199,8 +4199,12 @@ svg{display:block}
       await openEditVerification({reuseExisting:false});
       return;
     }
-    await logoutCustomerSession();
-    history.back();
+    // Done must work even when Update Info was opened directly and there is
+    // no useful browser history entry. Clear the verified session immediately,
+    // revoke it in the background, then return to this QR's normal public view.
+    void logoutCustomerSession();
+    const nextUrl = location.pathname + "?id=" + encodeURIComponent(id) + "&v=" + Date.now();
+    location.replace(nextUrl);
   });
 
   updateSelectedSummary();
