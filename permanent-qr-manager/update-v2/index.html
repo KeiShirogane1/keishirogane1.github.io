@@ -2150,6 +2150,7 @@ svg{display:block}
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"/></svg>
       <span>Edit Info</span>
     </button>
+    <div id="pending-edit-status" class="status hidden" aria-live="polite"></div>
   </section>
   </div>
 
@@ -2412,6 +2413,7 @@ svg{display:block}
   const publicLoadStatus = document.getElementById("public-load-status");
   const publicLoadMessage = document.getElementById("public-load-message");
   const retryPublicLoad = document.getElementById("retry-public-load");
+  const pendingEditStatus = document.getElementById("pending-edit-status");
 
   const esc = (value) => String(value == null ? "" : value).replace(/[&<>"']/g,(char)=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[char]));
   const fresh = (src) => src + (src.includes("?") ? "&" : "?") + "v=" + Date.now();
@@ -3116,6 +3118,16 @@ svg{display:block}
     throw lastError || new Error("The latest QwerNFC profile is temporarily unavailable.");
   };
 
+  const refreshCustomerUpdatePending = async () => {
+    const profile = await loadRequiredPublicProfile();
+    if(typeof profile?.customerUpdatePending !== "boolean"){
+      throw new Error("QwerNFC could not verify whether a previous edit is still pending. Please try Edit Info again.");
+    }
+    const pending = profile.customerUpdatePending === true;
+    if(state.record) state.record.customerUpdatePending = pending;
+    return pending;
+  };
+
   const validPublicRoute = (route) =>
     route &&
     String(route.id || "").toUpperCase()===id &&
@@ -3154,6 +3166,7 @@ svg{display:block}
     storeImageUpdatedAt:"",
     enabled:true,
     deleted:false,
+    customerUpdatePending:false,
     linkMode:String(route?.linkMode || "both")
   });
 
@@ -3204,6 +3217,7 @@ svg{display:block}
         storeImageUpdatedAt:String(profile?.updatedAt || ""),
         enabled:true,
         deleted:false,
+        customerUpdatePending:profile?.customerUpdatePending===true,
         linkMode:String(route.linkMode || "both")
       };
       state.verified=false;
@@ -3332,7 +3346,7 @@ svg{display:block}
       setStep("submit");
       const requestStatus=document.getElementById("request-status");
       if(requestStatus){
-        requestStatus.textContent="Waiting for admin review… You can submit another edit only after this request is approved or rejected.";
+        requestStatus.textContent="Please wait for admin approval. Your saved changes are still pending. You can edit again after Management approves or rejects them.";
         requestStatus.className="status";
       }
       const doneButton=document.getElementById("done-button");
@@ -3947,11 +3961,31 @@ svg{display:block}
     authStatus.className="status hidden";
   });
 
-  document.getElementById("open-edit-verification").addEventListener("click",async()=>{
-    // Every deliberate Edit Info action starts with fresh verification.
-    // A verified session remains valid only for the edit/review/submit flow
-    // already in progress; it must not silently skip the verification gate
-    // the next time the customer starts editing.
+  document.getElementById("open-edit-verification").addEventListener("click",async(event)=>{
+    const button=event.currentTarget;
+    pendingEditStatus.textContent="";
+    pendingEditStatus.className="status hidden";
+    button.disabled=true;
+
+    let pending=false;
+    try{
+      pending=await refreshCustomerUpdatePending();
+    }catch(error){
+      pendingEditStatus.textContent=error?.message || "QwerNFC could not check the previous edit request. Please try again.";
+      pendingEditStatus.className="status error";
+      return;
+    }finally{
+      button.disabled=false;
+    }
+
+    if(pending){
+      pendingEditStatus.textContent="Please wait for admin approval. Your saved changes are still pending. You can edit again after Management approves or rejects them.";
+      pendingEditStatus.className="status";
+      return;
+    }
+
+    // Every deliberate Edit Info action starts with fresh verification only
+    // when there is no pending customer request for this permanent QR.
     if(!state.accessToken) restoreStoredEditSession();
     await logoutCustomerSession();
     await openEditVerification({reuseExisting:false});
