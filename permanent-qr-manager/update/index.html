@@ -2360,6 +2360,7 @@ svg{display:block}
     submitting:false,
     apiBase:"",
     accessToken:"",
+    accessExpiresAt:0,
     verified:false,
     challengeId:"",
     authEmail:"",
@@ -2499,9 +2500,52 @@ svg{display:block}
     return data;
   };
 
+  const EDIT_SESSION_STORAGE_KEY = "qwernfc-customer-edit-session-v1:" + id;
+
+  const clearStoredEditSession = () => {
+    state.accessToken = "";
+    state.accessExpiresAt = 0;
+    try{ sessionStorage.removeItem(EDIT_SESSION_STORAGE_KEY); }catch{}
+  };
+
+  const storeVerifiedEditSession = (verified) => {
+    const token = String(verified?.accessToken || "");
+    if(!token) throw new Error("Secure customer session was not created.");
+    const directExpiry = Date.parse(String(verified?.accessExpiresAt || ""));
+    const ttlSeconds = Math.max(60, Number(verified?.accessExpiresInSeconds || 24 * 60 * 60));
+    const expiresAt = Number.isFinite(directExpiry) && directExpiry > Date.now()
+      ? directExpiry
+      : Date.now() + ttlSeconds * 1000;
+    state.accessToken = token;
+    state.accessExpiresAt = expiresAt;
+    try{
+      sessionStorage.setItem(EDIT_SESSION_STORAGE_KEY, JSON.stringify({
+        accessToken: token,
+        accessExpiresAt: expiresAt
+      }));
+    }catch{}
+    return token;
+  };
+
+  const restoreStoredEditSession = () => {
+    if(state.accessToken && state.accessExpiresAt > Date.now()) return true;
+    try{
+      const saved = JSON.parse(String(sessionStorage.getItem(EDIT_SESSION_STORAGE_KEY) || "null"));
+      const token = String(saved?.accessToken || "");
+      const expiresAt = Number(saved?.accessExpiresAt || 0);
+      if(token && expiresAt > Date.now()){
+        state.accessToken = token;
+        state.accessExpiresAt = expiresAt;
+        return true;
+      }
+    }catch{}
+    clearStoredEditSession();
+    return false;
+  };
+
   const logoutCustomerSession = async () => {
     const token = state.accessToken;
-    state.accessToken = "";
+    clearStoredEditSession();
     if(!token) return;
     try{
       await apiJson("/v1/auth/logout",{
@@ -3166,7 +3210,6 @@ svg{display:block}
 
   const openEditVerification = async ({ resume = "" } = {}) => {
     state.resumeAfterVerification=String(resume || "");
-    state.accessToken="";
     state.verified=false;
     protectedContent.classList.add("hidden");
     publicView.classList.add("hidden");
@@ -3185,6 +3228,24 @@ svg{display:block}
     authStatus.className="status hidden";
     if(state.authEmail) authEmail.value=state.authEmail;
     window.scrollTo({top:0,behavior:"auto"});
+
+    if(restoreStoredEditSession()){
+      try{
+        await openVerifiedRecord();
+        return;
+      }catch(error){
+        if(
+          error?.status===401 ||
+          error?.code==="customer_session_invalid" ||
+          error?.code==="customer_device_revoked"
+        ){
+          clearStoredEditSession();
+        }else{
+          showAuthStatus("Your verified session could not be checked yet. You can retry with the same Admin PIN or email code.","error");
+        }
+      }
+    }
+
     await refreshCustomerAccessState();
   };
 
@@ -3393,11 +3454,17 @@ svg{display:block}
           deviceName:"QwerNFC Update Info web"
         }
       });
-      state.accessToken=String(verified.accessToken||"");
-      if(!state.accessToken) throw new Error("Secure customer session was not created.");
+      storeVerifiedEditSession(verified);
       showAuthStatus("Verification succeeded. Loading your protected record…","ok");
       await openVerifiedRecord();
     }catch(error){
+      if(
+        error?.status===401 ||
+        error?.code==="customer_session_invalid" ||
+        error?.code==="customer_device_revoked"
+      ){
+        clearStoredEditSession();
+      }
       if(state.accessToken){
         showAuthStatus(
           error?.code==="request_timeout"
@@ -3823,10 +3890,16 @@ svg{display:block}
           deviceName:"QwerNFC Update Info web"
         }
       });
-      state.accessToken=String(verified.accessToken||"");
-      if(!state.accessToken) throw new Error("Secure customer session was not created.");
+      storeVerifiedEditSession(verified);
       await openVerifiedRecord();
     }catch(error){
+      if(
+        error?.status===401 &&
+        error?.code!=="admin_pin_invalid" &&
+        error?.code!=="admin_pin_rate_limited"
+      ){
+        clearStoredEditSession();
+      }
       if(error?.code==="admin_pin_invalid"){
         showAuthStatus("That Admin PIN does not match the current active PIN. Reopen Recover QR in QwerNFC Manager and use the PIN marked PIN ACTIVE.","error");
       }else if(error?.code==="admin_pin_rate_limited"){
@@ -4004,7 +4077,10 @@ svg{display:block}
         requestStatus.className="status";
       }
     }catch(error){
-      if(error?.status===401) stopRequestStatusPolling();
+      if(error?.status===401){
+        stopRequestStatusPolling();
+        clearStoredEditSession();
+      }
     }
   };
 
@@ -4075,6 +4151,7 @@ svg{display:block}
         error?.code==="customer_session_invalid" ||
         error?.code==="customer_device_revoked"
       ){
+        clearStoredEditSession();
         await openEditVerification({resume:"review"});
         showAuthStatus("Your edit session expired. Verify again to submit. Your reviewed changes are still kept on this page.","error");
         return;
