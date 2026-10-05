@@ -3489,6 +3489,16 @@ svg{display:block}
   const authBackToEmail = document.getElementById("auth-back-to-email");
   const authRequestPin = document.getElementById("auth-request-pin");
 
+  const clearAuthErrorWhileTyping = () => {
+    if(authStatus.classList.contains("error")){
+      authStatus.className="status hidden";
+      authStatus.textContent="";
+    }
+  };
+  authPin.addEventListener("input",clearAuthErrorWhileTyping);
+  authCode.addEventListener("input",clearAuthErrorWhileTyping);
+  authEmail.addEventListener("input",clearAuthErrorWhileTyping);
+
   authSendCode.addEventListener("click",async()=>{
     if(state.otpRequestBusy) return;
     state.otpRequestBusy=true;
