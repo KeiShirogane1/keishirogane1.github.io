@@ -3,9 +3,9 @@
   "kind": "NFC",
   "enabled": true,
   "deleted": false,
-  "destination": "",
-  "fallbackDestination": "",
-  "linkVersion": 2,
-  "linkChangedAt": "2026-10-07T02:21:18.203Z",
-  "updatedAt": "2026-10-07T02:21:18.203Z"
+  "destination": "https://youtube.com/",
+  "fallbackDestination": "https://youtube.com/",
+  "linkVersion": 3,
+  "linkChangedAt": "2026-10-08T15:37:43.707Z",
+  "updatedAt": "2026-10-08T15:37:43.707Z"
 }
