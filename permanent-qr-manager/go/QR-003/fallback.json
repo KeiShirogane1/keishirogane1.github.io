@@ -2,6 +2,6 @@
   "id": "QR-003",
   "enabled": true,
   "deleted": false,
-  "fallbackDestination": "https://nexora-production-eb7b.up.railway.app/",
-  "updatedAt": "2026-10-08T11:15:18.843Z"
+  "fallbackDestination": "",
+  "updatedAt": "2026-10-08T12:50:51.503Z"
 }
