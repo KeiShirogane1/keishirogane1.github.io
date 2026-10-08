@@ -3,9 +3,9 @@
   "kind": "QR",
   "enabled": true,
   "deleted": false,
-  "destination": "https://nexora-production-eb7b.up.railway.app/",
-  "fallbackDestination": "https://nexora-production-eb7b.up.railway.app/",
-  "linkVersion": 4,
-  "linkChangedAt": "2026-10-08T11:15:18.843Z",
-  "updatedAt": "2026-10-08T11:15:18.843Z"
+  "destination": "",
+  "fallbackDestination": "",
+  "linkVersion": 5,
+  "linkChangedAt": "2026-10-08T12:50:51.503Z",
+  "updatedAt": "2026-10-08T12:50:51.503Z"
 }
