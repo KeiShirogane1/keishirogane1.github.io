@@ -3,9 +3,9 @@
   "kind": "NFC",
   "enabled": true,
   "deleted": false,
-  "destination": "https://google.com/",
-  "fallbackDestination": "https://google.com/",
-  "linkVersion": 9,
-  "linkChangedAt": "2026-10-09T03:50:05.737Z",
-  "updatedAt": "2026-10-09T03:50:05.737Z"
+  "destination": "",
+  "fallbackDestination": "",
+  "linkVersion": 10,
+  "linkChangedAt": "2026-10-09T04:23:50.915Z",
+  "updatedAt": "2026-10-09T04:23:50.915Z"
 }
