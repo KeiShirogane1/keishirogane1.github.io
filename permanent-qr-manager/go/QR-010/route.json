@@ -3,9 +3,9 @@
   "kind": "QR",
   "enabled": true,
   "deleted": false,
-  "destination": "https://google.com/",
-  "fallbackDestination": "https://google.com/",
-  "linkVersion": 5,
-  "linkChangedAt": "2026-10-09T00:45:39.885Z",
-  "updatedAt": "2026-10-09T00:45:39.885Z"
+  "destination": "",
+  "fallbackDestination": "",
+  "linkVersion": 6,
+  "linkChangedAt": "2026-10-09T00:48:18.784Z",
+  "updatedAt": "2026-10-09T00:48:18.784Z"
 }
