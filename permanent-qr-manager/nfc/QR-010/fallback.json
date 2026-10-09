@@ -2,6 +2,6 @@
   "id": "QR-010",
   "enabled": true,
   "deleted": false,
-  "fallbackDestination": "",
-  "updatedAt": "2026-10-09T12:06:47.927Z"
+  "fallbackDestination": "https://youtube.com/",
+  "updatedAt": "2026-10-09T12:07:39.169Z"
 }
