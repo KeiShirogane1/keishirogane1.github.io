@@ -3,9 +3,9 @@
   "kind": "QR",
   "enabled": true,
   "deleted": false,
-  "destination": "",
-  "fallbackDestination": "",
-  "linkVersion": 16,
-  "linkChangedAt": "2026-10-09T11:51:38.427Z",
-  "updatedAt": "2026-10-09T11:51:38.427Z"
+  "destination": "https://youtube.com/",
+  "fallbackDestination": "https://youtube.com/",
+  "linkVersion": 17,
+  "linkChangedAt": "2026-10-09T11:52:50.263Z",
+  "updatedAt": "2026-10-09T11:52:50.263Z"
 }
