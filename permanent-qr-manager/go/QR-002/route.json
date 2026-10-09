@@ -3,9 +3,9 @@
   "kind": "QR",
   "enabled": true,
   "deleted": false,
-  "destination": "",
-  "fallbackDestination": "",
-  "linkVersion": 19,
-  "linkChangedAt": "2026-10-09T03:46:52.942Z",
-  "updatedAt": "2026-10-09T03:46:52.942Z"
+  "destination": "https://mail.google.com/mail/u/0/#inbox/FMfcgzQhWnrznwkpllLnnPxXcSPQvqzm",
+  "fallbackDestination": "https://mail.google.com/mail/u/0/#inbox/FMfcgzQhWnrznwkpllLnnPxXcSPQvqzm",
+  "linkVersion": 20,
+  "linkChangedAt": "2026-10-09T04:49:21.726Z",
+  "updatedAt": "2026-10-09T04:49:21.726Z"
 }
