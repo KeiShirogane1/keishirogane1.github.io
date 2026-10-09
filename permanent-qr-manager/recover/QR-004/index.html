@@ -1,16 +1,27 @@
 <!doctype html>
-<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow"><meta name="referrer" content="no-referrer">
-<meta http-equiv="cache-control" content="no-store,no-cache,must-revalidate,max-age=0">
-<title>Opening QwerNFC</title>
+<meta http-equiv="cache-control" content="no-store,no-cache,max-age=0"><title>Opening QwerNFC</title>
+<style>body{background:#03130a;color:#eafbef;min-height:100dvh;display:grid;place-items:center;text-align:center;font:16px system-ui,sans-serif}p{color:#b0c8b8}</style>
+</head><body><main role="status"><h1>QwerNFC</h1><p>Opening your secure Restore page…</p></main>
 <script>
-(() => {
-  const match = window.location.pathname.match(/\/recover\/(QR-\d+)\/?$/i);
-  const id = String(match?.[1] || "").toUpperCase();
-  const target = new URL("https://qwernfc-api.qwernfc-api.workers.dev/update-v2/");
-  if (id) target.searchParams.set("id", id);
-  target.searchParams.set("v", String(Date.now()));
-  window.location.replace(target.href);
+(()=>{
+  const match=location.pathname.match(/\/recover\/(QR-\d{3,})\/?$/i);
+  const id=String(match?.[1]||"").toUpperCase();
+  if(!id)return;
+  // Existing physical Restore QR remains unchanged. Use TheNFCGuy if
+  // published and retain the currently working Cloudflare fallback.
+  const target="https://thenfcguy.github.io/permanent-qr-manager/recover/"+id+"/?v="+Date.now();
+  const fallback="https://qwernfc-api.qwernfc-api.workers.dev/update-v2/?id="+encodeURIComponent(id)+"&v="+Date.now();
+  let settled=false;
+  const finish=(url)=>{if(settled)return;settled=true;clearTimeout(timer);location.replace(url)};
+  window.__qwernfcPagesReady=(version)=>{if(version==="qwernfc-pages-v1")finish(target)};
+  const timer=setTimeout(()=>finish(fallback),1700);
+  const probe=document.createElement("script");
+  probe.src="https://thenfcguy.github.io/ready.js?v="+Date.now();
+  probe.async=true;
+  probe.onerror=()=>finish(fallback);
+  probe.onload=()=>{if(!settled)finish(fallback)};
+  document.head.appendChild(probe);
 })();
-</script>
-</head><body><p>Opening QwerNFC…</p></body></html>
+</script></body></html>
