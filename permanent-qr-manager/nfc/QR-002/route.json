@@ -3,9 +3,9 @@
   "kind": "NFC",
   "enabled": true,
   "deleted": false,
-  "destination": "https://nexora-production-eb7b.up.railway.app/",
-  "fallbackDestination": "https://nexora-production-eb7b.up.railway.app/",
-  "linkVersion": 18,
-  "linkChangedAt": "2026-10-09T02:20:41.584Z",
-  "updatedAt": "2026-10-09T02:20:41.584Z"
+  "destination": "",
+  "fallbackDestination": "",
+  "linkVersion": 19,
+  "linkChangedAt": "2026-10-09T03:46:52.942Z",
+  "updatedAt": "2026-10-09T03:46:52.942Z"
 }
